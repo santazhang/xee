@@ -577,15 +577,16 @@ BOOL finderlaunch;
 	for(int i=0;i<num;i++)
 	{
 		NSMenuItem *item=[slideshowmenu itemAtIndex:i];
-		if([item action]==@selector(setSlideshowDelay:))
-		if([item tag]==slidedelay)
-		{
-			[item setState:NSOnState];
-			found=YES;
-		}
-		else
-        {
-            [item setState:NSOffState];
+        if([item action]==@selector(setSlideshowDelay:)){
+            if([item tag]==slidedelay)
+            {
+                [item setState:NSOnState];
+                found=YES;
+            }
+            else
+            {
+                [item setState:NSOffState];
+            }
         }
 	}
 
