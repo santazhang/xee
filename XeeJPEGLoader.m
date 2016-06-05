@@ -617,6 +617,9 @@
 
 	XeeImageLoaderHeaderDone();
 
+	cinfo.do_fancy_upsampling = FALSE;
+	//cinfo.do_block_smoothing = FALSE;
+
 	if(!thumbonly||!thumbhandle)
 	{
 		if([[NSUserDefaults standardUserDefaults] boolForKey:@"jpegYUV"]
@@ -628,23 +631,24 @@
 			mainimage=[[[XeeYUVImage alloc] initWithWidth:width height:height] autorelease];
 			if(!mainimage) XeeImageLoaderDone(NO);
 			[self addSubImage:mainimage];
-
-			int num_lines=8*cinfo.comp_info[0].v_samp_factor;
-			int y_width=(width+7)&~7;
-			int y_rows=8*cinfo.comp_info[0].v_samp_factor;
-			int cbcr_width=((width+1)/2+7)&~7;
-			uint8_t y_buf[y_rows*y_width];
-			uint8_t cb_buf[8*cbcr_width];
-			uint8_t cr_buf[8*cbcr_width];
-			JSAMPROW y_lines[y_rows],cb_lines[8],cr_lines[8];
-			JSAMPARRAY image[3]={y_lines,cb_lines,cr_lines};
-
-			for(int i=0;i<y_rows;i++) y_lines[i]=y_buf+i*y_width;
-			for(int i=0;i<8;i++) cb_lines[i]=cb_buf+i*cbcr_width;
-			for(int i=0;i<8;i++) cr_lines[i]=cr_buf+i*cbcr_width;
-
+			
 			cinfo.raw_data_out=TRUE;
 			jpeg_start_decompress(&cinfo);
+			
+			int num_lines=DCTSIZE*cinfo.comp_info[0].v_samp_factor;
+			int y_width=(cinfo.output_width+7)&~7;
+			int y_rows=num_lines;
+			int cbcr_width=((cinfo.output_width+1)/2+7)&~7;
+			uint8_t y_buf[y_rows*y_width];
+			uint8_t cb_buf[DCTSIZE*cbcr_width];
+			uint8_t cr_buf[DCTSIZE*cbcr_width];
+			JSAMPROW y_lines[y_rows],cb_lines[DCTSIZE],cr_lines[DCTSIZE];
+			JSAMPARRAY image[3]={y_lines,cb_lines,cr_lines};
+			
+			for(int i=0;i<y_rows;i++)  y_lines[i]=y_buf+i*y_width;
+			for(int i=0;i<DCTSIZE;i++) cb_lines[i]=cb_buf+i*cbcr_width;
+			for(int i=0;i<DCTSIZE;i++) cr_lines[i]=cr_buf+i*cbcr_width;
+
 			while(cinfo.output_scanline<cinfo.output_height)
 			{
 				int start_line=cinfo.output_scanline;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2004, Eric M. Johnston <emj@postal.net>
+ * Copyright (c) 2001-2007, Eric M. Johnston <emj@postal.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: canon.c,v 1.52 2005/01/11 20:12:35 ejohnst Exp $
+ * $Id: canon.c,v 1.54 2007/12/16 03:06:13 ejohnst Exp $
  */
 
 /*
@@ -38,6 +38,7 @@
  * EOS 1D and 1Ds contributions from Stan Jirman <stanj@phototrek.org>.
  * EOS 10D contributions from Jason Montojo <jason.montojo@rogers.com>.
  * EOS 20D contributions from Per Kristian Hove <Per.Hove@math.ntnu.no>.
+ * EOS 5D contributions from Albert Max Lai <amlai@columbia.edu>.
  *
  */
 
@@ -277,6 +278,8 @@ static struct exiftag canon_tags[] = {
 	  "Custom Function", NULL },
 	{ 0x0093, TIFF_SHORT, 0,  ED_UNK, "Canon93Tag",
 	  "Canon Tag93 Offset", NULL },
+	{ 0x0095, TIFF_ASCII, 64, ED_PAS, "LensName",
+	  "Lens Name", NULL },
 	{ 0x00a0, TIFF_SHORT, 0,  ED_UNK, "CanonA0Tag",
 	  "Canon TagA0 Offset", NULL },
 	{ 0xffff, TIFF_UNKN,  0,  ED_UNK, "CanonUnknown",
@@ -697,6 +700,19 @@ static struct descrip ccstm_20dettl[] = {
 	{ -1,	"Unknown" },
 };
 
+static struct descrip ccstm_5dflashsync[] = {
+	{ 0,	"Auto" },
+	{ 1,	"1/200 (Fixed)" },
+	{ -1,	"Unknown" },
+};
+
+static struct descrip ccstm_5dfscr[] = {
+	{ 0,	"Ee-A" },
+	{ 1,	"Ee-D" },
+	{ 2,	"Ee-S" },
+	{ -1,	"Unknown" },
+};
+
 
 /* D30/D60 custom functions. */
 
@@ -783,6 +799,51 @@ static struct exiftag canon_1dcustom[] = {
 	  "AI servo tracking sensitivity", ccstm_aisens },
 	{ 0xffff, TIFF_SHORT, 0, ED_UNK, "1DCustomUnknown",
 	  "Canon 1D/1Ds Custom Unknown", NULL },
+};
+
+/* 5D custom functions. */
+
+static struct exiftag canon_5dcustom[] = {
+	{ 0, TIFF_SHORT, 0, ED_VRB, "5DCustom",
+	  "Focusing Screen", ccstm_5dfscr },
+	{ 1,  TIFF_SHORT, 0, ED_VRB, "5DCustom",
+	  "SET button function when shooting", ccstm_10dsetbut },
+	{ 2,  TIFF_SHORT, 0, ED_VRB, "5DCustom",
+	  "Long exposure noise reduction", ccstm_offon },
+	{ 3,  TIFF_SHORT, 0, ED_VRB, "5DCustom",
+	  "Flash sync speed in Av mode", ccstm_5dflashsync },
+	{ 4,  TIFF_SHORT, 0, ED_VRB, "5DCustom",
+	  "Shutter button/AE lock button", ccstm_10dshutter },
+	{ 5,  TIFF_SHORT, 0, ED_VRB, "5DCustom",
+	  "AF-assist beam", ccstm_assistflash },
+	{ 6,  TIFF_SHORT, 0, ED_VRB, "5DCustom",
+	  "Exposure level increments", ccstm_20dexplvl },
+	{ 7,  TIFF_SHORT, 0, ED_VRB, "5DCustom",
+	  "Flash firing", ccstm_20dflash },
+	{ 8,  TIFF_SHORT, 0, ED_VRB, "5DCustom",
+	  "ISO expansion", ccstm_offon },
+	{ 9,  TIFF_SHORT, 0, ED_VRB, "5DCustom",
+	  "AEB sequence/auto cancellation", ccstm_aebseq },
+	{ 10, TIFF_SHORT, 0, ED_VRB, "5DCustom",
+	  "Superimposed display", ccstm_onoff },
+	{ 11, TIFF_SHORT, 0, ED_VRB, "5DCustom",
+	  "Menu button display position", ccstm_10dmenubut },
+	{ 12, TIFF_SHORT, 0, ED_VRB, "5DCustom",
+	  "Mirror lockup", ccstm_disen },
+	{ 13, TIFF_SHORT, 0, ED_VRB, "5DCustom",
+	  "AF point selection method", ccstm_20dafpsel },
+	{ 14, TIFF_SHORT, 0, ED_VRB, "5DCustom",
+	  "E-TTL II", ccstm_20dettl },
+	{ 15, TIFF_SHORT, 0, ED_VRB, "5DCustom",
+	  "Shutter curtain sync", ccstm_shutsync },
+	{ 16, TIFF_SHORT, 0, ED_VRB, "5DCustom",
+	  "Safety shift in Av or Tv", ccstm_disen },
+	{ 17, TIFF_SHORT, 0, ED_VRB, "5DCustom",
+	  "Lens AF stop button", ccstm_lensaf1 },
+	{ 18, TIFF_SHORT, 0, ED_VRB, "5DCustom",
+	  "Add original decision data", ccstm_offon },
+	{ 0xffff, TIFF_SHORT, 0, ED_UNK, "5DCustomUnknown",
+	  "Canon 5D Custom Unknown", NULL },
 };
 
 /* 10D custom functions. */
@@ -888,7 +949,7 @@ canon_prop01(struct exifprop *aprop, struct exifprop *prop,
 	case 5:
 		/* Change "Single" to "Timed" if #2 > 0. */
 
-		if (!v && exif2byte(off + 2 * 2, &t->mkrmd))
+		if (!v && exif2byte(off + 2 * 2, t->mkrmd.order))
 			strcpy(aprop->str, "Timed");
 		break;
 	case 12:
@@ -902,8 +963,8 @@ canon_prop01(struct exifprop *aprop, struct exifprop *prop,
 		if (v == 3 && prop->count >= 37) {
 			exifstralloc(&aprop->str, 32);
 			snprintf(aprop->str, 31, "x%.1f", 2 *
-			    (float)exif2byte(off + 37 * 2, &t->mkrmd) /
-			    (float)exif2byte(off + 36 * 2, &t->mkrmd));
+			    (float)exif2byte(off + 37 * 2, t->mkrmd.order) /
+			    (float)exif2byte(off + 36 * 2, t->mkrmd.order));
 		} else
 			aprop->str = finddescr(canon_dzoom, v);
 		break;
@@ -1052,7 +1113,7 @@ canon_subval(struct exifprop *prop, struct exiftags *t,
 
 	/* Check size of tag (first value) if we're not debugging. */
 
-	if (valfun && exif2byte(off, &t->mkrmd) != 2 * prop->count) {
+	if (valfun && exif2byte(off, t->mkrmd.order) != 2 * prop->count) {
 		exifwarn("Canon maker tag appears corrupt");
 		return (FALSE);
 	}
@@ -1062,7 +1123,7 @@ canon_subval(struct exifprop *prop, struct exiftags *t,
 		    prop->name, prop->tag, prop->count);
 
 	for (i = 0; i < (int)prop->count; i++) {
-		v = exif2byte(off + i * 2, &t->mkrmd);
+		v = exif2byte(off + i * 2, t->mkrmd.order);
 
 		aprop = childprop(prop);
 		aprop->value = (u_int32_t)v;
@@ -1101,7 +1162,7 @@ canon_subval(struct exifprop *prop, struct exiftags *t,
  * Process custom function tag values.
  */
 static void
-canon_custom(struct exifprop *prop, unsigned char *off, struct tiffmeta *md,
+canon_custom(struct exifprop *prop, unsigned char *off, enum byteorder o,
     struct exiftag *table)
 {
 	int i, j = -1;
@@ -1117,8 +1178,8 @@ canon_custom(struct exifprop *prop, unsigned char *off, struct tiffmeta *md,
 	 * to the second value being zero?
 	 */
 
-	if (exif2byte(off, md) != 2 * prop->count &&
-	    exif2byte(off, md) != 2 * (prop->count - 1)) {
+	if (exif2byte(off, o) != 2 * prop->count &&
+	    exif2byte(off, o) != 2 * (prop->count - 1)) {
 		exifwarn("Canon custom tag appears corrupt");
 		return;
 	}
@@ -1128,7 +1189,7 @@ canon_custom(struct exifprop *prop, unsigned char *off, struct tiffmeta *md,
 		    prop->count);
 
 	for (i = 1; i < (int)prop->count; i++) {
-		v = exif2byte(off + i * 2, md);
+		v = exif2byte(off + i * 2, o);
 
 		aprop = childprop(prop);
 		aprop->value = v & 0xff;
@@ -1201,9 +1262,9 @@ canon_prop(struct exifprop *prop, struct exiftags *t)
 
 		if (prop->count >= 25) {
 			offset = t->mkrmd.btiff + prop->value;
-			flmax = exif2byte(offset + 23 * 2, &t->mkrmd);
-			flmin = exif2byte(offset + 24 * 2, &t->mkrmd);
-			flunit = exif2byte(offset + 25 * 2, &t->mkrmd);
+			flmax = exif2byte(offset + 23 * 2, t->mkrmd.order);
+			flmin = exif2byte(offset + 24 * 2, t->mkrmd.order);
+			flunit = exif2byte(offset + 25 * 2, t->mkrmd.order);
 		}
 
 		if (flunit && (flmin || flmax)) {
@@ -1343,20 +1404,23 @@ canon_prop(struct exifprop *prop, struct exiftags *t)
 
 		if (strstr(t->model, "10D"))
 			canon_custom(prop, t->mkrmd.btiff + prop->value,
-			    &t->mkrmd, canon_10dcustom);
+			    t->mkrmd.order, canon_10dcustom);
 		else if (strstr(t->model, "D30") || strstr(t->model, "D60"))
 			canon_custom(prop, t->mkrmd.btiff + prop->value,
-			    &t->mkrmd, canon_d30custom);
+			    t->mkrmd.order, canon_d30custom);
 		else if (strstr(t->model, "20D"))
 			canon_custom(prop, t->mkrmd.btiff + prop->value,
-			    &t->mkrmd, canon_20dcustom);
+			    t->mkrmd.order, canon_20dcustom);
+		else if (strstr(t->model, "5D"))
+			canon_custom(prop, t->mkrmd.btiff + prop->value,
+			    t->mkrmd.order, canon_5dcustom);
 		else
 			exifwarn2("Custom function unsupported; please "
 			    "report to author", t->model);
 		break;
 
 	case 0x0090:
-		canon_custom(prop, t->mkrmd.btiff + prop->value, &t->mkrmd,
+		canon_custom(prop, t->mkrmd.btiff + prop->value, t->mkrmd.order,
 		    canon_1dcustom);
 		break;
 
@@ -1376,8 +1440,6 @@ canon_prop(struct exifprop *prop, struct exiftags *t)
 struct ifd *
 canon_ifd(u_int32_t offset, struct tiffmeta *md)
 {
-	struct ifd *myifd;
 
-	readifd(offset, &myifd, canon_tags, md);
-	return(myifd);
+	return (readifds(offset, canon_tags, md));
 }

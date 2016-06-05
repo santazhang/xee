@@ -221,7 +221,9 @@ struct ifd *
 fuji_ifd(u_int32_t offset, struct tiffmeta *md)
 {
 	struct ifd *myifd;
-	int fujioff;
+	int fujilen, fujioff;
+
+	fujilen = strlen("FUJIFILM");
 
 	/*
 	 * The Fuji maker note appears to be in Intel byte order
@@ -230,10 +232,8 @@ fuji_ifd(u_int32_t offset, struct tiffmeta *md)
 	 * offset relative to the MakerNote tag.
 	 */
 
-	struct tiffmeta fakemd={LITTLE,md->btiff,md->etiff};
-
-	if (!strncmp((const char *)(md->btiff + offset), "FUJIFILM", 8)) {
-		fujioff = exif2byte(md->btiff + offset + 8, &fakemd);
+	if (!strncmp((const char *)(md->btiff + offset), "FUJIFILM", fujilen)) {
+		fujioff = exif2byte(md->btiff + offset + fujilen, LITTLE);
 		md->order = LITTLE;
 		readifd(offset + fujioff, &myifd, fuji_tags, md);
 	} else

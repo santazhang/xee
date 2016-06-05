@@ -581,16 +581,15 @@ GLuint make_resize_texture();
 
 static const void *XeeCopyGLGetBytePointer(void *bitmap) { return bitmap; }
 
--(void)copyGLtoQuartz
+-(void *)readPixels:(int)bytesperrow
 {
-	int bytesperrow=width*4;
-    void *bitmap=malloc(bytesperrow*height);
-
+	void *bitmap=malloc(bytesperrow*height);
+	
 	[[self openGLContext] makeCurrentContext];
-
-    glFinish(); // finish any pending OpenGL commands
+	
+	glFinish(); // finish any pending OpenGL commands
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
-
+	
 	//glPixelStorei(GL_PACK_SWAP_BYTES, 0);
 	//glPixelStorei(GL_PACK_LSB_FIRST, 0);
 	//glPixelStorei(GL_PACK_IMAGE_HEIGHT, 0);
@@ -598,13 +597,21 @@ static const void *XeeCopyGLGetBytePointer(void *bitmap) { return bitmap; }
 	glPixelStorei(GL_PACK_ROW_LENGTH,0);
 	glPixelStorei(GL_PACK_SKIP_PIXELS,0);
 	glPixelStorei(GL_PACK_SKIP_ROWS,0);
-
-	#ifdef __BIG_ENDIAN__
+	
+#ifdef __BIG_ENDIAN__
 	glReadPixels(0,0,width,height,GL_BGRA,GL_UNSIGNED_INT_8_8_8_8_REV,bitmap);
-	#else
+#else
 	glReadPixels(0,0,width,height,GL_BGRA,GL_UNSIGNED_INT_8_8_8_8,bitmap);
-	#endif
+#endif
 	glPopAttrib();
+	
+	return bitmap;
+}
+
+-(void)copyGLtoQuartz
+{
+	int bytesperrow=width*4;
+	void *bitmap=[self readPixels:bytesperrow];
 
     [self lockFocus];
 

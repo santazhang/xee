@@ -36,7 +36,7 @@
 		NSString *line=[fh readLineWithEncoding:NSASCIIStringEncoding];
 		NSArray *matches;
 
-		if(matches=[line substringsCapturedByPattern:@"^#define( [^ ]+_| )([^ ]+) ([0-9]+)"])
+		if((matches=[line substringsCapturedByPattern:@"^#define( [^ ]+_| )([^ ]+) ([0-9]+)"]))
 		{
 			NSString *name=[matches objectAtIndex:2];
 			int value=[[matches objectAtIndex:3] intValue];
@@ -44,7 +44,7 @@
 			if([name isEqual:@"width"]) width=value;
 			else if([name isEqual:@"height"]) height=value;
 		}
-		else if(matches=[line substringsCapturedByPattern:@"^static short( [^ ]+_| )([^ ]+)\\[\\] = {"])
+		else if((matches=[line substringsCapturedByPattern:@"^static short( [^ ]+_| )([^ ]+)\\[\\] = {"]))
 		{
 			shorts=YES;
 			break;

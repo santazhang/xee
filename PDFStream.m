@@ -380,7 +380,7 @@ static uint8_t ASCII85NextByte(CSInputBuffer *input)
 	else
 	{
 		if(finalbytes&&byte>=finalbytes) CSByteStreamEOF(self);
-		return val>>24-byte*8;
+		return val>>(24-byte*8);
 	}
 }
 

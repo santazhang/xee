@@ -1097,7 +1097,7 @@
 	<key>CFBundleIconFile</key>
 	<string>Xee</string>
 	<key>CFBundleIdentifier</key>
-	<string>cx.c3.xee</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
@@ -1105,7 +1105,7 @@
 	<key>CFBundleSignature</key>
 	<string>xee!</string>
 	<key>CFBundleVersion</key>
-	<string>2.2.1</string>
+	<string>2.3</string>
 	<key>CFShortVersion</key>
 	<string>2.2.1</string>
 	<key>CSHiddenDocumentTypes</key>

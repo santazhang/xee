@@ -8,7 +8,7 @@
 {
 	if(self=[super initWithCoder:coder])
 	{
-		[self setDataSource:[[CSFileTypeListSource alloc] init]];
+		[self setDataSource:(id)[[CSFileTypeListSource alloc] init]];
 	}
 	return self;
 }
@@ -18,7 +18,7 @@
 	if(self=[super initWithFrame:frame])
 	{
 		NSLog(@"Custom view mode in IB not supported yet");
-		[self setDataSource:[[CSFileTypeListSource alloc] init]];
+		[self setDataSource:(id)[[CSFileTypeListSource alloc] init]];
 	}
 	return self;
 }

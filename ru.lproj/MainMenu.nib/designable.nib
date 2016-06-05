@@ -1,0 +1,707 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+    <dependencies>
+        <deployment version="1060" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9532"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
+            <connections>
+                <outlet property="delegate" destination="239" id="240"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <menu title="MainMenu" systemMenu="main" id="29" userLabel="MainMenu">
+            <items>
+                <menuItem title="Xee" id="56">
+                    <menu key="submenu" title="Xee" systemMenu="apple" id="57">
+                        <items>
+                            <menuItem title="О программе Xee" id="58">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="orderFrontStandardAboutPanel:" target="-2" id="142"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="202">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Настройки…" keyEquivalent="," id="129">
+                                <connections>
+                                    <action selector="preferences:" target="239" id="1063"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="143">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Сервисы" id="131">
+                                <menu key="submenu" title="Сервисы" systemMenu="services" id="130"/>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="144">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Скрыть Xee" keyEquivalent="h" id="134">
+                                <connections>
+                                    <action selector="hide:" target="-2" id="152"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Скрыть остальные" keyEquivalent="h" id="145">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="hideOtherApplications:" target="-2" id="146"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Показать все" id="150">
+                                <connections>
+                                    <action selector="unhideAllApplications:" target="-2" id="153"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="149">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Завершить Xee" keyEquivalent="q" id="136">
+                                <connections>
+                                    <action selector="terminate:" target="-2" id="139"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Файл" id="83">
+                    <menu key="submenu" title="Файл" id="81">
+                        <items>
+                            <menuItem title="Открыть..." keyEquivalent="o" id="72">
+                                <connections>
+                                    <action selector="openDocument:" target="-1" id="195"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="79">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Закрыть" keyEquivalent="w" id="73">
+                                <connections>
+                                    <action selector="performClose:" target="-1" id="193"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Сохранить без потерь" keyEquivalent="s" id="837">
+                                <connections>
+                                    <action selector="save:" target="-1" id="1065"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Сохранить как…" keyEquivalent="S" id="80">
+                                <connections>
+                                    <action selector="saveAs:" target="-1" id="1066"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="74">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Показать информацию" keyEquivalent="i" id="807">
+                                <connections>
+                                    <action selector="getInfo:" target="239" id="808"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Показать в Finder" keyEquivalent="F" id="367">
+                                <connections>
+                                    <action selector="revealInFinder:" target="-1" id="369"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="368">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Открыть в редакторе" id="340">
+                                <menu key="submenu" title="Открыть в редакторе" id="341">
+                                    <items>
+                                        <menuItem title="Редактор по умолчанию" keyEquivalent="e" id="371">
+                                            <connections>
+                                                <action selector="launchDefaultEditor:" target="-1" id="380"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="372">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                    </items>
+                                    <connections>
+                                        <outlet property="delegate" destination="239" id="363"/>
+                                    </connections>
+                                </menu>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="338">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Копировать файл" keyEquivalent="C" id="381">
+                                <connections>
+                                    <action selector="copyFile:" target="-1" id="382"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Переместить файл" keyEquivalent="M" id="385">
+                                <connections>
+                                    <action selector="moveFile:" target="-1" id="386"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="361">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Переименовать файл" id="421">
+                                <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                                <connections>
+                                    <action selector="renameFileFromMenu:" target="-1" id="422"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="420">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Удалить файл" id="294">
+                                <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
+                                <connections>
+                                    <action selector="deleteFileFromMenu:" target="-1" id="387"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="nEP-3u-QYa">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Напечатать…" keyEquivalent="p" id="KIp-Hc-coZ">
+                                <connections>
+                                    <action selector="printFileFromMenu:" target="-1" id="qsb-Qh-Yy1"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Правка" id="485">
+                    <menu key="submenu" title="Правка" id="486">
+                        <items>
+                            <menuItem title="Отменить" keyEquivalent="z" id="825">
+                                <connections>
+                                    <action selector="undo:" target="-1" id="838"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Повторить" keyEquivalent="Z" id="826">
+                                <connections>
+                                    <action selector="redo:" target="-1" id="839"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="824">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Вырезать" keyEquivalent="x" id="487">
+                                <connections>
+                                    <action selector="cut:" target="-1" id="521"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Копировать" keyEquivalent="c" id="488">
+                                <connections>
+                                    <action selector="copy:" target="-1" id="520"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Вставить" keyEquivalent="v" id="493">
+                                <connections>
+                                    <action selector="paste:" target="-1" id="525"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="809">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Автоматическая ориентация" keyEquivalent="a" id="810">
+                                <connections>
+                                    <action selector="autoRotate:" target="-1" id="830"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Актуальная ориентация" keyEquivalent="A" id="829">
+                                <connections>
+                                    <action selector="rotateActual:" target="-1" id="831"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="811">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Повернуть по часовой стрелке" keyEquivalent="r" id="812">
+                                <connections>
+                                    <action selector="rotateCW:" target="-1" id="832"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Повернуть против часовой стрелки" keyEquivalent="R" id="813">
+                                <connections>
+                                    <action selector="rotateCCW:" target="-1" id="833"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Повернуть на 180°" keyEquivalent="r" id="814">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="rotate180:" target="-1" id="834"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="815">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Отразить по горизонтали" id="816">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="mirrorHorizontal:" target="-1" id="835"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Отразить по вертикали" id="817">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="mirrorVertical:" target="-1" id="836"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="840">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Обрезка" keyEquivalent="k" id="842">
+                                <connections>
+                                    <action selector="crop:" target="-1" id="843"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                        <connections>
+                            <outlet property="delegate" destination="239" id="534"/>
+                        </connections>
+                    </menu>
+                </menuItem>
+                <menuItem title="Просмотр" id="241">
+                    <menu key="submenu" title="Просмотр" id="242">
+                        <items>
+                            <menuItem title="Следующее изображение" keyEquivalent="" id="245">
+                                <connections>
+                                    <action selector="skipNext:" target="-1" id="250"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Предыдущее изображение" keyEquivalent="" id="246">
+                                <connections>
+                                    <action selector="skipPrev:" target="-1" id="249"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="279">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Первое изображение" keyEquivalent="" id="244">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                <connections>
+                                    <action selector="skipFirst:" target="-1" id="247"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Последнее изображение" keyEquivalent="" id="243">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                <connections>
+                                    <action selector="skipLast:" target="-1" id="248"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="280">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Пропустить" id="652">
+                                <menu key="submenu" title="Пропустить" id="653">
+                                    <items>
+                                        <menuItem title="10 изображений вперёд" keyEquivalent="" id="654">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="skip10Forward:" target="-1" id="659"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="100 изображений вперёд" keyEquivalent="" id="655">
+                                            <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="skip100Forward:" target="-1" id="660"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="658">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                        <menuItem title="10 изображений назад" keyEquivalent="" id="656">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="skip10Back:" target="-1" id="661"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="100 изображений назад" keyEquivalent="" id="657">
+                                            <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="skip100Back:" target="-1" id="662"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="896">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Случайное изображение" id="425">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="skipRandom:" target="-1" id="426"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Предыдущее случайное изображение" id="423">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="skipRandomPrev:" target="-1" id="427"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="649">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Зациклить просмотр изображений" id="897">
+                                <connections>
+                                    <action selector="loopImagesStub:" target="239" id="1068"/>
+                                    <binding destination="266" name="value" keyPath="values.wrapImageBrowsing" id="917"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Сортировать" id="1046">
+                                <menu key="submenu" title="Сортировать" id="1047">
+                                    <items>
+                                        <menuItem title="По имени файла" tag="1" id="1048">
+                                            <connections>
+                                                <action selector="setSortOrder:" target="-1" id="1057"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="По дате" tag="2" id="1049">
+                                            <connections>
+                                                <action selector="setSortOrder:" target="-1" id="1058"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="По размеру" tag="3" id="1050">
+                                            <connections>
+                                                <action selector="setSortOrder:" target="-1" id="1059"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                    <connections>
+                                        <outlet property="delegate" destination="239" id="1052"/>
+                                    </connections>
+                                </menu>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="921">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Слайдшоу" id="922">
+                                <menu key="submenu" title="Слайдшоу" id="923">
+                                    <items>
+                                        <menuItem title="Начать" id="926">
+                                            <connections>
+                                                <action selector="runSlideshow:" target="-1" id="948"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="935">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                        <menuItem title="В случайном порядке" id="936">
+                                            <connections>
+                                                <action selector="randomOrderStub:" target="239" id="1067"/>
+                                                <binding destination="266" name="value" keyPath="values.randomizeSlideshow" id="946"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="927">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                        <menuItem title="1 секунда" tag="1" id="925">
+                                            <connections>
+                                                <action selector="setSlideshowDelay:" target="-1" id="945"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="2 секунды" tag="2" id="924">
+                                            <connections>
+                                                <action selector="setSlideshowDelay:" target="-1" id="944"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="5 секунд" tag="5" id="928">
+                                            <connections>
+                                                <action selector="setSlideshowDelay:" target="-1" id="943"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="10 секунд" tag="10" id="930">
+                                            <connections>
+                                                <action selector="setSlideshowDelay:" target="-1" id="942"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="20 секунд" tag="20" id="929">
+                                            <connections>
+                                                <action selector="setSlideshowDelay:" target="-1" id="941"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="30 секунд" tag="30" id="931">
+                                            <connections>
+                                                <action selector="setSlideshowDelay:" target="-1" id="940"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="1 минута" tag="60" id="933">
+                                            <connections>
+                                                <action selector="setSlideshowDelay:" target="-1" id="938"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="951">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                        <menuItem title="Другая..." id="934">
+                                            <connections>
+                                                <action selector="setCustomSlideshowDelay:" target="-1" id="937"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                    <connections>
+                                        <outlet property="delegate" destination="239" id="954"/>
+                                    </connections>
+                                </menu>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Вид" id="231">
+                    <menu key="submenu" title="Вид" id="232">
+                        <items>
+                            <menuItem title="Увеличить" keyEquivalent="+" id="234">
+                                <connections>
+                                    <action selector="zoomIn:" target="-1" id="253"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Уменьшить" keyEquivalent="-" id="233">
+                                <connections>
+                                    <action selector="zoomOut:" target="-1" id="254"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="278">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Реальный размер" keyEquivalent="0" id="252">
+                                <connections>
+                                    <action selector="zoomActual:" target="-1" id="256"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Вписать в экран" keyEquivalent="0" id="251">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                <connections>
+                                    <action selector="zoomFit:" target="-1" id="255"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="428">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Автоматическое увеличение" id="235">
+                                <menu key="submenu" title="Автоматическое увеличение" autoenablesItems="NO" id="236">
+                                    <items>
+                                        <menuItem title="Сжимать чтобы вписать в размер" keyEquivalent="*" id="237">
+                                            <connections>
+                                                <action selector="setAutoZoom:" target="-1" id="581"/>
+                                                <binding destination="266" name="value" keyPath="values.shrinkToFit" id="275"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Увеличивать чтобы вписать в размер" keyEquivalent="*" id="238">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                            <connections>
+                                                <action selector="setAutoZoom:" target="-1" id="582"/>
+                                                <binding destination="266" name="value" keyPath="values.enlargeToFit" id="274"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Запомнить уровень увеличения" id="852">
+                                            <connections>
+                                                <action selector="rememberZoomStub:" target="239" id="1070"/>
+                                                <binding destination="266" name="value" keyPath="values.rememberZoom" id="853"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Запомнить позицию увеличения" id="1082">
+                                            <connections>
+                                                <action selector="rememberFocusStub:" target="239" id="1086"/>
+                                                <binding destination="266" name="value" keyPath="values.rememberFocus" id="1085"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
+                            <menuItem title="Качество сглаживания" id="762">
+                                <menu key="submenu" title="Качество сглаживания" id="763">
+                                    <items>
+                                        <menuItem title="Без сглаживания" id="769">
+                                            <connections>
+                                                <action selector="setAntialiasing:" target="239" id="1075"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="768">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                        <menuItem title="Плавно, низкое" tag="1" id="764">
+                                            <connections>
+                                                <action selector="setAntialiasing:" target="239" id="1074"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Плавно, среднее" tag="2" id="767">
+                                            <connections>
+                                                <action selector="setAntialiasing:" target="239" id="1076"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Плавно, высокое" tag="3" id="766">
+                                            <connections>
+                                                <action selector="setAntialiasing:" target="239" id="1077"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="789">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                        <menuItem title="Резко, низкое" tag="4" id="775">
+                                            <connections>
+                                                <action selector="setAntialiasing:" target="239" id="1078"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Резко, среднее" tag="5" id="778">
+                                            <connections>
+                                                <action selector="setAntialiasing:" target="239" id="1079"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Резко, высокое" tag="6" id="780">
+                                            <connections>
+                                                <action selector="setAntialiasing:" target="239" id="1080"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="796">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                        <menuItem title="(Высокие параметры могут" id="797"/>
+                                        <menuItem title=" искажать цвета)" id="798"/>
+                                    </items>
+                                </menu>
+                            </menuItem>
+                            <menuItem title="Сглаживать увеличенные изображения" id="1071">
+                                <connections>
+                                    <action selector="setUpscaling:" target="239" id="1073"/>
+                                    <binding destination="266" name="value" keyPath="values.upsampleImage" id="1072"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="285">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Следующий кадр" keyEquivalent="" id="900">
+                                <connections>
+                                    <action selector="frameSkipNext:" target="-1" id="906"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Предыдущий кадр" keyEquivalent="" id="901">
+                                <connections>
+                                    <action selector="frameSkipPrev:" target="-1" id="905"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Включить анимацию" id="902">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleAnimation:" target="-1" id="903"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="899">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="На весь экран" keyEquivalent="f" id="719">
+                                <connections>
+                                    <action selector="fullScreen:" target="-1" id="720"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Всегда открывать на весь экран" id="918">
+                                <connections>
+                                    <action selector="alwaysFullscreenStub:" target="239" id="1069"/>
+                                    <binding destination="266" name="value" keyPath="values.autoFullscreen" id="920"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="765">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Спрятать Toolbar" keyEquivalent="b" id="565">
+                                <connections>
+                                    <action selector="toggleToolbarShown:" target="-1" id="574"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Настроить Toolbar…" id="566">
+                                <connections>
+                                    <action selector="runToolbarCustomizationPalette:" target="-1" id="575"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="568">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Спрятать строку состояния" id="567">
+                                <connections>
+                                    <action selector="toggleStatusBar:" target="-1" id="626"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                        <connections>
+                            <outlet property="delegate" destination="239" id="630"/>
+                        </connections>
+                    </menu>
+                </menuItem>
+                <menuItem title="Окно" id="19">
+                    <menu key="submenu" title="Окно" systemMenu="window" id="24">
+                        <items>
+                            <menuItem title="Убрать в Dock" keyEquivalent="m" id="23">
+                                <connections>
+                                    <action selector="performMiniaturize:" target="-1" id="37"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Изменить масштаб" id="203">
+                                <connections>
+                                    <action selector="performZoom:" target="-1" id="204"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="92">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Все окна — на передний план" id="5">
+                                <connections>
+                                    <action selector="arrangeInFront:" target="-1" id="39"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Справка" id="103">
+                    <menu key="submenu" title="Справка" id="106">
+                        <items>
+                            <menuItem title="Клавиатурные сокращения..." id="579">
+                                <connections>
+                                    <action selector="keyboardShortcuts:" target="-1" id="580"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="578">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Поддержка BBS…" id="561">
+                                <connections>
+                                    <action selector="openSupportThread:" target="-1" id="563"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Сообщить об ошибке..." id="1060">
+                                <connections>
+                                    <action selector="openBugReport:" target="-1" id="1061"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Домашняя страничка..." id="562">
+                                <connections>
+                                    <action selector="openHomePage:" target="-1" id="564"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+            </items>
+        </menu>
+        <customObject id="239" userLabel="XeeDelegate" customClass="XeeDelegate">
+            <connections>
+                <outlet property="antialiasmenu" destination="763" id="788"/>
+                <outlet property="copyitem" destination="488" id="532"/>
+                <outlet property="cropitem" destination="842" id="1062"/>
+                <outlet property="editmenu" destination="486" id="531"/>
+                <outlet property="openmenu" destination="341" id="358"/>
+                <outlet property="otherdelayitem" destination="934" id="956"/>
+                <outlet property="pasteitem" destination="493" id="533"/>
+                <outlet property="runslidesitem" destination="926" id="950"/>
+                <outlet property="slideshowmenu" destination="923" id="949"/>
+                <outlet property="sortmenu" destination="1047" id="1053"/>
+                <outlet property="statusitem" destination="567" id="632"/>
+                <outlet property="viewmenu" destination="232" id="631"/>
+            </connections>
+        </customObject>
+        <userDefaultsController representsSharedInstance="YES" id="266" userLabel="Shared Defaults"/>
+        <customObject id="612" userLabel="CSKeyboardShortcuts" customClass="CSKeyboardShortcuts"/>
+    </objects>
+</document>

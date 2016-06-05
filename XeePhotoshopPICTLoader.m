@@ -266,11 +266,11 @@ NSLog(@"%d: %d",row+startrow+last_alpha_y,skip);
 						{
 							int len=code+1;
 							if(len>bytesleft) len=bytesleft;
-							for(int i=0;i<len;i++)
+							for(int i=0;i<len;i++, data++)
 							{
 								uint8_t val=[fh readUInt8];
 								uint8_t r=palette[3*val+0],g=palette[3*val+1],b=palette[3*val+2];
-								*data++=XeeMakeARGB8(XeeGetAFromARGB8(*data),r,g,b);
+								*data=XeeMakeARGB8(XeeGetAFromARGB8(*data),r,g,b);
 							}
 							bytesleft-=len;
 						}
@@ -280,9 +280,9 @@ NSLog(@"%d: %d",row+startrow+last_alpha_y,skip);
 							if(len>bytesleft) len=bytesleft;
 							uint8_t val=[fh readUInt8];
 							uint8_t r=palette[3*val+0],g=palette[3*val+1],b=palette[3*val+2];
-							for(int i=0;i<len;i++)
+							for(int i=0;i<len;i++, data++)
 							{
-								*data++=XeeMakeARGB8(XeeGetAFromARGB8(*data),r,g,b);
+								*data=XeeMakeARGB8(XeeGetAFromARGB8(*data),r,g,b);
 							}
 							bytesleft-=len;
 						}
@@ -359,9 +359,9 @@ NSLog(@"%d: %d",row+startrow+last_alpha_y,skip);
 					uint32_t *data=(uint32_t *)XeeImageDataRow(image,y+top);
 					data+=left;
 
-					for(int x=0;x<rectwidth;x++)
+					for(int x=0;x<rectwidth;x++,data++)
 					{
-						*data++=XeeMakeARGB8(XeeGetAFromARGB8(*data),buffer[0*rectwidth+x],
+						*data=XeeMakeARGB8(XeeGetAFromARGB8(*data),buffer[0*rectwidth+x],
 						buffer[1*rectwidth+x],buffer[2*rectwidth+x]);
 					}
 

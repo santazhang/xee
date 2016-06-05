@@ -3,7 +3,7 @@
 
 @implementation XeePasswordPanel
 
--(NSString *)runModalForWindow:(NSWindow *)window
+-(NSString *)runModalForPasswordWindow:(NSWindow *)window
 {
 	[passwordfield setStringValue:@""];
 	[self makeFirstResponder:passwordfield];

@@ -55,7 +55,7 @@
 		return;
 	}
 
-	[observers setObject:event forKey:[XeeKEventKey keyWithRef:ref target:observer]];
+	[observers setObject:event forKey:(id)[XeeKEventKey keyWithRef:ref target:observer]];
 }
 
 -(void)removeObserver:(id)observer ref:(XeeFSRef *)ref

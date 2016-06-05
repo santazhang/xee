@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003, Javier Crespo <jcrespoc@dsland.org>
- * Copyright (c) 2003, Eric M. Johnston <emj@postal.net>
+ * Copyright (c) 2003-2007, Eric M. Johnston <emj@postal.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: minolta.c,v 1.28 2004/12/23 20:38:52 ejohnst Exp $
+ * $Id: minolta.c,v 1.29 2007/12/15 21:01:23 ejohnst Exp $
  *
  */ 
 
@@ -440,8 +440,7 @@ minolta_cprop(struct exifprop *prop, unsigned char *off, struct exiftags *t,
 		aprop->tagset = thetags;
 
 		/* Note: these are big-endian regardless. */
-		struct tiffmeta fakemd={BIG,t->mkrmd.btiff,t->mkrmd.etiff};
-		aprop->value = exif4byte(off + (4 * i), &fakemd);
+		aprop->value = exif4byte(off + (4 * i), BIG);
 
 		/* Lookup property name and description. */
 
@@ -542,8 +541,9 @@ minolta_cprop(struct exifprop *prop, unsigned char *off, struct exiftags *t,
 		case 9:
 			aprop->str = valbuf;
 			valbuf = NULL;
+			// Xee fix
 			d = (double)pow(2,
-			    ((double)abs(48 - aprop->value)) / 8);
+			    ((double)(48 - aprop->value)) / 8);
 
 			/* 1 sec limit. */
 			if (aprop->value < 56)
@@ -665,7 +665,8 @@ minolta_naval(struct exifprop *props, struct exiftag *tags, int16_t tag)
 	prop->str = NULL;
 	exifstralloc(&prop->str, strlen(na) + 1);
 	strcpy(prop->str, na);
-	prop->lvl = ED_BAD;
+	if (!(prop->lvl & ED_UNK))
+		prop->lvl = ED_VRB;
 }
 
 
@@ -805,8 +806,8 @@ minolta_ifd(u_int32_t offset, struct tiffmeta *md)
 	 * Takes care of the unfortunate DiMAGE 2300 & EX.
 	 */
 
-	if (exif2byte(md->btiff + offset, md) > 0xff ||
-	    exif2byte(md->btiff + offset, md) < 0x02) {
+	if (exif2byte(md->btiff + offset, md->order) > 0xff ||
+	    exif2byte(md->btiff + offset, md->order) < 0x02) {
 		exifwarn("Minolta maker note version not supported");
 		return (NULL);
 	}

@@ -249,7 +249,7 @@
 	va_list va;
 
 	va_start(va,control);
-	while(obj=va_arg(va,id)) [controls addObject:obj];
+	while((obj=va_arg(va,id))) [controls addObject:obj];
 	va_end(va);
 
 	return [[[XeeSLGroup alloc] initWithControls:controls] autorelease];
@@ -326,7 +326,7 @@
 	va_list va;
 
 	va_start(va,entry);
-	while(obj=va_arg(va,id)) [contents addObject:obj];
+	while((obj=va_arg(va,id))) [contents addObject:obj];
 	va_end(va);
 
 	return [[[XeeSLPopUp alloc] initWithTitle:title contents:contents defaultValue:def] autorelease];

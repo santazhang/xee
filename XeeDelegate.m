@@ -292,7 +292,7 @@ BOOL finderlaunch;
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
 {
-    return YES;
+    return [[NSUserDefaults standardUserDefaults] boolForKey:@"quitOnClose"];
 }
 
 -(BOOL)application:(NSApplication *)app openFile:(NSString *)filename
@@ -577,17 +577,17 @@ BOOL finderlaunch;
 	for(int i=0;i<num;i++)
 	{
 		NSMenuItem *item=[slideshowmenu itemAtIndex:i];
-        if([item action]==@selector(setSlideshowDelay:)){
-            if([item tag]==slidedelay)
-            {
-                [item setState:NSOnState];
-                found=YES;
-            }
-            else
-            {
-                [item setState:NSOffState];
-            }
-        }
+		if([item action]==@selector(setSlideshowDelay:)) {
+			if([item tag]==slidedelay)
+			{
+				[item setState:NSOnState];
+				found=YES;
+			}
+			else
+			{
+				[item setState:NSOffState];
+			}
+		}
 	}
 
 	if(found)
@@ -613,6 +613,7 @@ BOOL finderlaunch;
 -(BOOL)validateMenuItem:(NSMenuItem *)item
 {
 	if([item action]==@selector(paste:)) return [XeeClipboardSource canInitWithGeneralPasteboard];
+	else if([item action]==@selector(getInfo:)) return [[maindelegate focusedController] validateMenuItem:item];
 	return YES;
 }
 

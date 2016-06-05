@@ -207,7 +207,7 @@ asahi_ifd(u_int32_t offset, struct tiffmeta *md)
 	 * of a minimum 10 tags before we look at it as an IFD.
 	 */
 
-	if (exif2byte(md->btiff + offset, md) < 10) {
+	if (exif2byte(md->btiff + offset, md->order) < 10) {
 		exifwarn("Asahi maker note version not supported");
 		return (NULL);
 	}

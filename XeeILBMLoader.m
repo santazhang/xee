@@ -728,13 +728,11 @@
 			if(endindex<num)
 			{
 				endcol=colours[endindex];
-				if(startindex>=0) startcol=colours[startindex];
-				else startcol=endcol;
+				startcol=colours[startindex];
 			}
 			else 
 			{
-				if(startindex>=0) endcol=startcol=colours[startindex];
-				else startcol=endcol=BLACK_COLOUR;
+				endcol=startcol=colours[startindex];
 			}
 
 			int start_r=XeeGetRFromARGB8(startcol);

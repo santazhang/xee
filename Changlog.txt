@@ -1,0 +1,15 @@
+2.2.1 (by CocoaBob)
+— All tool-bar / status-bar icons have been redrawn to support retina display.
+— The image view now supports retina display too.
+— Removed the automatic open-file dialog at launch.
+— Quit app automatically when last window closed.
+— Changed default background color from black to gray.
+— Optimized the drawing of status bar icons.
+
+2.3
+— Latest libpng (1.2.58), jpeg (9b) with bugfixes.
+— More recent exiftags with wider exif support.
+— Merged Russian translation with CocoaBob's changes.
+— App termination after window closing is now optional.
+— Added a basic printing support.
+— Dropped PPC support.

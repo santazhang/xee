@@ -30,6 +30,7 @@ int main(int argc, char *argv[])
 		@"0",@"defaultSortingOrder",
 		@"YES",@"openFilePanelOnLaunch",
 		@"NO",@"upsampleImage",
+		@"NO",@"quitOnClose",
 		[NSArchiver archivedDataWithRootObject:[NSColor whiteColor]],@"defaultImageBackground",
 		[NSArchiver archivedDataWithRootObject:[NSColor grayColor]],@"windowBackground",
 		[NSArchiver archivedDataWithRootObject:[NSColor grayColor]],@"fullScreenBackground",

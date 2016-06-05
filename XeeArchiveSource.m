@@ -22,10 +22,10 @@
 
 		parser=nil;
 		tmpdir=[[NSTemporaryDirectory() stringByAppendingPathComponent:
-		[NSString stringWithFormat:@"Xee-archive-%04x%04x%04x",random()&0xffff,random()&0xffff,random()&0xffff]]
+		[NSString stringWithFormat:@"Xee-archive-%04lx%04lx%04lx",random()&0xffff,random()&0xffff,random()&0xffff]]
 		retain];
 
-		[[NSFileManager defaultManager] createDirectoryAtPath:tmpdir attributes:nil];
+		[[NSFileManager defaultManager] createDirectoryAtPath:tmpdir withIntermediateDirectories:NO attributes:nil error:nil];
 
 		[self setIcon:[[NSWorkspace sharedWorkspace] iconForFile:archivename]];
 		[icon setSize:NSMakeSize(16,16)];

@@ -100,7 +100,7 @@ static NSMutableArray *controllers=nil;
 	if(awake) return;
 	awake=YES;
 
-	movetool=[[XeeMoveTool toolForView:imageview] retain];
+	movetool=(XeeMoveTool*)[[XeeMoveTool toolForView:imageview] retain];
 	[imageview setTool:movetool];
 
 	[[NSNotificationCenter defaultCenter] addObserver:self
@@ -112,7 +112,7 @@ static NSMutableArray *controllers=nil;
 	name:@"XeeRefreshImageNotification" object:nil];
 
 	NSToolbar *toolbar=[[[NSToolbar alloc] initWithIdentifier:@"BrowserToolbar"] autorelease];
-	[toolbar setDelegate:self];
+	[toolbar setDelegate:(id)self];
 	[toolbar setDisplayMode:NSToolbarDisplayModeIconOnly];
 	[toolbar setAllowsUserCustomization:YES];
 	[toolbar setAutosavesConfiguration:YES];
@@ -324,7 +324,7 @@ static NSMutableArray *controllers=nil;
 
 	//[source setActionsBlocked:YES];
 
-	return [passwordpanel runModalForWindow:fullscreenwindow?nil:window];
+	return [passwordpanel runModalForPasswordWindow:fullscreenwindow?nil:window];
 }
 
 -(void)xeeView:(XeeView *)view imageDidChange:(XeeImage *)image
@@ -1010,11 +1010,12 @@ static NSMutableArray *controllers=nil;
 	else if(action==@selector(renameFileFromMenu:)) return [source canRenameCurrentImage];
 	else if(action==@selector(deleteFileFromMenu:)||
 			action==@selector(askAndDelete:)) return [source canDeleteCurrentImage];
+	else if(action==@selector(printFileFromMenu:)) return currimage?YES:NO;
 	else if(action==@selector(moveFile:)) return [source canMoveCurrentImage]&&!fullscreenwindow;
 	else if(action==@selector(copyFile:)) return [source canCopyCurrentImage]&&!fullscreenwindow;
 	else if(action==@selector(launchAppFromMenu:)) return currimage&&[currimage filename];
 	else if(action==@selector(launchDefaultEditor:)) return currimage&&[currimage filename]&&[maindelegate defaultEditor];
-
+	else if(action==@selector(getInfo:)) return currimage?YES:NO;
 	else return YES;
 }
 
@@ -1186,7 +1187,7 @@ static NSMutableArray *controllers=nil;
 	{
 		fullscreenwindow=[[XeeFullScreenWindow alloc] initWithContentRect:[[window screen] frame]
 		styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
-		[fullscreenwindow setDelegate:self];
+		[fullscreenwindow setDelegate:(id)self];
 		[fullscreenwindow setAcceptsMouseMovedEvents:YES];
 
 		[window orderOut:nil];

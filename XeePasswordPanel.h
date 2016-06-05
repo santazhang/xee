@@ -9,7 +9,7 @@
 	IBOutlet NSSecureTextField *passwordfield;
 }
 
--(NSString *)runModalForWindow:(NSWindow *)window;
+-(NSString *)runModalForPasswordWindow:(NSWindow *)window;
 
 -(IBAction)cancelClick:(id)sender;
 -(IBAction)openClick:(id)sender;

@@ -191,7 +191,7 @@
 	if(FSGetCatalogInfo(&ref,kFSCatInfoFinderInfo,&catinfo,NULL,NULL,NULL)!=noErr) return nil;
 	struct FileInfo *info=(struct FileInfo *)&catinfo.finderInfo;
 	OSType type=info->fileType;
-	return [NSString stringWithFormat:@"%c%c%c%c",(type>>24)&0xff,(type>>16)&0xff,(type>>8)&0xff,type&0xff];
+	return [NSString stringWithFormat:@"%c%c%c%c",(char)((type>>24)&0xff),(char)((type>>16)&0xff),(char)((type>>8)&0xff),(char)(type&0xff)];
 }
 
 -(NSString *)HFSCreatorCode
@@ -200,7 +200,7 @@
 	if(FSGetCatalogInfo(&ref,kFSCatInfoFinderInfo,&catinfo,NULL,NULL,NULL)!=noErr) return nil;
 	struct FileInfo *info=(struct FileInfo *)&catinfo.finderInfo;
 	OSType type=info->fileType;
-	return [NSString stringWithFormat:@"%c%c%c%c",(type>>24)&0xff,(type>>16)&0xff,(type>>8)&0xff,type&0xff];
+	return [NSString stringWithFormat:@"%c%c%c%c",(char)((type>>24)&0xff),(char)((type>>16)&0xff),(char)((type>>8)&0xff),(char)(type&0xff)];
 }
 
 
@@ -244,7 +244,7 @@
 
 	NSMutableArray *array=[NSMutableArray array];
 	XeeFSRef *entry;
-	while(entry=[self nextDirectoryEntry]) [array addObject:entry];
+	while((entry=[self nextDirectoryEntry])) [array addObject:entry];
 
 	return array;
 }

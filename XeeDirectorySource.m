@@ -323,7 +323,7 @@
 	[self removeAllEntries];
 
 	XeeFSRef *subref;
-	while(subref=[dirref nextDirectoryEntry])
+	while((subref=[dirref nextDirectoryEntry]))
 	{
 		NSString *name=[subref name];
 		if([name hasPrefix:@"._"]) continue;

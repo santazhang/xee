@@ -279,7 +279,7 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 	}
 	else
 	{
-		shortcuts=[shortcutarray retain];
+		shortcuts=(NSMutableArray *)[shortcutarray retain];
 		NSArray *dictionaries=[CSKeyStroke dictionariesFromKeys:shortcuts];
 		[[NSUserDefaults standardUserDefaults] setObject:dictionaries forKey:key];
 	}
@@ -306,7 +306,7 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 	if(dictionaries)
 	{
 		[shortcuts autorelease];
-		shortcuts=[[CSKeyStroke keysFromDictionaries:dictionaries] retain];
+		shortcuts=(NSMutableArray *)[[CSKeyStroke keysFromDictionaries:dictionaries] retain];
 		[self updateMenuItem];
 		[self clearImage];
 	}
@@ -809,8 +809,8 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 
 	[self registerForDraggedTypes:[NSArray arrayWithObjects:@"CSKeyStroke",nil]];
 
-	[self setDelegate:self];
-	[self setDataSource:self];
+	[self setDelegate:(id)self];
+	[self setDataSource:(id)self];
 	[self reloadData];
 	[self performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 	[self updateButtons];
@@ -1063,7 +1063,7 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 	[keyboardShortcuts autorelease];
 	keyboardShortcuts=[shortcuts retain];
 
-	[self setDataSource:self];
+	[self setDataSource:(id)self];
 	[self reloadData];
 }
 
@@ -1197,11 +1197,11 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 	if(!remapdictionary)
 	{
 		remapdictionary=[[NSDictionary dictionaryWithObjectsAndKeys:
-			[NSString stringWithFormat:@"%C",NSBackspaceCharacter],
-			[NSString stringWithFormat:@"%C",NSDeleteCharacter],
+			[NSString stringWithFormat:@"%C",(unichar)NSBackspaceCharacter],
+			[NSString stringWithFormat:@"%C",(unichar)NSDeleteCharacter],
 
-			[NSString stringWithFormat:@"%C",NSDeleteCharacter],
-			[NSString stringWithFormat:@"%C",NSDeleteFunctionKey],
+			[NSString stringWithFormat:@"%C",(unichar)NSDeleteCharacter],
+			[NSString stringWithFormat:@"%C",(unichar)NSDeleteFunctionKey],
 		nil] retain];
 	}
 

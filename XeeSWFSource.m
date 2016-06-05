@@ -54,7 +54,7 @@
 		CSHandle *fh=[parser handle];
 
 		int tag,n=0;
-		while(tag=[parser nextTag])
+		while((tag=[parser nextTag]))
 		switch(tag)
 		{
 			case SWFJPEGTables:

@@ -215,7 +215,7 @@
 							[fh skipBytes:2];
 							if(c=='\n') continue; // skip \n
 							if(c=='\r') c='\n'; // and turn \r into \n;
-							[str appendFormat:@"%C",c];
+							[str appendFormat:@"%C",(unichar)c];
 						}
 					}
 

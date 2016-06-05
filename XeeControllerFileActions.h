@@ -11,6 +11,8 @@
 -(IBAction)askAndDelete:(id)sender;
 -(void)deleteAlertEnd:(NSAlert *)alert returnCode:(int)res contextInfo:(void *)info;
 
+-(IBAction)printFileFromMenu:(id)sender;
+
 -(IBAction)moveFile:(id)sender;
 -(IBAction)copyFile:(id)sender;
 -(IBAction)copyToDestination1:(id)sender;

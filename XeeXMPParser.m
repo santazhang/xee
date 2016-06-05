@@ -112,8 +112,8 @@
 		unichar c=[name characterAtIndex:i];
 		if(iswupper(c)) if(i!=0) [newname appendString:@" "];
 
-		if(i==0&&capitalize) [newname appendFormat:@"%C",towupper(c)];
-		else [newname appendFormat:@"%C",towlower(c)];
+		if(i==0&&capitalize) [newname appendFormat:@"%C",(unichar)towupper(c)];
+		else [newname appendFormat:@"%C",(unichar)towlower(c)];
 	}
 
 	return newname;

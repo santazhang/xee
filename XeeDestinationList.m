@@ -26,8 +26,8 @@ void XeePlayPoof(NSWindow *somewindow);
 	movemode=NO;
 	surpressshortcut=NO;
 
-	[self setDataSource:self];
-	[self setDelegate:self];
+	[self setDataSource:(id)self];
+	[self setDelegate:(id)self];
     [self registerForDraggedTypes:[NSArray arrayWithObjects:@"XeeDestinationPath",NSFilenamesPboardType,nil]];
 
 	[self setDoubleAction:@selector(destinationListClick:)];

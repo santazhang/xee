@@ -174,6 +174,7 @@ static OSErr XeeQTProgressFunc(short message,Fixed completeness,long refcon);
 
 	GWorldPtr gw;
 	Rect rect;
+	void SetRect(Rect *, int, int, int, int);
 	SetRect(&rect,0,0,framewidth,frameheight);
 	if(QTNewGWorldFromPtr(&gw,pixelformat,&rect,NULL,NULL,0,[image data],[image bytesPerRow])!=noErr) return @selector(loadNextImage);
 
@@ -188,14 +189,18 @@ static OSErr XeeQTProgressFunc(short message,Fixed completeness,long refcon);
 			{
 				unsigned long *ptr=(unsigned long *)[image data];
 				int n=[image bytesPerRow]*frameheight/4;
-				while(n--) *ptr=~*ptr++;
+				while(n--) {
+					*ptr=~*ptr;
+					ptr++;
+				}
 			}
 
 			[self addSubImage:image];
 			[image setCompleted];
 		}
 	}
-
+	
+	void DisposeGWorld ( GWorldPtr offscreenGWorld );
 	DisposeGWorld(gw);
 	#endif
 

@@ -29,7 +29,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: exifgps.c,v 1.13 2005/01/05 00:28:22 ejohnst Exp $
+ * $Id: exifgps.c,v 1.14 2007/12/15 20:57:10 ejohnst Exp $
  */
 
 /*
@@ -245,9 +245,9 @@ gpsprop(struct exifprop *prop, struct exiftags *t)
 	case 0x0004:
 	case 0x0014:
 	case 0x0016:
-	 	if (prop->count != 3 || prop->value + prop->count * 8 >
-		    (u_int32_t)(t->md.etiff - t->md.btiff)) {
+	 	if (prop->count != 3) {
 			exifwarn("unexpected GPS coordinate values");
+			prop->lvl = ED_BAD;
 			break;
 		}
 
@@ -277,8 +277,8 @@ gpsprop(struct exifprop *prop, struct exiftags *t)
 		/* Degrees. */
 
 		i = 0;
-		n = exif4byte(t->md.btiff + prop->value + i * 8, &t->md);
-		d = exif4byte(t->md.btiff + prop->value + 4 + i * 8, &t->md);
+		n = exif4byte(t->md.btiff + prop->value + i * 8, o);
+		d = exif4byte(t->md.btiff + prop->value + 4 + i * 8, o);
 
 		strcpy(fmt, "%s %.f%s ");
 		if (!n || !d)			/* Punt. */
@@ -293,8 +293,8 @@ gpsprop(struct exifprop *prop, struct exiftags *t)
 		/* Minutes. */
 
 		i++;
-		n = exif4byte(t->md.btiff + prop->value + i * 8, &t->md);
-		d = exif4byte(t->md.btiff + prop->value + 4 + i * 8, &t->md);
+		n = exif4byte(t->md.btiff + prop->value + i * 8, o);
+		d = exif4byte(t->md.btiff + prop->value + 4 + i * 8, o);
 
 		if (!n || !d) {			/* Punt. */
 			min = 0.0;
@@ -314,8 +314,8 @@ gpsprop(struct exifprop *prop, struct exiftags *t)
 		 */
 
 		i++;
-		n = exif4byte(t->md.btiff + prop->value + i * 8, &t->md);
-		d = exif4byte(t->md.btiff + prop->value + 4 + i * 8, &t->md);
+		n = exif4byte(t->md.btiff + prop->value + i * 8, o);
+		d = exif4byte(t->md.btiff + prop->value + 4 + i * 8, o);
 
 		if (!n || !d) {			/* Assume no seconds. */
 			snprintf(prop->str, 31, fmt, tmpprop && tmpprop->str ?
@@ -336,8 +336,8 @@ gpsprop(struct exifprop *prop, struct exiftags *t)
 	/* Altitude. */
 
 	case 0x0006:
-		n = exif4byte(t->md.btiff + prop->value, &t->md);
-		d = exif4byte(t->md.btiff + prop->value + 4, &t->md);
+		n = exif4byte(t->md.btiff + prop->value, o);
+		d = exif4byte(t->md.btiff + prop->value + 4, o);
 
 		/* Look up reference.  Non-zero means negative altitude. */
 
@@ -363,8 +363,8 @@ gpsprop(struct exifprop *prop, struct exiftags *t)
 
 		prop->str[0] = '\0';
 		for (i = 0; i < prop->count; i++) {
-			n = exif4byte(t->md.btiff + prop->value + i * 8, &t->md);
-			d = exif4byte(t->md.btiff + prop->value + 4 + i * 8, &t->md);
+			n = exif4byte(t->md.btiff + prop->value + i * 8, o);
+			d = exif4byte(t->md.btiff + prop->value + 4 + i * 8, o);
 
 			if (!d) break;
 

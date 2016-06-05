@@ -130,7 +130,7 @@ typedef union {
 #endif /* USE_MSDOS_MEMMGR */
 
 #ifdef USE_MAC_MEMMGR		/* Mac-specific junk */
-#include <Files.h>
+#include <CarbonCore/Files.h>
 #endif /* USE_MAC_MEMMGR */
 
 

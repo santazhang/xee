@@ -114,7 +114,7 @@ olympus_prop(struct exifprop *prop, struct exiftags *t)
 		/* Picture taking mode. */
 
 		aprop = childprop(prop);
-		aprop->value = exif4byte(offset, &t->mkrmd);
+		aprop->value = exif4byte(offset, t->mkrmd.order);
 		aprop->name = "OlympusPicMode";
 		aprop->descr = "Picture Mode";
 		aprop->lvl = ED_UNK;
@@ -122,7 +122,7 @@ olympus_prop(struct exifprop *prop, struct exiftags *t)
 		/* Sequence number. */
 
 		aprop = childprop(prop);
-		aprop->value = exif4byte(offset + 4, &t->mkrmd);
+		aprop->value = exif4byte(offset + 4, t->mkrmd.order);
 		aprop->name = "OlympusSeqNum";
 		aprop->descr = "Sequence Number";
 		aprop->lvl = ED_UNK;
@@ -130,7 +130,7 @@ olympus_prop(struct exifprop *prop, struct exiftags *t)
 		/* Panorama direction. */
 
 		aprop = childprop(prop);
-		aprop->value = exif4byte(offset + 8, &t->mkrmd);
+		aprop->value = exif4byte(offset + 8, t->mkrmd.order);
 		aprop->name = "OlympusPanDir";
 		aprop->descr = "Panoramic Direction";
 		aprop->lvl = ED_UNK;
@@ -140,10 +140,9 @@ olympus_prop(struct exifprop *prop, struct exiftags *t)
 	/* Digital zoom. */
 
 	case 0x0204:
-		a = exif4byte(t->mkrmd.btiff + prop->value, &t->mkrmd);
-		b = exif4byte(t->mkrmd.btiff + prop->value + 4, &t->mkrmd);
+		a = exif4byte(t->mkrmd.btiff + prop->value, t->mkrmd.order);
+		b = exif4byte(t->mkrmd.btiff + prop->value + 4, t->mkrmd.order);
 
-		exifstralloc(&prop->str, 32);
 		if (a == b)
 			snprintf(prop->str, 31, "None");
 		else

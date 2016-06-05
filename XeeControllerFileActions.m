@@ -6,6 +6,7 @@
 #import "XeeRenamePanel.h"
 #import "XeeDelegate.h"
 #import "XeeStringAdditions.h"
+#import "XeeView.h"
 
 
 
@@ -59,6 +60,69 @@
 	[self setResizeBlockFromSender:sender];
 	[self displayPossibleError:[source deleteCurrentImage]];
 	[self setResizeBlock:NO];
+}
+
+-(IBAction)printFileFromMenu:(id)sender
+{
+	int src_w = [imageview bounds].size.width;
+	int src_h = [imageview bounds].size.height;
+	int src_x = [imageview imageRect].origin.x;
+	int src_y = [imageview imageRect].origin.y;
+	uint32_t *src_bitmap = [imageview readPixels:src_w*sizeof(uint32_t)];
+	
+	int w = [imageview imageRect].size.width;
+	int h = [imageview imageRect].size.height;
+	int bytesperrow = w*sizeof(uint32_t);
+	uint32_t *bitmap = malloc(bytesperrow*h);
+	
+	for (int y = 0; y < h; y++) {
+		for (int x = 0; x < w; x++) {
+			bitmap[y*w+x] = src_bitmap[(src_h-(src_y+y)-1)*src_w+x+src_x];
+		}
+	}
+
+	free(src_bitmap);
+
+	CGColorSpaceRef cs = CGColorSpaceCreateDeviceRGB();
+	CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, bitmap, h*bytesperrow, NULL);
+	CGImageRef cgimage = CGImageCreate(w, h, 8, sizeof(uint32_t)*8, bytesperrow, cs,
+									   kCGImageAlphaNoneSkipFirst, provider, NULL, NO, kCGRenderingIntentDefault);
+	
+	NSImage *image = [[NSImage alloc] initWithCGImage:cgimage size:[imageview imageRect].size];
+	
+	NSPrintInfo *pi = [NSPrintInfo sharedPrintInfo];
+	//[pi setHorizontalPagination:NSAutoPagination];
+	//[pi setVerticalPagination:NSAutoPagination];
+	[pi setHorizontallyCentered:YES];
+	[pi setVerticallyCentered:YES];
+	[pi setTopMargin:0];
+	[pi setLeftMargin:0];
+	[pi setBottomMargin:0];
+	[pi setRightMargin:0];
+	
+	if (w > h) [pi setOrientation:NSLandscapeOrientation];
+	else [pi setOrientation:NSPortraitOrientation];
+	
+	NSImageView *view = [[NSImageView alloc] init];
+	[view setImage:image];
+	[view setFrame:[pi imageablePageBounds]];
+	[view setImageScaling:NSImageScaleProportionallyUpOrDown];
+	
+	NSPrintOperation *op;
+	op = [NSPrintOperation printOperationWithView:view printInfo:pi];
+	if (op)
+		[op runOperation];
+	else
+		NSLog(@"Failed to create a print operation");
+	
+	[view release];
+	[image release];
+	
+	CGImageRelease(cgimage);
+	CGDataProviderRelease(provider);
+	CGColorSpaceRelease(cs);
+	
+	free(bitmap);
 }
 
 -(IBAction)askAndDelete:(id)sender

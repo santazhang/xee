@@ -291,8 +291,8 @@ nikon_prop0(struct exifprop *prop, struct exiftags *t)
 	/* Digital zoom. */
 
 	case 0x000a:
-		a = exif4byte(t->mkrmd.btiff + prop->value, &t->mkrmd);
-		b = exif4byte(t->mkrmd.btiff + prop->value + 4, &t->mkrmd);
+		a = exif4byte(t->mkrmd.btiff + prop->value, t->mkrmd.order);
+		b = exif4byte(t->mkrmd.btiff + prop->value + 4, t->mkrmd.order);
 
 		if (!a) {
 			snprintf(prop->str, 31, "None");
@@ -375,9 +375,9 @@ nikon_prop1(struct exifprop *prop, struct exiftags *t)
 	/* AE bracket compensation. */
 
 	case 0x0019:
-		sn = exif4byte(t->mkrmd.btiff + prop->value, &t->mkrmd);
+		sn = exif4byte(t->mkrmd.btiff + prop->value, t->mkrmd.order);
 		sd = exif4byte(t->mkrmd.btiff + prop->value + 4,
-		    &t->mkrmd);
+		    t->mkrmd.order);
 
 		if (sn && !sd) {
 			snprintf(prop->str, 31, "n/a");
@@ -403,7 +403,7 @@ nikon_prop1(struct exifprop *prop, struct exiftags *t)
 
 		for (i = 0; i < 8; i++)
 			v[i] = exif4byte(t->mkrmd.btiff + prop->value + (i * 4),
-			    &t->mkrmd);
+			    t->mkrmd.order);
 
 		if ((v[0] && !v[1]) || (v[2] && !v[3]) ||
 		    (v[4] && !v[5]) || (v[6] && !v[7])) {
@@ -442,9 +442,9 @@ nikon_prop1(struct exifprop *prop, struct exiftags *t)
 	/* Manual focus distance. */
 
 	case 0x0085:
-		v[0] = exif4byte(t->mkrmd.btiff + prop->value, &t->mkrmd);
+		v[0] = exif4byte(t->mkrmd.btiff + prop->value, t->mkrmd.order);
 		v[1] = exif4byte(t->mkrmd.btiff + prop->value + 4,
-		    &t->mkrmd);
+		    t->mkrmd.order);
 
 		if (v[0] == v[1] || (v[0] && !v[1])) {
 			snprintf(prop->str, 31, "n/a");
@@ -457,9 +457,9 @@ nikon_prop1(struct exifprop *prop, struct exiftags *t)
 	/* Digital zoom. */
 
 	case 0x0086:
-		v[0] = exif4byte(t->mkrmd.btiff + prop->value, &t->mkrmd);
+		v[0] = exif4byte(t->mkrmd.btiff + prop->value, t->mkrmd.order);
 		v[1] = exif4byte(t->mkrmd.btiff + prop->value + 4,
-		    &t->mkrmd);
+		    t->mkrmd.order);
 
 		if (v[0] == v[1] || !v[0] || (v[0] && !v[1])) {
 			snprintf(prop->str, 31, "None");
@@ -582,7 +582,7 @@ nikon_prop1(struct exifprop *prop, struct exiftags *t)
 
 	case 0x0094:
 		c1 = NULL;
-		switch ((int32_t)prop->value) {
+		switch (prop->value) {
 		case -3:
 			c1 = "Black & White";
 			exifstralloc(&prop->str, strlen(c1) + 1);
@@ -676,8 +676,7 @@ nikon_ifd(u_int32_t offset, struct tiffmeta *md)
 
 	if (!strcmp((const char *)b, "Nikon")) {
 		b += 6;
-		struct tiffmeta fakemd={BIG,md->btiff,md->etiff};
-		switch (exif2byte(b, &fakemd)) {
+		switch (exif2byte(b, BIG)) {
 		case 0x0100:
 			readifd(offset + 8, &myifd, nikon_tags0, md);
 			return (myifd);
@@ -706,13 +705,13 @@ nikon_ifd(u_int32_t offset, struct tiffmeta *md)
 
 			/* Verify the TIFF header. */
 
-			if (exif2byte(b, md) != 42) {
+			if (exif2byte(b, md->order) != 42) {
 				exifwarn("invalid Nikon TIFF header");
 				return (NULL);
 			}
 			b += 2;
 
-			readifd(exif4byte(b, md), &myifd,
+			readifd(exif4byte(b, md->order), &myifd,
 			    nikon_tags1, md);
 			return (myifd);
 

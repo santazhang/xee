@@ -887,7 +887,7 @@ static BOOL KFKeyEventIsCancelEvent(NSEvent *keyEvent)
     }
     
     // select row
-    [self selectRow:row byExtendingSelection:NO];
+	[self selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
     if (![self kfRowIsVisible:row])
     {
         // this is what NSTextView does when it finds patterns, and it's what Mail does

@@ -389,7 +389,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 			default: b=c; break;
 			case '(': nesting++; b='('; break;
 			case ')':
-				if(--nesting==0) return [[[PDFString alloc] initWithData:data parent:parent parser:self] autorelease];
+				if(--nesting==0) return (NSString *)[[[PDFString alloc] initWithData:data parent:parent parser:self] autorelease];
 				else b=')';
 			break;
 			case '\\':
@@ -442,7 +442,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 		int c1;
 		do { c1=[fh readUInt8]; }
 		while(IsWhiteSpace(c1));
-		if(c1=='>') return [[[PDFString alloc] initWithData:data parent:parent parser:self] autorelease];
+		if(c1=='>') return (NSData *)[[[PDFString alloc] initWithData:data parent:parent parser:self] autorelease];
 		if(!IsHexDigit(c1)) [self _raiseParserException:@"Error parsing hex data value"];
 
 		int c2;
@@ -453,7 +453,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 		uint8_t byte=HexDigit(c1)*16+HexDigit(c2);
 		[data appendBytes:&byte length:1];
 
-		if(c2=='>') return [[[PDFString alloc] initWithData:data parent:parent parser:self] autorelease];
+		if(c2=='>') return (NSData *)[[[PDFString alloc] initWithData:data parent:parent parser:self] autorelease];
 	}
 }
 

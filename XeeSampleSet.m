@@ -39,7 +39,7 @@ static float XeeSincFilter(float u,float v)
 {
 	if(self=[super init])
 	{
-		if(samples=malloc(count*sizeof(XeeSamplePoint)))
+		if((samples=malloc(count*sizeof(XeeSamplePoint))))
 		{
 			num=count;
 			return self;

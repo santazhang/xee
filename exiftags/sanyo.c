@@ -278,7 +278,7 @@ sanyo_prop(struct exifprop *prop, struct exiftags *t)
 
 		for (i = 0; i < (int)prop->count; i++) {
 			a = exif4byte(t->mkrmd.btiff + prop->value + i * 2,
-			    &t->mkrmd);
+			    t->mkrmd.order);
 
 			aprop = childprop(prop);
 			aprop->value = a;
@@ -326,8 +326,8 @@ sanyo_prop(struct exifprop *prop, struct exiftags *t)
 	/* Digital zoom. */
 
 	case 0x0204:
-		a = exif4byte(t->mkrmd.btiff + prop->value, &t->mkrmd);
-		b = exif4byte(t->mkrmd.btiff + prop->value + 4, &t->mkrmd);
+		a = exif4byte(t->mkrmd.btiff + prop->value, t->mkrmd.order);
+		b = exif4byte(t->mkrmd.btiff + prop->value + 4, t->mkrmd.order);
 
 		if (!a || !b || a == b)
 			snprintf(prop->str, 31, "None");

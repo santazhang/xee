@@ -78,6 +78,7 @@
 -(void)setCursorShouldHide:(BOOL)shouldhide;
 
 -(void)hideCursor;
+-(void *)readPixels:(int)bytesperrow;
 -(void)copyGLtoQuartz;
 
 @end

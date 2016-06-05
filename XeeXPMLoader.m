@@ -124,7 +124,7 @@ static int ConvertHex(int x)
 			NSString *line=[fh readLineWithEncoding:NSASCIIStringEncoding];
 			NSArray *matches;
 
-			if(matches=[line substringsCapturedByPattern:@"^#define[ \t]+[^ \t]+_(format|width|height|ncolors|chars_per_pixel)[ \t]+([0-9]+)"])
+			if((matches=[line substringsCapturedByPattern:@"^#define[ \t]+[^ \t]+_(format|width|height|ncolors|chars_per_pixel)[ \t]+([0-9]+)"]))
 			{
 				NSString *name=[matches objectAtIndex:1];
 				int value=[[matches objectAtIndex:2] intValue];
@@ -134,7 +134,7 @@ static int ConvertHex(int x)
 				if([name isEqual:@"ncolors"]) numcolours=value;
 				else if([name isEqual:@"chars_per_pixel"]) numchars=value;
 			}
-			else if(matches=[line substringsCapturedByPattern:@"^static[ \t]+char[ \t]+\\*[ \t]*[^ \t]+_colors[ \t]*\\[[ \t]*\\][ \t]*=[ \t]*{"])
+			else if((matches=[line substringsCapturedByPattern:@"^static[ \t]+char[ \t]+\\*[ \t]*[^ \t]+_colors[ \t]*\\[[ \t]*\\][ \t]*=[ \t]*{"]))
 			break;
 		}
 
