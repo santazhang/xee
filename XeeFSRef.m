@@ -54,27 +54,19 @@
 {
 	FSCatalogInfo catinfo;
 	if(FSGetCatalogInfo(&ref,kFSCatInfoNodeFlags,&catinfo,NULL,NULL,NULL)!=noErr) return NO;
-	return catinfo.nodeFlags&kFSNodeIsDirectoryMask?YES:NO;
+	return (catinfo.nodeFlags & kFSNodeIsDirectoryMask) ? YES : NO;
 }
 
 -(BOOL)isRemote
 {
-	FSCatalogInfo catinfo;
-	if(FSGetCatalogInfo(&ref,kFSCatInfoVolume,&catinfo,NULL,NULL,NULL)!=noErr) return NO;
-
-	HParamBlockRec pb;
-	GetVolParmsInfoBuffer volparms;
-
-	pb.ioParam.ioCompletion=NULL;
-	pb.ioParam.ioNamePtr=NULL;
-	pb.ioParam.ioVRefNum=catinfo.volume;
-	pb.ioParam.ioBuffer=(Ptr)&volparms;
-	pb.ioParam.ioReqCount=sizeof(volparms);
-
-	if(PBHGetVolParmsSync(&pb)!=noErr) return NO;
-
-	if((volparms.vMExtendedAttributes&((1<<bIsOnInternalBus)|(1<<bIsOnExternalBus)))==0) return YES;
-	return NO;
+	NSURL *currentURL = CFBridgingRelease(CFURLCreateFromFSRef(kCFAllocatorDefault, &ref));
+	NSNumber *aNum = nil;
+	
+	BOOL success = [currentURL getResourceValue:&aNum forKey:NSURLVolumeIsLocalKey error:NULL];
+	if (!success) {
+		return NO;
+	}
+	return ![aNum boolValue];
 }
 
 
@@ -191,7 +183,7 @@
 	if(FSGetCatalogInfo(&ref,kFSCatInfoFinderInfo,&catinfo,NULL,NULL,NULL)!=noErr) return nil;
 	struct FileInfo *info=(struct FileInfo *)&catinfo.finderInfo;
 	OSType type=info->fileType;
-	return [NSString stringWithFormat:@"%c%c%c%c",(char)((type>>24)&0xff),(char)((type>>16)&0xff),(char)((type>>8)&0xff),(char)(type&0xff)];
+	return CFBridgingRelease(UTCreateStringForOSType(type));
 }
 
 -(NSString *)HFSCreatorCode
@@ -200,7 +192,7 @@
 	if(FSGetCatalogInfo(&ref,kFSCatInfoFinderInfo,&catinfo,NULL,NULL,NULL)!=noErr) return nil;
 	struct FileInfo *info=(struct FileInfo *)&catinfo.finderInfo;
 	OSType type=info->fileType;
-	return [NSString stringWithFormat:@"%c%c%c%c",(char)((type>>24)&0xff),(char)((type>>16)&0xff),(char)((type>>8)&0xff),(char)(type&0xff)];
+	return CFBridgingRelease(UTCreateStringForOSType(type));
 }
 
 

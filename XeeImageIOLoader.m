@@ -76,7 +76,7 @@ static void XeeImageIOReleaseInfo(void *info) { [(CSHandle *)info release]; }
 
 -(SEL)loadImage
 {
-	int count=CGImageSourceGetCount(source);
+	size_t count=CGImageSourceGetCount(source);
 	if(current_image==count) return @selector(loadThumbnail);
 
 	NSDictionary *options=[NSDictionary dictionaryWithObjectsAndKeys:

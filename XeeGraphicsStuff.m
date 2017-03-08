@@ -5,14 +5,14 @@
 
 struct XeeGradientInfo
 {
-	float start_r,start_g,start_b,start_a;
-	float end_r,end_g,end_b,end_a;
+	CGFloat start_r,start_g,start_b,start_a;
+	CGFloat end_r,end_g,end_b,end_a;
 };
 
-static void XeeGradientCalc(void *infoptr,const float *in,float *out)
+static void XeeGradientCalc(void *infoptr,const CGFloat *in,CGFloat *out)
 {
 	struct XeeGradientInfo *info=(struct XeeGradientInfo *)infoptr;
-	float t=*in;
+	CGFloat t=*in;
 
 	*out++=info->start_r*(1-t)+info->end_r*t;
 	*out++=info->start_g*(1-t)+info->end_g*t;
@@ -27,8 +27,8 @@ static void XeeGradientFree(void *infoptr)
 
 CGShadingRef XeeMakeGradient(NSColor *startcol,NSColor *endcol,NSPoint start,NSPoint end)
 {
-	static const float input_value_range[2]={0,1};
-	static const float output_value_ranges[8]={0,1,0,1,0,1,0,1};
+	static const CGFloat input_value_range[2]={0,1};
+	static const CGFloat output_value_ranges[8]={0,1,0,1,0,1,0,1};
 	static const CGFunctionCallbacks callbacks={0,&XeeGradientCalc,&XeeGradientFree}; 
 
 	CGShadingRef shading=NULL;

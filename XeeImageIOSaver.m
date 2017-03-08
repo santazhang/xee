@@ -55,7 +55,7 @@
 
 	if(colorspace&&back)
 	{
-		float components[4]=
+		CGFloat components[4]=
 		{
 			[back redComponent],
 			[back greenComponent],

@@ -600,8 +600,8 @@
 		[content layoutContent:contentrect title:titlerect];
 	}
 
-	int count=[pages count];
-	for(int i=0;i<count;i++)
+	NSInteger count=[pages count];
+	for(NSInteger i=0;i<count;i++)
 	{
 		XeeSLControl *control=[pages objectAtIndex:i];
 		if((id)control==[NSNull null]) continue;

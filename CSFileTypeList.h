@@ -21,7 +21,7 @@
 	[type] (string)
 */
 
-@interface CSFileTypeListSource:NSObject
+@interface CSFileTypeListSource:NSObject <NSTableViewDataSource, NSTableViewDelegate>
 {
 	NSArray *filetypes;
 }
@@ -29,10 +29,6 @@
 -(id)init;
 -(void)dealloc;
 -(NSArray *)readFileTypes;
-
--(int)numberOfRowsInTableView:(NSTableView *)table;
--(id)tableView:(NSTableView *)table objectValueForTableColumn:(NSTableColumn *)column row:(int)row;
--(void)tableView:(NSTableView *)table setObjectValue:(id)object forTableColumn:(NSTableColumn *)column row:(int)row;
 
 -(void)claimAllTypes;
 -(void)surrenderAllTypes;

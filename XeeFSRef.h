@@ -7,16 +7,16 @@
 	int hash;
 }
 
-+(XeeFSRef *)refForPath:(NSString *)path;
++(instancetype)refForPath:(NSString *)path;
 
--(id)initWithPath:(NSString *)path;
--(id)initWithFSRef:(FSRef *)fsref;
+-(instancetype)initWithPath:(NSString *)path;
+-(instancetype)initWithFSRef:(FSRef *)fsref;
 
--(FSRef *)FSRef;
+-(FSRef *)FSRef NS_RETURNS_INNER_POINTER;
 
--(BOOL)isValid;
--(BOOL)isDirectory;
--(BOOL)isRemote;
+@property (readonly, getter=isValid) BOOL valid;
+@property (readonly, getter=isDirectory) BOOL directory;
+@property (readonly, getter=isRemote) BOOL remote;
 
 -(NSString *)name;
 -(NSString *)path;

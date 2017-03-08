@@ -250,7 +250,7 @@ static int XeeGIFReadData(GifFileType *gif,GifByteType *buf,int len)
 		identifier:@"gif.animation"
  		labelsAndValues:
 			NSLocalizedString(@"Number of frames",@"Number of frames GIF property label"),
-			[NSNumber numberWithInt:[frames count]],
+			@([frames count]),
 			NSLocalizedString(@"Total playing time",@"Total playing time GIF property label"),
 			[NSString stringWithFormat:
 			NSLocalizedString(@"%.2f seconds",@"A time in seconds with two decimals"),

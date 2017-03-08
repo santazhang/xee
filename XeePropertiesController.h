@@ -3,7 +3,7 @@
 
 @class XeePropertyItem,XeeController;
 
-@interface XeePropertiesController:NSObject
+@interface XeePropertiesController:NSObject <NSOutlineViewDataSource, NSOutlineViewDelegate>
 {
 	IBOutlet NSPanel *infopanel;
 	IBOutlet NSOutlineView *outlineview;
@@ -20,13 +20,6 @@
 
 -(void)frontImageDidChange:(NSNotification *)notification;
 -(IBAction)doubleClick:(id)sender;
-
--(BOOL)outlineView:(NSOutlineView *)view isItemExpandable:(XeePropertyItem *)item;
--(int)outlineView:(NSOutlineView *)view numberOfChildrenOfItem:(XeePropertyItem *)item;
--(id)outlineView:(NSOutlineView *)view child:(int)index ofItem:(XeePropertyItem *)item;
--(id)outlineView:(NSOutlineView *)view objectValueForTableColumn:(NSTableColumn *)col byItem:(XeePropertyItem *)item;
-
--(BOOL)outlineView:(NSOutlineView *)view shouldEditTableColumn:(NSTableColumn *)col item:(XeePropertyItem *)item;
 
 -(void)restoreCollapsedStatusForArray:(NSArray *)array;
 

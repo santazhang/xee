@@ -1246,8 +1246,13 @@
  * want to have unsigned int for png_uint_32 instead of unsigned long.
  */
 
+#ifdef __LP64__
+typedef unsigned int png_uint_32;
+typedef int png_int_32;
+#else
 typedef unsigned long png_uint_32;
 typedef long png_int_32;
+#endif
 typedef unsigned short png_uint_16;
 typedef short png_int_16;
 typedef unsigned char png_byte;

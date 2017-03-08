@@ -11,7 +11,7 @@ NSDictionary *CSParseDSStore(NSString *filename)
 	if(!data) return nil;
 
 	const unsigned char *bytes=[data bytes];
-	int length=[data length];
+	NSInteger length=[data length];
 	if(length<20) return nil; // Too short for the header.
 
 	int ver=CSGetUInt32(bytes);

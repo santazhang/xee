@@ -39,7 +39,7 @@ void XeePlayPoof(NSWindow *somewindow);
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateData:) name:@"XeeDestinationUpdate" object:nil];
 }
 
--(id)tableView:(NSTableView *)table objectValueForTableColumn:(NSTableColumn *)column row:(int)row
+-(id)tableView:(NSTableView *)table objectValueForTableColumn:(NSTableColumn *)column row:(NSInteger)row
 {
 	NSString *ident=[column identifier];
 
@@ -53,7 +53,7 @@ void XeePlayPoof(NSWindow *somewindow);
 		if([ident isEqual:@"shortcut"]) return [self shortcutForRow:row];
 		else
 		{
-			int index=[self indexForRow:row];
+			NSInteger index=[self indexForRow:row];
 			if(index<0) return nil;
 			NSMutableDictionary *dict=[destinations objectAtIndex:index];
 			return [dict objectForKey:ident];
@@ -61,16 +61,16 @@ void XeePlayPoof(NSWindow *somewindow);
 	}
 }
 
--(int)numberOfRowsInTableView:(NSTableView *)table
+-(NSInteger)numberOfRowsInTableView:(NSTableView *)table
 {
 	return [destinations count]+1+dropnum;
 }
 
 
 
--(void)drawRow:(int)row clipRect:(NSRect)clipRect
+-(void)drawRow:(NSInteger)row clipRect:(NSRect)clipRect
 {
-	int index=[self indexForRow:row];
+	NSInteger index=[self indexForRow:row];
 
 	if(index>=0&&![self isRowSelected:row])
 	{
@@ -93,7 +93,7 @@ void XeePlayPoof(NSWindow *somewindow);
 	[super drawRow:row clipRect:clipRect];
 }
 
--(NSRect)frameOfCellAtColumn:(int)column row:(int)row
+-(NSRect)frameOfCellAtColumn:(NSInteger)column row:(NSInteger)row
 {
 	NSRect rect=[self rectOfRow:row];
 	rect.size.height-=1;
@@ -166,8 +166,8 @@ void XeePlayPoof(NSWindow *somewindow);
 -(void)mouseDown:(NSEvent *)event
 {
 	NSPoint clickpoint=[self convertPoint:[event locationInWindow] fromView:nil];
-	int row=[self rowAtPoint:clickpoint];
-	int index=[self indexForRow:row];
+	NSInteger row=[self rowAtPoint:clickpoint];
+	NSInteger index=[self indexForRow:row];
 
 //	if(row>=0) [self selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
 
@@ -223,7 +223,7 @@ void XeePlayPoof(NSWindow *somewindow);
 }
 
 
--(unsigned int)draggingSourceOperationMaskForLocal:(BOOL)local
+-(NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)local
 {
 	return NSDragOperationMove|NSDragOperationDelete;
 }
@@ -238,7 +238,7 @@ void XeePlayPoof(NSWindow *somewindow);
 -(NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
 {
 	NSPasteboard *pboard=[sender draggingPasteboard];
-	int row=[self rowForDropPoint:[self convertPoint:[sender draggingLocation] fromView:nil]];
+	NSInteger row=[self rowForDropPoint:[self convertPoint:[sender draggingLocation] fromView:nil]];
 
 	if([[pboard types] containsObject:NSFilenamesPboardType])
 	{
@@ -285,7 +285,7 @@ void XeePlayPoof(NSWindow *somewindow);
 
 	[self setDropRow:0 num:0];
 
-	if([[pboard types] containsObject:@"XeeDestinationPath"]) SetThemeCursor(kThemePoofCursor);
+	if([[pboard types] containsObject:@"XeeDestinationPath"]) [[NSCursor disappearingItemCursor] set];
 
 	[self reloadData];
 }
@@ -294,7 +294,7 @@ void XeePlayPoof(NSWindow *somewindow);
 {
 	if(!dropnum) return NO;
 
-	int row=droprow;
+	NSInteger row=droprow;
 	droprow=0;
 	dropnum=0;
 
@@ -324,18 +324,18 @@ void XeePlayPoof(NSWindow *somewindow);
     return YES;
 }
 
--(int)rowForDropPoint:(NSPoint)point
+-(NSInteger)rowForDropPoint:(NSPoint)point
 {
-	int row=[self rowAtPoint:point];
+	NSInteger row=[self rowAtPoint:point];
 
 	if(row==0) return 1;
 	else if(row<0||row>[destinations count]) return [destinations count]+1;
 	else return row;
 }
 
--(void)setDropRow:(int)row num:(int)num
+-(void)setDropRow:(NSInteger)row num:(NSInteger)num
 {
-	int sel=[self selectedRow];
+	NSInteger sel=[self selectedRow];
 
 	if(sel>=0)
 	{
@@ -349,7 +349,7 @@ void XeePlayPoof(NSWindow *somewindow);
 	if(sel>=0) [self selectRowIndexes:[NSIndexSet indexSetWithIndex:sel] byExtendingSelection:NO];
 }
 
--(void)setDropRow:(int)row
+-(void)setDropRow:(NSInteger)row
 {
 	[self setDropRow:row num:dropnum];
 }
@@ -369,7 +369,7 @@ void XeePlayPoof(NSWindow *somewindow);
 
 -(IBAction)openInXee:(id)sender
 {
-	int index=[self indexForRow:[self selectedRow]];
+	NSInteger index=[self indexForRow:[self selectedRow]];
 	if(index<0) return;
 
 	NSString *filename=[[destinations objectAtIndex:index] objectForKey:@"path"];
@@ -378,7 +378,7 @@ void XeePlayPoof(NSWindow *somewindow);
 
 -(IBAction)openInFinder:(id)sender
 {
-	int index=[self indexForRow:[self selectedRow]];
+	NSInteger index=[self indexForRow:[self selectedRow]];
 	if(index<0) return;
 
 	NSString *filename=[[destinations objectAtIndex:index] objectForKey:@"path"];
@@ -387,7 +387,7 @@ void XeePlayPoof(NSWindow *somewindow);
 
 -(IBAction)removeFromList:(id)sender
 {
-	int index=[self indexForRow:[self selectedRow]];
+	NSInteger index=[self indexForRow:[self selectedRow]];
 	if(index<0) return;
 
 	[destinations removeObjectAtIndex:index];
@@ -398,18 +398,18 @@ void XeePlayPoof(NSWindow *somewindow);
 -(void)menuNeedsUpdate:(NSMenu *)menu
 {
 	BOOL enabled=[self selectedRow]==0?NO:YES;
-	int count=[menu numberOfItems];
+	NSInteger count=[menu numberOfItems];
 
 	for(int i=0;i<count;i++) [[menu itemAtIndex:i] setEnabled:enabled];
 }
 
 
 
--(int)indexForRow:(int)row
+-(NSInteger)indexForRow:(NSInteger)row
 {
 	if(row<1) return -1;
 
-	int index;
+	NSInteger index;
 	if(row>=droprow+dropnum) index=row-dropnum-1;
 	else if(row>=droprow) return -1;
 	else index=row-1;
@@ -418,21 +418,21 @@ void XeePlayPoof(NSWindow *somewindow);
 	return index;
 }
 
--(NSString *)pathForRow:(int)row
+-(NSString *)pathForRow:(NSInteger)row
 {
-	int index=[self indexForRow:row];
+	NSInteger index=[self indexForRow:row];
 	if(index<0) return nil;
 	return [[destinations objectAtIndex:index] objectForKey:@"path"];
 }
 
--(NSString *)shortcutForRow:(int)row
+-(NSString *)shortcutForRow:(NSInteger)row
 {
 	if(row==0||row>10) return nil;
 	if(row>=droprow&&row<droprow+dropnum) return nil;
 	if(row>[destinations count]) return nil;
 
 	CSAction **actions=[maindelegate copyAndMoveActions];
-	int index=movemode?row+9:row-1;
+	NSInteger index=movemode?row+9:row-1;
 	NSArray *shortcuts=[actions[index] shortcuts];
 	if([shortcuts count]) return [[shortcuts objectAtIndex:0] description];
 	else return nil;
@@ -454,7 +454,7 @@ void XeePlayPoof(NSWindow *somewindow);
 	[self saveArray];
 }
 
-+(void)addDestinations:(NSArray *)directories index:(int)index
++(void)addDestinations:(NSArray *)directories index:(NSInteger)index
 {
 	NSMutableArray *destinations=[self defaultArray];
 	NSEnumerator *enumerator=[directories reverseObjectEnumerator];
@@ -495,11 +495,11 @@ void XeePlayPoof(NSWindow *somewindow);
 	}
 }
 
-+(int)findDestination:(NSString *)directory
++(NSInteger)findDestination:(NSString *)directory
 {
 	NSMutableArray *destinations=[self defaultArray];
 
-	int count=[destinations count];
+	NSInteger count=[destinations count];
 	for(int i=0;i<count;i++) if([[[destinations objectAtIndex:i] objectForKey:@"path"] isEqual:directory]) return i;
 
 	return NSNotFound;

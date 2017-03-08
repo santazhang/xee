@@ -3,10 +3,12 @@
 #import "XeeStringAdditions.h"
 #import "XeePrefKeys.h"
 
-#import <pthread.h>
+#include <pthread.h>
+#include <unistd.h>
 
 
 @implementation XeeImage
+@synthesize delegate;
 
 -(id)init
 {
@@ -262,35 +264,29 @@
 
 
 
--(void)setDelegate:(id)newdelegate
-{
-	delegate=newdelegate;
-}
-
-#include <unistd.h>
 -(void)triggerLoadingAction
 {
 	if(pthread_main_np()) [delegate xeeImageLoadingProgress:self];
-	else [delegate performSelectorOnMainThread:@selector(xeeImageLoadingProgress:) withObject:self waitUntilDone:NO];
+	else [(NSObject*)delegate performSelectorOnMainThread:@selector(xeeImageLoadingProgress:) withObject:self waitUntilDone:NO];
 //	usleep(20000);
 }
 
 -(void)triggerChangeAction
 {
 	if(pthread_main_np()) [delegate xeeImageDidChange:self];
-	else [delegate performSelectorOnMainThread:@selector(xeeImageDidChange:) withObject:self waitUntilDone:NO];
+	else [(NSObject*)delegate performSelectorOnMainThread:@selector(xeeImageDidChange:) withObject:self waitUntilDone:NO];
 }
 
 -(void)triggerSizeChangeAction
 {
 	if(pthread_main_np()) [delegate xeeImageSizeDidChange:self];
-	else [delegate performSelectorOnMainThread:@selector(xeeImageSizeDidChange:) withObject:self waitUntilDone:NO];
+	else [(NSObject*)delegate performSelectorOnMainThread:@selector(xeeImageSizeDidChange:) withObject:self waitUntilDone:NO];
 }
 
 -(void)triggerPropertyChangeAction
 {
 	if(pthread_main_np()) [delegate xeeImagePropertiesDidChange:self];
-	else [delegate performSelectorOnMainThread:@selector(xeeImagePropertiesDidChange:) withObject:self waitUntilDone:NO];
+	else [(NSObject*)delegate performSelectorOnMainThread:@selector(xeeImagePropertiesDidChange:) withObject:self waitUntilDone:NO];
 }
 
 
@@ -431,7 +427,7 @@
 {
 	NSString *name=[self filename];
 	if(name) return name;
-	if(delegate&&[delegate isKindOfClass:[XeeImage class]]) return [delegate filename];
+	if(delegate&&[delegate isKindOfClass:[XeeImage class]]) return [(XeeImage*)delegate filename];
 	return nil;
 }
 

@@ -119,7 +119,7 @@
 	else return NO;
 }
 
--(int)outlineView:(NSOutlineView *)view numberOfChildrenOfItem:(XeePropertyItem *)item
+-(NSInteger)outlineView:(NSOutlineView *)view numberOfChildrenOfItem:(XeePropertyItem *)item
 {
 	NSArray *children;
 	if(!item) children=dataarray;
@@ -129,7 +129,7 @@
 	return [children count];
 }
 
--(id)outlineView:(NSOutlineView *)view child:(int)index ofItem:(XeePropertyItem *)item
+-(id)outlineView:(NSOutlineView *)view child:(NSInteger)index ofItem:(XeePropertyItem *)item
 {
 	NSArray *children;
 	if(!item) children=dataarray;
@@ -171,7 +171,7 @@
 	return NO;
 }
 
--(float)outlineView:(NSOutlineView *)view heightOfRowByItem:(XeePropertyItem *)item
+-(CGFloat)outlineView:(NSOutlineView *)view heightOfRowByItem:(XeePropertyItem *)item
 {
 	if([item isSubSection]) return 18;
 //	if([item isSubSection]&&[view levelForItem:item]==0) return 18;
@@ -354,7 +354,7 @@ tableColumn:(NSTableColumn *)col item:(XeePropertyItem *)item mouseLocation:(NSP
 
 -(IBAction)copy:(id)sender
 {
-	int sel=[self selectedRow];
+	NSInteger sel=[self selectedRow];
 	if(sel<0) { NSBeep(); return; }
 
 	XeePropertyItem *item=[self itemAtRow:sel];

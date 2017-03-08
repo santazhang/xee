@@ -477,7 +477,7 @@ static NSMutableArray *controllers=nil;
 
 		// Check for futaba timestamp name
 		NSString *namepart=[[filename lastPathComponent] stringByDeletingPathExtension];
-		int len=[namepart length];
+		NSInteger len=[namepart length];
 
 		if(len==10||len==13||len==17)
 		{
@@ -627,10 +627,10 @@ static NSMutableArray *controllers=nil;
 	if(win_width>screenframe.size.width) win_width=screenframe.size.width;
 	if(win_height>screenframe.size.height) win_height=screenframe.size.height;
 
-	int focus_x=window_focus_x;
-	int focus_y=window_focus_y;
-	int win_x=window_focus_x-win_width/2;
-	int win_y=window_focus_y-win_height/2;
+	NSInteger focus_x=window_focus_x;
+	NSInteger focus_y=window_focus_y;
+	NSInteger win_x=window_focus_x-win_width/2;
+	NSInteger win_y=window_focus_y-win_height/2;
 
 	if(win_x<screenframe.origin.x) win_x=screenframe.origin.x;
 	if(win_y<screenframe.origin.y) win_y=screenframe.origin.y;
@@ -731,7 +731,7 @@ static NSMutableArray *controllers=nil;
 
 	if([drawer state]==NSDrawerOpenState)
 	{
-		int drawerheight=[destinationtable numberOfRows]*19;
+		NSInteger drawerheight=[destinationtable numberOfRows]*19;
 		drawerheight+=[drawer leadingOffset];
 		drawerheight+=[drawer trailingOffset];
 		drawerheight+=19; // uh-huh, right...
@@ -1260,7 +1260,7 @@ static NSMutableArray *controllers=nil;
 
 -(IBAction)cancel:(id)sender
 {
-	int state=[drawer state];
+	NSInteger state=[drawer state];
 
 	if([self isCropping]) [imageview setTool:movetool];
 	else if(fullscreenwindow)

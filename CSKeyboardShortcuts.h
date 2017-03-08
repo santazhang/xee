@@ -140,7 +140,7 @@
 
 
 
-@interface CSKeyboardList:KFTypeSelectTableView
+@interface CSKeyboardList:KFTypeSelectTableView <NSTableViewDataSource, NSDraggingSource>
 {
 	CSKeyStroke *selected;
 	CSAction *dropaction;
@@ -159,18 +159,8 @@
 
 -(void)awakeFromNib;
 
--(id)tableView:(NSTableView *)table objectValueForTableColumn:(NSTableColumn *)column row:(int)row;
--(int)numberOfRowsInTableView:(NSTableView *)table;
--(void)tableViewSelectionDidChange:(NSNotification *)notification;
-
 -(void)mouseDown:(NSEvent *)event;
 
--(unsigned int)draggingSourceOperationMaskForLocal:(BOOL)local;
--(void)draggedImage:(NSImage *)image endedAt:(NSPoint)point operation:(NSDragOperation)operation;
--(NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender;
--(NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender;
--(void)draggingExited:(id <NSDraggingInfo>)sender;
--(BOOL)performDragOperation:(id <NSDraggingInfo>)sender;
 -(CSAction *)getActionForLocation:(NSPoint)point hasFrame:(NSRect *)frame;
 
 -(void)updateButtons;

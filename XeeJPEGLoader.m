@@ -25,7 +25,7 @@
 +(BOOL)canOpenFile:(NSString *)name firstBlock:(NSData *)block attributes:(NSDictionary *)attributes;
 {
 	const unsigned char *head=[block bytes];
-	int len=[block length];
+	NSInteger len=[block length];
 
 	if(len>=2&&head[0]==0xff&&head[1]==0xd8) return YES;
 

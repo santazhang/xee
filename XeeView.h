@@ -1,12 +1,14 @@
 #import "XeeTypes.h"
+#import "XeeImage.h"
 
 #import <OpenGL/GL.h>
 #import <OpenGL/GLu.h>
 
 @class XeeImage,XeeController,XeeTool;
 @protocol XeeViewDelegate;
+@protocol XeeImageDelegate;
 
-@interface XeeView:NSOpenGLView
+@interface XeeView:NSOpenGLView <XeeImageDelegate>
 {
 	XeeImage *image;
 	XeeTool *tool;

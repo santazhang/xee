@@ -65,8 +65,8 @@
 	{
 		[self setEnabled:YES];
 
-		int count=[control segmentCount];
-		for(int i=0;i<count;i++)
+		NSInteger count=[control segmentCount];
+		for(NSInteger i=0;i<count;i++)
 		{
 			XeeController *controller=(XeeController *)[[control window] delegate];
 			[control setEnabled:[controller validateAction:actions[i]] forSegment:i];

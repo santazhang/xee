@@ -37,11 +37,11 @@
 	if([imagerep isPlanar]) return NO;
 
 	uint8_t *pixeldata=[imagerep bitmapData];
-	int pixelwidth=[imagerep pixelsWide];
-	int pixelheight=[imagerep pixelsHigh];
-	int bppixel=[imagerep bitsPerPixel];
-	int bpcomponent=[imagerep bitsPerSample];
-	int bprow=[imagerep bytesPerRow];
+	NSInteger pixelwidth=[imagerep pixelsWide];
+	NSInteger pixelheight=[imagerep pixelsHigh];
+	NSInteger bppixel=[imagerep bitsPerPixel];
+	NSInteger bpcomponent=[imagerep bitsPerSample];
+	NSInteger bprow=[imagerep bytesPerRow];
 
 	int bitmapformat=[imagerep respondsToSelector:@selector(bitmapFormat)]?[imagerep bitmapFormat]:0;
 	NSString *colorspace=[imagerep colorSpaceName];

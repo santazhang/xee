@@ -1,3 +1,4 @@
+#import <Cocoa/Cocoa.h>
 #import "XeeXPMLoader.h"
 
 #import <XADMaster/XADRegex.h>
@@ -20,7 +21,7 @@ static int ConvertHex(int x)
 +(BOOL)canOpenFile:(NSString *)name firstBlock:(NSData *)block attributes:(NSDictionary *)attributes;
 {
 	const unsigned char *head=[block bytes];
-	int len=[block length];
+	NSInteger len=[block length];
 
 	if(len>=9&&!memcmp(head,"/* XPM */",9)) return YES;
 	if(len>=6&&!memcmp(head,"! XPM2",6)) return YES;
@@ -175,7 +176,7 @@ static int ConvertHex(int x)
 		uint32_t *dest=(uint32_t *)(data+y*bytesperrow);
 		NSString *row=[self nextLine];
 
-		int len=[row length]/numchars;
+		NSInteger len=[row length]/numchars;
 		if(len>width) len=width;
 
 		for(int x=0;x<len;x++)
@@ -234,7 +235,7 @@ static int ConvertHex(int x)
 
 -(NSNumber *)parseHexColour:(NSString *)hex
 {
-	int chars=[hex length]/3;
+	NSInteger chars=[hex length]/3;
 	const char *cstr=[hex UTF8String];
 
 	if(chars==1)

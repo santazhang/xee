@@ -68,9 +68,8 @@
 	NSArray *types=[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDocumentTypes"];
 	NSArray *hidden=[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CSHiddenDocumentTypes"];
 	NSEnumerator *enumerator=[types objectEnumerator];
-	NSDictionary *dict;
 
-	while(dict=[enumerator nextObject])
+	for(NSDictionary<NSString*,id> *dict in types)
 	{
 		NSArray *types=[dict objectForKey:@"LSItemContentTypes"];
 		if(types)
@@ -91,12 +90,12 @@
 	return [NSArray arrayWithArray:array];
 }
 
--(int)numberOfRowsInTableView:(NSTableView *)table
+-(NSInteger)numberOfRowsInTableView:(NSTableView *)table
 {
 	return [filetypes count];
 }
 
--(id)tableView:(NSTableView *)table objectValueForTableColumn:(NSTableColumn *)column row:(int)row
+-(id)tableView:(NSTableView *)table objectValueForTableColumn:(NSTableColumn *)column row:(NSInteger)row
 {
 	NSString *ident=[column identifier];
 
@@ -113,7 +112,7 @@
 	}
 }
 
--(void)tableView:(NSTableView *)table setObjectValue:(id)object forTableColumn:(NSTableColumn *)column row:(int)row
+-(void)tableView:(NSTableView *)table setObjectValue:(id)object forTableColumn:(NSTableColumn *)column row:(NSInteger)row
 {
 	NSString *ident=[column identifier];
 
@@ -190,7 +189,7 @@
 
 	for(;;)
 	{
-		int index=[handlers indexOfObject:self_id];
+		NSInteger index=[handlers indexOfObject:self_id];
 		if(index==NSNotFound) break;
 		[handlers removeObjectAtIndex:index];
 	}

@@ -184,7 +184,7 @@
 
 -(void)selectNamePart
 {
-	int length=[[[self filenameFieldContents] stringByDeletingPathExtension] length];
+	NSInteger length=[[[self filenameFieldContents] stringByDeletingPathExtension] length];
 	NSRange range=NSMakeRange(0,length);
 	if(textview) [textview setSelectedRange:range];
 	else

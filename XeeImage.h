@@ -1,23 +1,27 @@
 #import <Cocoa/Cocoa.h>
 
 #import "XeeTypes.h"
+//TODO: port to GCD/libdispatch or NSOperation?
 #import "CSCoroutine.h"
 #import "XeeFSRef.h"
 #import "XeeProperties.h"
 
 #import <XADMaster/CSFileHandle.h>
 
-#define XeeCanSaveLosslesslyFlag 1
-#define XeeCanOverwriteLosslesslyFlag 2
-#define XeeNotActuallyLosslessFlag 4
-#define XeeCroppingIsInexactFlag 8
-#define XeeHasUntransformableBlocksFlag 16
-#define XeeUntransformableBlocksCanBeRetainedFlag 32
-	
+typedef NS_OPTIONS(unsigned int, XeeSaveFormatFlags) {
+	XeeCanSaveLosslesslyFlag = 1,
+	XeeCanOverwriteLosslesslyFlag = 2,
+	XeeNotActuallyLosslessFlag = 4,
+	XeeCroppingIsInexactFlag = 8,
+	XeeHasUntransformableBlocksFlag = 16,
+	XeeUntransformableBlocksCanBeRetainedFlag = 32
+};
+
 #define XeeTrimCroppingFlag 1
 #define XeeRetainUntransformableBlocksFlag 2
 
 //#define Xee
+@protocol XeeImageDelegate;
 
 @interface XeeImage:NSObject
 {
@@ -41,7 +45,7 @@
 	int crop_x,crop_y,crop_width,crop_height;
 	NSMutableArray *properties;
 
-	id delegate;
+	id<XeeImageDelegate> delegate;
 }
 
 -(id)init;
@@ -67,20 +71,18 @@
 -(CSHandle *)handle;
 -(CSFileHandle *)fileHandle;
 
--(int)frames;
--(void)setFrame:(int)frame;
--(int)frame;
+@property (readonly) int frames;
+@property (nonatomic) int frame;
 
--(void)setDelegate:(id)delegate;
+@property (assign) id<XeeImageDelegate> delegate;
 -(void)triggerLoadingAction;
 -(void)triggerChangeAction;
 -(void)triggerSizeChangeAction;
 -(void)triggerPropertyChangeAction;
 
 -(BOOL)animated;
--(void)setAnimating:(BOOL)animating;
+@property (nonatomic) BOOL animating;
 -(void)setAnimatingDefault;
--(BOOL)animating;
 
 -(NSRect)updatedAreaInRect:(NSRect)rect;
 
@@ -109,10 +111,10 @@
 
 @property (readonly) XeeTransformation orientation;
 @property (readonly) XeeTransformation correctOrientation;
--(NSRect)croppingRect;
--(NSRect)rawCroppingRect;
--(BOOL)isTransformed;
--(BOOL)isCropped;
+@property (readonly) NSRect croppingRect;
+@property (readonly) NSRect rawCroppingRect;
+@property (readonly, getter=isTransformed) BOOL transformed;
+@property (readonly, getter=isCropped) BOOL cropped;
 -(XeeMatrix)transformationMatrix;
 -(XeeMatrix)transformationMatrixInRect:(NSRect)rect;
 
@@ -171,7 +173,7 @@ static inline void __XeeImageLoaderDone(BOOL success,BOOL *loaded,BOOL *finished
 
 
 
-@interface NSObject (XeeImageDelegate)
+@protocol XeeImageDelegate <NSObject>
 
 -(void)xeeImageLoadingProgress:(XeeImage *)image;
 -(void)xeeImageDidChange:(XeeImage *)image;

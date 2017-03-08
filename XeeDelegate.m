@@ -556,12 +556,12 @@ NSString *XeeRefreshImageNotification = @"XeeRefreshImageNotification";
 
 -(void)updateSortMenu:(NSMenu *)menu
 {
-	int sortorder=0;
+	NSInteger sortorder=0;
 
 	XeeController *controller=[self focusedController];
 	if(controller) sortorder=[[controller imageSource] sortOrder];
 
-	int num=[sortmenu numberOfItems];
+	NSInteger num=[sortmenu numberOfItems];
 	for(int i=0;i<num;i++)
 	{
 		NSMenuItem *item=[sortmenu itemAtIndex:i];
@@ -573,12 +573,12 @@ NSString *XeeRefreshImageNotification = @"XeeRefreshImageNotification";
 
 -(void)updateSlideshowMenu:(NSMenu *)menu
 {
-	int slidedelay=[[NSUserDefaults standardUserDefaults] integerForKey:XeeSlideshowDelayKey];
+	NSInteger slidedelay=[[NSUserDefaults standardUserDefaults] integerForKey:XeeSlideshowDelayKey];
 
 	BOOL found=NO;
 
-	int num=[slideshowmenu numberOfItems];
-	for(int i=0;i<num;i++)
+	NSInteger num=[slideshowmenu numberOfItems];
+	for(NSInteger i=0;i<num;i++)
 	{
 		NSMenuItem *item=[slideshowmenu itemAtIndex:i];
 		if([item action]==@selector(setSlideshowDelay:)) {
@@ -722,8 +722,8 @@ NSString *XeeRefreshImageNotification = @"XeeRefreshImageNotification";
 	[[NSUserDefaults standardUserDefaults] setInteger:[(NSMenuItem *)sender tag] forKey:@"antialiasQuality"];
 
 	NSMenu *menu=[sender menu];
-	int num=[menu numberOfItems];
-	for(int i=0;i<num;i++)
+	NSInteger num=[menu numberOfItems];
+	for(NSInteger i=0;i<num;i++)
 	{
 		NSMenuItem *item=[menu itemAtIndex:i];
 		[item setState:item==sender?NSOnState:NSOffState];
@@ -755,7 +755,7 @@ NSString *XeeRefreshImageNotification = @"XeeRefreshImageNotification";
 	if(focus&&[focus isFullscreen]) return focus;
 
 	XeeController *controller=nil;
-	int windowmode=[[NSUserDefaults standardUserDefaults] integerForKey:@"windowOpening"];
+	NSInteger windowmode=[[NSUserDefaults standardUserDefaults] integerForKey:@"windowOpening"];
 	switch(windowmode)
 	{
 		case 0: // single window

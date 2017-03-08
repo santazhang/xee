@@ -19,8 +19,8 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 {
 	NSMutableArray *array=[NSMutableArray array];
 
-	int count=[menu numberOfItems];
-	for(int i=0;i<count;i++)
+	NSInteger count=[menu numberOfItems];
+	for(NSInteger i=0;i<count;i++)
 	{
 		NSMenuItem *item=[menu itemAtIndex:i];
 		NSMenu *submenu=[item submenu];
@@ -197,7 +197,7 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 -(id)initWithMenuItem:(NSMenuItem *)menuitem namespace:(NSMutableSet *)namespace
 {
 	NSString *baseidentifier=NSStringFromSelector([menuitem action]);
-	if([menuitem tag]) baseidentifier=[NSString stringWithFormat:@"%@%d",baseidentifier,[menuitem tag]];
+	if([menuitem tag]) baseidentifier=[NSString stringWithFormat:@"%@%ld",baseidentifier,(long)[menuitem tag]];
 
 	NSString *uniqueidentifier=baseidentifier;
 
@@ -818,7 +818,7 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 
 
 
--(id)tableView:(NSTableView *)table objectValueForTableColumn:(NSTableColumn *)column row:(int)row
+-(id)tableView:(NSTableView *)table objectValueForTableColumn:(NSTableColumn *)column row:(NSInteger)row
 {
 	if([[column identifier] isEqual:@"title"])
 	{
@@ -851,7 +851,7 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 	return nil;
 }
 
--(int)numberOfRowsInTableView:(NSTableView *)table
+-(NSInteger)numberOfRowsInTableView:(NSTableView *)table
 {
 	return [[keyboardShortcuts actions] count];
 }
@@ -946,7 +946,12 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 	[super mouseDown:event];
 }
 
--(unsigned int)draggingSourceOperationMaskForLocal:(BOOL)local
+-(NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)local
+{
+	return NSDragOperationMove|NSDragOperationDelete;
+}
+
+- (NSDragOperation)draggingSession:(NSDraggingSession *)session sourceOperationMaskForDraggingContext:(NSDraggingContext)context
 {
 	return NSDragOperationMove|NSDragOperationDelete;
 }
@@ -993,8 +998,8 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 	dropbefore=nil;
 	dropsize=NSZeroSize;
 
-//	[[NSCursor disappearingItemCursor] set];
-	SetThemeCursor(kThemePoofCursor);
+	[[NSCursor disappearingItemCursor] set];
+	//SetThemeCursor(kThemePoofCursor);
 	[self reloadData];
 }
 
@@ -1008,7 +1013,7 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 
 		if(dropbefore)
 		{
-			int index=[newshortcuts indexOfObjectIdenticalTo:dropbefore];
+			NSInteger index=[newshortcuts indexOfObjectIdenticalTo:dropbefore];
 			[newshortcuts insertObject:stroke atIndex:index];
 		}
 		else [newshortcuts addObject:stroke];
@@ -1029,8 +1034,8 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 
 -(CSAction *)getActionForLocation:(NSPoint)point hasFrame:(NSRect *)frame
 {
-	int rowindex=[self rowAtPoint:point];
-	int colindex=[self columnAtPoint:point];
+	NSInteger rowindex=[self rowAtPoint:point];
+	NSInteger colindex=[self columnAtPoint:point];
 
 	if(colindex>=0&&rowindex>=0)
 	{
@@ -1076,7 +1081,7 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 
 -(IBAction)addShortcut:(id)sender
 {
-	int rowindex=[self selectedRow];
+	NSInteger rowindex=[self selectedRow];
 	if(rowindex<0) return;
 
 	CSAction *action=[[keyboardShortcuts actions] objectAtIndex:rowindex];
@@ -1120,7 +1125,7 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 -(IBAction)removeShortcut:(id)sender
 {
 	if(!selected) return;
-	int rowindex=[self selectedRow];
+	NSInteger rowindex=[self selectedRow];
 	if(rowindex<0) return;
 
 	CSAction *action=[[keyboardShortcuts actions] objectAtIndex:rowindex];
@@ -1137,7 +1142,7 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 
 -(IBAction)resetToDefaults:(id)sender
 {
-	int rowindex=[self selectedRow];
+	NSInteger rowindex=[self selectedRow];
 	if(rowindex<0) return;
 
 	CSAction *action=[[keyboardShortcuts actions] objectAtIndex:rowindex];
@@ -1169,7 +1174,9 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 
 +(void)install
 {
+#if !__OBJC2__
 	[self poseAsClass:[NSWindow class]];
+#endif
 }
 
 -(BOOL)performKeyEquivalent:(NSEvent *)event
@@ -1214,12 +1221,10 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 {
 	unsigned short keycode=[self keyCode];
 
-	KeyboardLayoutRef layout;
-	const void *uchr,*kchr;
-	// TODO: use TISCopyCurrentKeyboardLayoutInputSource
-	KLGetCurrentKeyboardLayout(&layout);
-	KLGetKeyboardLayoutProperty(layout,kKLuchrData,&uchr);
-	KLGetKeyboardLayoutProperty(layout,kKLKCHRData,&kchr);
+	TISInputSourceRef layout;
+	const void *uchr = NULL;
+	layout = TISCopyCurrentKeyboardLayoutInputSource();
+	uchr = TISGetInputSourceProperty(layout, kTISPropertyUnicodeKeyLayoutData);
 
 	if(uchr)
 	{
@@ -1232,15 +1237,6 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 
 		if(strlen&&c>=32&&c!=127) // control chars are not reliable!
 		return [NSString stringWithCharacters:&c length:strlen];
-	}
-	else if(kchr)
-	{
-		char c[2]={0,0};
-		UInt32 state=0;
-		c[0]=KeyTranslate(kchr,keycode,&state)&0xff;
-		if(state!=0) c[0]=KeyTranslate(kchr,keycode,&state)&0xff;
-
-		return [NSString stringWithCString:c encoding:NSMacOSRomanStringEncoding];
 	}
 
 	return [[self charactersIgnoringModifiers] lowercaseString];
