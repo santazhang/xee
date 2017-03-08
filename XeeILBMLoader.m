@@ -20,7 +20,7 @@
 
 +(NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"iff",@"ilbm",@"lbm",@"'ILBM'",nil]; //@"'PNG '",@"'PNGf'",nil];
+	return [NSArray arrayWithObjects:@"iff",@"ilbm",@"lbm",NSFileTypeForHFSTypeCode('ILBM'),nil]; //@"'PNG '",@"'PNGf'",nil];
 }
 
 +(BOOL)canOpenFile:(NSString *)name firstBlock:(NSData *)block attributes:(NSDictionary *)attributes

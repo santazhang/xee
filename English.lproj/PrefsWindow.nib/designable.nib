@@ -245,7 +245,7 @@
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <clipView key="contentView" id="zVG-CQ-QAm">
                                                 <rect key="frame" x="1" y="0.0" width="461" height="322"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" alternatingRowBackgroundColors="YES" columnReordering="NO" multipleSelection="NO" autosaveName="xeekeyboardlist" headerView="1100" id="670" customClass="CSKeyboardList">
                                                         <rect key="frame" x="0.0" y="0.0" width="461" height="299"/>
@@ -302,9 +302,9 @@
                                         <button toolTip="Add a new shortcut key for the currectly selected action." id="704">
                                             <rect key="frame" x="20" y="16" width="23" height="22"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="add_idle" imagePosition="only" alignment="center" alternateImage="add_pressed" inset="2" id="1083">
+                                            <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="NSAddTemplate" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1083">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" metaFont="system" size="10"/>
+                                                <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
                                                 <action selector="addShortcut:" target="670" id="710"/>
@@ -313,9 +313,9 @@
                                         <button toolTip="Remove the currently selected shortcut key." id="705">
                                             <rect key="frame" x="43" y="16" width="22" height="22"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="remove_idle" imagePosition="only" alignment="center" alternateImage="remove_pressed" inset="2" id="1084">
+                                            <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="NSRemoveTemplate" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1084">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" metaFont="system" size="10"/>
+                                                <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
                                                 <action selector="removeShortcut:" target="670" id="711"/>
@@ -655,10 +655,8 @@
         </window>
     </objects>
     <resources>
-        <image name="add_idle" width="23" height="22"/>
-        <image name="add_pressed" width="23" height="22"/>
-        <image name="remove_idle" width="22" height="22"/>
-        <image name="remove_pressed" width="22" height="22"/>
+        <image name="NSAddTemplate" width="11" height="11"/>
+        <image name="NSRemoveTemplate" width="11" height="11"/>
         <image name="reset_idle" width="22" height="22"/>
         <image name="reset_pressed" width="22" height="22"/>
     </resources>

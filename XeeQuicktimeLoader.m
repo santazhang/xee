@@ -226,39 +226,39 @@ static OSErr XeeQTProgressFunc(short message,Fixed completeness,long refcon);
 		@"jpg", // JPEG Image
 		@"jpeg",
 		@"jpe",
-		@"'JPEG'",
+		NSFileTypeForHFSTypeCode('JPEG'),
 
 		@"png", // Portable Network Graphics
-		@"'PNG '", 
-		@"'PNGf'", 
+		NSFileTypeForHFSTypeCode('PNG '),
+		NSFileTypeForHFSTypeCode('PNGf'),
 
 		@"gif", // Graphics Interchange Format
-		@"'GIFf'",
-		@"'GIF '",
+		NSFileTypeForHFSTypeCode('GIFf'),
+		NSFileTypeForHFSTypeCode('GIF '),
 
 		@"tif", // TIFF Image
 		@"tiff", 
-		@"'TIFF'", 
+		NSFileTypeForHFSTypeCode('TIFF'),
 
 		@"bmp", // Windows Bitmap Image
 		@"dib", //?
-		@"'BMP '", 
-		@"'BMPf'", 
-		@"'BMPp'", 
+		NSFileTypeForHFSTypeCode('BMP '),
+		NSFileTypeForHFSTypeCode('BMPf'),
+		NSFileTypeForHFSTypeCode('BMPp'),
 
 		@"psd", // Adobe Photoshop Image
-		@"'8BPS'",
+		NSFileTypeForHFSTypeCode('8BPS'),
 
 		@"tga", // Targa Image
-		@"'TPIC'", 
+		NSFileTypeForHFSTypeCode('TPIC'),
 
 		@"jp2", // JPEG 2000 Image
-		@"'jp2 '", 
+		NSFileTypeForHFSTypeCode('jp2 '),
 
 		@"pict", // PICT Image
 		@"pct", 
 		@"pic",
-		@"'PICT'", 
+		NSFileTypeForHFSTypeCode('PICT'),
 
 		@"fpx", // FlashPix Image
 		@"'FPix'", 
@@ -266,14 +266,14 @@ static OSErr XeeQTProgressFunc(short message,Fixed completeness,long refcon);
 		@"qtif", // Apple Quicktime Image
 		@"qti",
 		@"qif", 
-		@"'qtif'", 
+		NSFileTypeForHFSTypeCode('qtif'),
 
 		@"sgi", // Silicon Graphics Image
-		@"'SGI '", 
-		@"'.SGI'", 
+		NSFileTypeForHFSTypeCode('SGI '),
+		NSFileTypeForHFSTypeCode('.SGI'),
 
 		@"pntg", // Apple MacPaint image
-		@"'PNTG'", 
+		NSFileTypeForHFSTypeCode('PNTG'), 
 
 		@"mac", //?
 

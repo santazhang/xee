@@ -5,6 +5,8 @@
 NSString *XeeErrorDomain=@"XeeErrorDomain";
 
 @implementation XeeImageSource
+@synthesize delegate;
+@synthesize icon;
 
 -(id)init
 {
@@ -36,22 +38,6 @@ NSString *XeeErrorDomain=@"XeeErrorDomain";
 -(void)start {}
 
 -(void)stop {}
-
-
-
--(id)delegate { return delegate; }
-
--(void)setDelegate:(id)newdelegate { delegate=newdelegate; }
-
--(NSImage *)icon { return icon; }
-
--(void)setIcon:(NSImage *)newicon
-{
-	if(icon==newicon) return;
-	[icon release];
-	icon=[newicon retain];
-}
-
 
 
 -(int)numberOfImages { return 0; }

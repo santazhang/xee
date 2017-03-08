@@ -15,7 +15,7 @@
 
 +(NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"psd",@"'8BPS'",nil];
+	return [NSArray arrayWithObjects:@"psd",NSFileTypeForHFSTypeCode('8BPS'),nil];
 }
 
 +(BOOL)canOpenFile:(NSString *)name firstBlock:(NSData *)block attributes:(NSDictionary *)attributes

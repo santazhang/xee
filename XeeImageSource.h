@@ -15,13 +15,14 @@ extern NSString *XeeErrorDomain;
 #define XeeNotSupportedError 6
 
 @class XeeImage;
+@protocol XeeImageSourceDelegate;
 
 @interface XeeImageSource:NSObject
 {
-	id delegate;
+	id<XeeImageSourceDelegate> delegate;
 	NSImage *icon;
 
-	int sortorder;
+	NSInteger sortorder;
 
 	BOOL actionsblocked;
 	BOOL pendingimagechange,pendinglistchange;
@@ -37,11 +38,8 @@ extern NSString *XeeErrorDomain;
 -(void)start;
 -(void)stop;
 
--(id)delegate;
--(void)setDelegate:(id)newdelegate;
-
--(NSImage *)icon;
--(void)setIcon:(NSImage *)newicon;
+@property (assign) id<XeeImageSourceDelegate> delegate;
+@property (retain) NSImage *icon;
 
 -(int)numberOfImages;
 -(int)indexOfCurrentImage;
@@ -96,7 +94,7 @@ extern NSString *XeeErrorDomain;
 
 
 
-@interface NSObject (XeeImageSourceDelegate)
+@protocol XeeImageSourceDelegate <NSObject>
 
 -(void)xeeImageSource:(XeeImageSource *)source imageListDidChange:(int)num;
 -(void)xeeImageSource:(XeeImageSource *)source imageDidChange:(XeeImage *)newimage;

@@ -1,5 +1,5 @@
 #import "XeePhotoshopPICTLoader.h"
-#import "XeeQuicktimeLoader.h"
+//#import "XeeQuicktimeLoader.h"
 #import "XeeImageIOLoader.h"
 
 @implementation XeePhotoshopPICTImage

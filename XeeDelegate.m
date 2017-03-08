@@ -15,7 +15,7 @@
 #import "XeeClipboardSource.h"
 
 #import "XeeImageIOLoader.h"
-#import "XeeQuicktimeLoader.h"
+//#import "XeeQuicktimeLoader.h"
 #import "XeeJPEGLoader.h"
 #import "XeePNGLoader.h"
 #import "XeeGIFLoader.h"
@@ -83,7 +83,7 @@ BOOL finderlaunch;
 	[XeeImage registerImageClass:[XeeXBMImage class]];
 	[XeeImage registerImageClass:[XeeXPMImage class]];
 	[XeeImage registerImageClass:[XeeImageIOImage class]];
-	[XeeImage registerImageClass:[XeeQuicktimeImage class]];
+	//[XeeImage registerImageClass:[XeeQuicktimeImage class]];
 
 	[XeeImageSaver registerSaverClass:[XeeLosslessSaver class]];
 	[XeeImageSaver registerSaverClass:[XeePNGSaver class]];

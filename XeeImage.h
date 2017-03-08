@@ -154,12 +154,12 @@
 +(XeeImage *)imageForRef:(XeeFSRef *)ref;
 +(XeeImage *)imageForHandle:(CSHandle *)fh;
 +(XeeImage *)imageForHandle:(CSHandle *)fh ref:(XeeFSRef *)ref attributes:(NSDictionary *)attrs;
-+(NSArray *)allFileTypes;
+@property (class, readonly) NSArray<NSString*> *allFileTypes;
 +(NSDictionary *)fileTypeDictionary;
 +(void)registerImageClass:(Class)class;
 
 +(BOOL)canOpenFile:(NSString *)name firstBlock:(NSData *)block attributes:(NSDictionary *)attributes;
-+(NSArray *)fileTypes;
+@property (class, readonly) NSArray<NSString*> *fileTypes;
 
 @end
 
