@@ -1,5 +1,5 @@
 #import "XeeSimpleLayout.h"
-
+#import "XeeSavePanel.h"
 
 
 @implementation XeeSimpleLayout:NSView

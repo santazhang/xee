@@ -72,7 +72,7 @@
 
 -(void)eventLoop
 {
-	NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
+	@autoreleasepool {
 
 	for(;;)
 	{
@@ -89,7 +89,7 @@
 		}
 	}
 	
-	[pool release];
+	}
 }
 
 +(XeeKQueue *)defaultKQueue

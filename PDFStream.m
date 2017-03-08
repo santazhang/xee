@@ -353,7 +353,7 @@ static uint8_t ASCII85NextByte(CSInputBuffer *input)
 		else if(c1=='~') CSByteStreamEOF(self);
 		else
 		{
-			uint8_t c2,c3,c4,c5;
+			uint8_t c2,c3 = 0,c4 = 0,c5 = 0;
 
 			c2=ASCII85NextByte(input);
 			if(c2!='~')

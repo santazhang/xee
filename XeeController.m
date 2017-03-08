@@ -1,3 +1,4 @@
+#include <tgmath.h>
 #import "XeeController.h"
 #import "XeeControllerImageActions.h"
 #import "XeeControllerNavigationActions.h"
@@ -13,11 +14,13 @@
 #import "XeeCropTool.h"
 #import "XeePasswordPanel.h"
 #import "XeeStringAdditions.h"
+#import "XeePrefKeys.h"
+#import "XeeControllerFileActions.h"
 
 #import <Carbon/Carbon.h>
 
-extern float XeeZoomLevels[];
-extern int XeeNumberOfZoomLevels;
+extern CGFloat XeeZoomLevels[];
+extern NSInteger XeeNumberOfZoomLevels;
 
 static NSMutableArray *controllers=nil;
 
@@ -109,7 +112,7 @@ static NSMutableArray *controllers=nil;
 
 	[[NSNotificationCenter defaultCenter] addObserver:self
 	selector:@selector(refreshImageNotification:)
-	name:@"XeeRefreshImageNotification" object:nil];
+	name:XeeRefreshImageNotification object:nil];
 
 	NSToolbar *toolbar=[[[NSToolbar alloc] initWithIdentifier:@"BrowserToolbar"] autorelease];
 	[toolbar setDelegate:(id)self];
@@ -208,7 +211,7 @@ static NSMutableArray *controllers=nil;
 
 -(void)scrollWheel:(NSEvent *)event
 {
-	if([[NSUserDefaults standardUserDefaults] integerForKey:@"scrollWheelFunction"]==0)
+	if([[NSUserDefaults standardUserDefaults] integerForKey:XeeScrollWheelFunctionKey]==0)
 	{
 		if([self isCropping]) return;
 
@@ -651,14 +654,14 @@ static NSMutableArray *controllers=nil;
 {
 	NSSize maxsize=[self maxViewSize];
 
-	BOOL shrink=[[NSUserDefaults standardUserDefaults] boolForKey:@"shrinkToFit"];
-	BOOL enlarge=[[NSUserDefaults standardUserDefaults] boolForKey:@"enlargeToFit"];
-	BOOL remember=[[NSUserDefaults standardUserDefaults] boolForKey:@"rememberZoom"];
-	BOOL rememberfocus=[[NSUserDefaults standardUserDefaults] boolForKey:@"rememberFocus"];
-	float savedzoom=[[NSUserDefaults standardUserDefaults] floatForKey:@"savedZoom"];
+	BOOL shrink=[[NSUserDefaults standardUserDefaults] boolForKey:XeeShrinkToFitKey];
+	BOOL enlarge=[[NSUserDefaults standardUserDefaults] boolForKey:XeeEnlargeToFitKey];
+	BOOL remember=[[NSUserDefaults standardUserDefaults] boolForKey:XeeRememberZoomKey];
+	BOOL rememberfocus=[[NSUserDefaults standardUserDefaults] boolForKey:XeeRememberFocusKey];
+	CGFloat savedzoom=[[NSUserDefaults standardUserDefaults] floatForKey:XeeSavedZoomKey];
 
-    float imgWidthInPoints = (float)[currimage width];
-    float imgHeightInPoints = (float)[currimage height];
+    CGFloat imgWidthInPoints = (CGFloat)[currimage width];
+    CGFloat imgHeightInPoints = (CGFloat)[currimage height];
     
     // Retina Support
     NSScreen *currentScreen = [imageview.window screen];
@@ -668,10 +671,10 @@ static NSMutableArray *controllers=nil;
         imgHeightInPoints/=scaleFactor;
     }
     
-	float horiz_zoom=maxsize.width/imgWidthInPoints;
-	float vert_zoom=maxsize.height/imgHeightInPoints;
+	CGFloat horiz_zoom=maxsize.width/imgWidthInPoints;
+	CGFloat vert_zoom=maxsize.height/imgHeightInPoints;
     
-	float min_zoom=fminf(horiz_zoom,vert_zoom);
+	CGFloat min_zoom=fmin(horiz_zoom,vert_zoom);
 
 	if(remember) zoom=savedzoom;
 	else zoom=1;
@@ -970,7 +973,7 @@ static NSMutableArray *controllers=nil;
 {
 	int count=[source numberOfImages];
 	int curr=[source indexOfCurrentImage];
-	BOOL wrap=[[NSUserDefaults standardUserDefaults] boolForKey:@"wrapImageBrowsing"];
+	BOOL wrap=[[NSUserDefaults standardUserDefaults] boolForKey:XeeWrapImageBrowsingKey];
 
 	if(action==@selector(toggleStatusBar:)) return fullscreenwindow?NO:YES;
 
@@ -1242,7 +1245,7 @@ static NSMutableArray *controllers=nil;
 
 -(void)autoFullScreen
 {
-	if([[NSUserDefaults standardUserDefaults] boolForKey:@"autoFullscreen"])
+	if([[NSUserDefaults standardUserDefaults] boolForKey:XeeAutoFullscreenKey])
 	{
 		[self fullScreen:nil];
 		autofullscreen=YES;

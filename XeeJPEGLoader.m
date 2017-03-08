@@ -8,6 +8,7 @@
 #import "XeeIPTCParser.h"
 #import "XeeXMPParser.h"
 #import "XeeDuckyParser.h"
+#import "XeePrefKeys.h"
 
 #import <XADMaster/CSMemoryHandle.h>
 #import <XADMaster/CSMultiHandle.h>
@@ -622,7 +623,7 @@
 
 	if(!thumbonly||!thumbhandle)
 	{
-		if([[NSUserDefaults standardUserDefaults] boolForKey:@"jpegYUV"]
+		if([[NSUserDefaults standardUserDefaults] boolForKey:XeeJpegYUVKey]
 		&&cinfo.jpeg_color_space==JCS_YCbCr&&cinfo.comp_info[0].h_samp_factor==2
 		&&(cinfo.comp_info[0].v_samp_factor==2||cinfo.comp_info[0].v_samp_factor==1)
 		&&cinfo.comp_info[1].h_samp_factor==1&&cinfo.comp_info[1].v_samp_factor==1

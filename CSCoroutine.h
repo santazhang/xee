@@ -23,7 +23,7 @@
 +(void)setCurrentCoroutine:(CSCoroutine *)curr;
 +(void)returnFromCurrent;
 
--(id)initWithTarget:(id)targetobj stackSize:(size_t)stackbytes;
+-(instancetype)initWithTarget:(id)targetobj stackSize:(size_t)stackbytes;
 -(void)dealloc;
 
 -(void)switchTo;

@@ -32,11 +32,14 @@
 #import "XeeImageIOSaver.h"
 #import "XeeLosslessSaver.h"
 #import "XeeExperimentalImage1Saver.h"
+#import "XeePrefKeys.h"
+#import "XeeControllerFileActions.h"
 
 
 
 XeeDelegate *maindelegate=nil;
 BOOL finderlaunch;
+NSString *XeeRefreshImageNotification = @"XeeRefreshImageNotification";
 
 
 @implementation XeeDelegate
@@ -99,7 +102,7 @@ BOOL finderlaunch;
 	[XeeImageSaver registerSaverClass:[XeeSGISaver class]];
 	[XeeImageSaver registerSaverClass:[XeeExperimentalImage1Saver class]];
 
-	[[antialiasmenu itemWithTag:[[NSUserDefaults standardUserDefaults] integerForKey:@"antialiasQuality"]] setState:NSOnState];
+	[[antialiasmenu itemWithTag:[[NSUserDefaults standardUserDefaults] integerForKey:XeeAntialiasQualityKey]] setState:NSOnState];
 
 	CSKeyboardShortcuts *shortcuts=[CSKeyboardShortcuts defaultShortcuts];
 
@@ -292,7 +295,7 @@ BOOL finderlaunch;
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
 {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:@"quitOnClose"];
+    return [[NSUserDefaults standardUserDefaults] boolForKey:XeeQuitOnCloseKey];
 }
 
 -(BOOL)application:(NSApplication *)app openFile:(NSString *)filename
@@ -396,10 +399,11 @@ BOOL finderlaunch;
 	[types addObjectsFromArray:[XeeArchiveSource fileTypes]];
 
 	NSOpenPanel *panel=[NSOpenPanel openPanel];
+	panel.allowedFileTypes = types;
 
 	[panel setCanChooseDirectories:YES];
 
-	int res=[panel runModalForTypes:types];
+	NSInteger res=[panel runModal];
 
 	if(res==NSOKButton)
 	{
@@ -569,7 +573,7 @@ BOOL finderlaunch;
 
 -(void)updateSlideshowMenu:(NSMenu *)menu
 {
-	int slidedelay=[[NSUserDefaults standardUserDefaults] integerForKey:@"slideshowDelay"];
+	int slidedelay=[[NSUserDefaults standardUserDefaults] integerForKey:XeeSlideshowDelayKey];
 
 	BOOL found=NO;
 
@@ -725,13 +729,13 @@ BOOL finderlaunch;
 		[item setState:item==sender?NSOnState:NSOffState];
 	}
 
-	[[NSNotificationCenter defaultCenter] postNotificationName:@"XeeRefreshImageNotification" object:nil];
+	[[NSNotificationCenter defaultCenter] postNotificationName:XeeRefreshImageNotification object:nil];
 }
 
 -(IBAction)setUpscaling:(id)sender
 {
-	//[[NSUserDefaults standardUserDefaults] setBoolean:[sender state]==NSOnState forKey:@"upsampleImage"];
-	[[NSNotificationCenter defaultCenter] postNotificationName:@"XeeRefreshImageNotification" object:nil];
+	//[[NSUserDefaults standardUserDefaults] setBoolean:[sender state]==NSOnState forKey:@XeeUpsampleImageKey];
+	[[NSNotificationCenter defaultCenter] postNotificationName:XeeRefreshImageNotification object:nil];
 }
 -(IBAction)alwaysFullscreenStub:(id)sender { }
 
@@ -828,6 +832,7 @@ BOOL finderlaunch;
 		@"jpeg.icns",@"pcx.icns",@"pic.icns",@"pict.icns",
 		@"png.icns",@"pntg.icns",@"psd.icns",@"qtif.icns",
 		@"sgi.icns",@"tga.icns",@"tiff.icns",@"xbm.icns",
+		@"Xeei.icns",
 	nil];
 }
 

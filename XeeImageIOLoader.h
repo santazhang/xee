@@ -22,6 +22,4 @@
 -(NSArray *)convertCGProperties:(NSDictionary *)cgproperties;
 -(NSArray *)convertCGPropertyValues:(NSDictionary *)cgproperties imageIOBundle:(NSBundle *)imageio;
 
-+(NSArray *)fileTypes;
-
 @end

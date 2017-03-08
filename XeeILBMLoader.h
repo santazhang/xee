@@ -50,8 +50,6 @@
 -(void)setAnimating:(BOOL)animating;
 -(BOOL)animating;
 
-+(NSArray *)fileTypes;
-
 @end
 
 

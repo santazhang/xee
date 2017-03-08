@@ -47,7 +47,7 @@
 #include "exif.h"
 #include "exifint.h"
 
-#define DEGREE "°"
+#define DEGREE "\xB0"
 
 
 /* Speed. */

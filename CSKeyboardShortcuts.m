@@ -1216,6 +1216,7 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 
 	KeyboardLayoutRef layout;
 	const void *uchr,*kchr;
+	// TODO: use TISCopyCurrentKeyboardLayoutInputSource
 	KLGetCurrentKeyboardLayout(&layout);
 	KLGetKeyboardLayoutProperty(layout,kKLuchrData,&uchr);
 	KLGetKeyboardLayoutProperty(layout,kKLKCHRData,&kchr);

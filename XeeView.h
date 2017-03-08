@@ -4,6 +4,7 @@
 #import <OpenGL/GLu.h>
 
 @class XeeImage,XeeController,XeeTool;
+@protocol XeeViewDelegate;
 
 @interface XeeView:NSOpenGLView
 {
@@ -59,20 +60,16 @@
 -(void)stopScrolling;
 -(void)scroll:(NSTimer *)timer;
 
--(NSPoint)focus;
--(void)setFocus:(NSPoint)focus;
+@property NSPoint focus;
 -(void)clampCoords;
 
--(NSRect)imageRect;
--(XeeMatrix)imageToViewTransformMatrix;
--(XeeMatrix)viewToImageTransformMatrix;
--(id)delegate;
--(XeeImage *)image;
--(XeeTool *)tool;
+@property (readonly) NSRect imageRect;
+@property (readonly) XeeMatrix imageToViewTransformMatrix;
+@property (readonly) XeeMatrix viewToImageTransformMatrix;
+@property (assign) id<XeeViewDelegate> delegate;
+@property (retain) XeeImage *image;
+@property (retain) XeeTool *tool;
 
--(void)setDelegate:(id)newdelegate;
--(void)setImage:(XeeImage *)img;
--(void)setTool:(XeeTool *)newtool;
 -(void)setImageSize:(NSSize)size;
 -(void)setDrawResizeCorner:(BOOL)draw;
 -(void)setCursorShouldHide:(BOOL)shouldhide;
@@ -83,8 +80,8 @@
 
 @end
 
-@interface NSObject (XeeViewDelegate)
-
+@protocol XeeViewDelegate <NSObject>
+@optional
 -(void)xeeView:(XeeView *)view imageDidChange:(XeeImage *)image;
 -(void)xeeView:(XeeView *)view imageSizeDidChange:(XeeImage *)image;
 -(void)xeeView:(XeeView *)view imagePropertiesDidChange:(XeeImage *)image;

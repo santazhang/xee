@@ -1,12 +1,13 @@
 #import <Cocoa/Cocoa.h>
 
 @class XeeImage,XeeController,XeeSLPages,XeeSimpleLayout;
+@class XeeImageSaver;
 
 @interface XeeSavePanel:NSSavePanel
 {
 	XeeImage *image;
 	XeeController *controller;
-	NSArray *savers;
+	NSArray<XeeImageSaver*> *savers;
 	XeeSLPages *formats;
 	XeeSimpleLayout *view;
 
@@ -21,7 +22,7 @@
 -(id)initWithImage:(XeeImage *)img controller:(XeeController *)cont;
 -(void)dealloc;
 
--(void)savePanelDidEnd:(NSSavePanel *)sheet returnCode:(int)res contextInfo:(void *)info;
+-(void)savePanelDidEnd:(NSSavePanel *)sheet returnCode:(NSInteger)res contextInfo:(void *)info;
 -(void)xeeSLUpdated:(XeeSimpleLayout *)alsoview;
 
 -(NSString *)updateExtension:(NSString *)filename;

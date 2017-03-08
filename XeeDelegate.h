@@ -1,6 +1,7 @@
 #import <Cocoa/Cocoa.h>
 #import "XeeFSRef.h"
 
+extern NSString *XeeRefreshImageNotification;
 @class XeeController,XeeKeyboardShortcuts,XeePropertiesController,CSAction;
 
 @interface XeeDelegate:NSObject

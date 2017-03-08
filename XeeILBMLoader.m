@@ -1,5 +1,6 @@
 #import "XeeILBMLoader.h"
 #import "XeeIFFHandle.h"
+#import "XeePrefKeys.h"
 
 
 
@@ -201,11 +202,11 @@
 				blue:(float)XeeGetBFromARGB8(col)/255.0
 				alpha:1]];
 
-				if(masking==1&&[[NSUserDefaults standardUserDefaults] boolForKey:@"ilbmUseMask"])
+				if(masking==1&&[[NSUserDefaults standardUserDefaults] boolForKey:XeeILBMUseMaskKey])
 				{
 					transparency=YES;
 				}
-				else if(masking==2&&[[NSUserDefaults standardUserDefaults] boolForKey:@"ilbmUseTransparentColour"])
+				else if(masking==2&&[[NSUserDefaults standardUserDefaults] boolForKey:XeeILBMUseTransparentColorKey])
 				{
 					palette[trans]&=COLOR_MASK;
 					transparency=YES;
@@ -460,7 +461,7 @@
 		}
 	}
 
-	if(masking==1&&[[NSUserDefaults standardUserDefaults] boolForKey:@"ilbmUseMask"])
+	if(masking==1&&[[NSUserDefaults standardUserDefaults] boolForKey:XeeILBMUseMaskKey])
 	{
 		for(int y=0;y<realheight;y++)
 		for(int sub_y=0;sub_y<yscale;sub_y++)

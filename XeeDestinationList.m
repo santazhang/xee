@@ -3,6 +3,7 @@
 #import "XeeDelegate.h"
 #import "XeeGraphicsStuff.h"
 #import "CSKeyboardShortcuts.h"
+#import "XeeControllerFileActions.h"
 
 #import <Carbon/Carbon.h>
 

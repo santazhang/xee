@@ -4,6 +4,10 @@
 #import <OpenGL/gl.h>
 #import <sys/time.h>
 
+@interface NSEvent (DeviceDelta)
+-(CGFloat)deviceDeltaX;
+-(CGFloat)deviceDeltaY;
+@end
 
 
 //

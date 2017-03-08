@@ -1,5 +1,6 @@
 #import "XeeControllerNavigationActions.h"
 #import "XeeImageSource.h"
+#import "XeePrefKeys.h"
 
 @implementation XeeController (NavigationActions)
 
@@ -100,7 +101,7 @@
 
 -(IBAction)setSlideshowDelay:(id)sender
 {
-	[[NSUserDefaults standardUserDefaults] setInteger:[sender tag] forKey:@"slideshowDelay"];
+	[[NSUserDefaults standardUserDefaults] setInteger:[sender tag] forKey:XeeSlideshowDelayKey];
 }
 
 -(IBAction)setCustomSlideshowDelay:(id)sender
@@ -111,8 +112,8 @@
 		[nib instantiateNibWithOwner:self topLevelObjects:nil];
 	}
 
-	int delay=[[NSUserDefaults standardUserDefaults] integerForKey:@"slideshowCustomDelay"];
-	if(!delay) delay=[[NSUserDefaults standardUserDefaults] integerForKey:@"slideshowDelay"];
+	NSInteger delay=[[NSUserDefaults standardUserDefaults] integerForKey:XeeSlideshowCustomDelayKey];
+	if(!delay) delay=[[NSUserDefaults standardUserDefaults] integerForKey:XeeSlideshowDelayKey];
 	[delayfield setIntValue:delay];
 
 	if(fullscreenwindow)
@@ -129,8 +130,8 @@
 
 -(IBAction)delayPanelOK:(id)sender
 {
-	[[NSUserDefaults standardUserDefaults] setInteger:[delayfield intValue] forKey:@"slideshowCustomDelay"];
-	[[NSUserDefaults standardUserDefaults] setInteger:[delayfield intValue] forKey:@"slideshowDelay"];
+	[[NSUserDefaults standardUserDefaults] setInteger:[delayfield intValue] forKey:XeeSlideshowCustomDelayKey];
+	[[NSUserDefaults standardUserDefaults] setInteger:[delayfield intValue] forKey:XeeSlideshowDelayKey];
 
 	if(delaysheet) [NSApp endSheet:delaypanel];
 	[delaypanel orderOut:nil];
@@ -147,19 +148,19 @@
 	// Prevent sleeping
 	UpdateSystemActivity(UsrActivity);
 
-	int slideshowdelay=[[NSUserDefaults standardUserDefaults] integerForKey:@"slideshowDelay"];
+	int slideshowdelay=[[NSUserDefaults standardUserDefaults] integerForKey:XeeSlideshowDelayKey];
 	if(++slideshowcount>=slideshowdelay)
 	{
 		slideshowcount=0;
 
-		if([[NSUserDefaults standardUserDefaults] boolForKey:@"randomizeSlideshow"])
+		if([[NSUserDefaults standardUserDefaults] boolForKey:XeeRandomizeSlideshowKey])
 		{
 			[source pickNextImageAtRandom];
 		}
 		else
 		{
 			if([source indexOfCurrentImage]<[source numberOfImages]-1
-			||[[NSUserDefaults standardUserDefaults] boolForKey:@"wrapImageBrowsing"])
+			||[[NSUserDefaults standardUserDefaults] boolForKey:XeeWrapImageBrowsingKey])
 			[source skip:1];
 			else
 			{

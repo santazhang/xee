@@ -1,6 +1,7 @@
 #import "XeeImage.h"
 #import "XeeMultiImage.h"
 #import "XeeStringAdditions.h"
+#import "XeePrefKeys.h"
 
 #import <pthread.h>
 
@@ -366,7 +367,7 @@
 
 -(NSColor *)backgroundColor
 {
-	if(!back) back=[[NSUnarchiver unarchiveObjectWithData:[[NSUserDefaults standardUserDefaults] dataForKey:@"defaultImageBackground"]] retain];
+	if(!back) back=[[NSUnarchiver unarchiveObjectWithData:[[NSUserDefaults standardUserDefaults] dataForKey:XeeDefaultImageBackgroundKey]] retain];
 
 	return back;
 }
@@ -389,7 +390,7 @@
 -(BOOL)isTransformed
 {
 	if([self isCropped]) return YES;
-	if([[NSUserDefaults standardUserDefaults] boolForKey:@"useOrientation"])
+	if([[NSUserDefaults standardUserDefaults] boolForKey:XeeUseOrientationKey])
 	{
 		XeeTransformation corr=[self correctOrientation];
 		if(corr) return corr==[self orientation];
@@ -460,7 +461,7 @@
 	correctorientation=transformation;
 
 	if(correctorientation)
-	if([[NSUserDefaults standardUserDefaults] boolForKey:@"useOrientation"])
+	if([[NSUserDefaults standardUserDefaults] boolForKey:XeeUseOrientationKey])
 	orientation=correctorientation;
 }
 
@@ -488,7 +489,7 @@
 
 -(void)resetTransformations
 {
-	if([[NSUserDefaults standardUserDefaults] boolForKey:@"useOrientation"]) orientation=correctorientation;	
+	if([[NSUserDefaults standardUserDefaults] boolForKey:XeeUseOrientationKey]) orientation=correctorientation;
 	else orientation=XeeNoTransformation;
 
 	crop_x=crop_y=0;

@@ -4,11 +4,12 @@
 #import "XeeTool.h"
 #import "XeeGraphicsStuff.h"
 #import "CSKeyboardShortcuts.h"
+#import "XeePrefKeys.h"
 
-#import <OpenGL/GL.h>
-#import <OpenGL/GLu.h>
-#import <Carbon/Carbon.h>
-#import <ApplicationServices/ApplicationServices.h>
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#include <Carbon/Carbon.h>
+#include <ApplicationServices/ApplicationServices.h>
 
 GLuint make_resize_texture();
 
@@ -138,8 +139,8 @@ GLuint make_resize_texture();
 		bounds=imgrect;
 
 		NSString *key;
-		if([[self window] isKindOfClass:[XeeFullScreenWindow class]]) key=@"fullScreenBackground";
-		else key=@"windowBackground";
+		if([[self window] isKindOfClass:[XeeFullScreenWindow class]]) key=XeeFullScreenBackgroundKey;
+		else key=XeeWindowBackgroundKey;
 
 		NSColor *clear=[NSUnarchiver unarchiveObjectWithData:[[NSUserDefaults standardUserDefaults] dataForKey:key]];
 		[clear glSetForClear];
@@ -292,9 +293,9 @@ GLuint make_resize_texture();
 
 -(void)scrollWheel:(NSEvent *)event
 {
-	if([[NSUserDefaults standardUserDefaults] integerForKey:@"scrollWheelFunction"]==1)
+	if([[NSUserDefaults standardUserDefaults] integerForKey:XeeScrollWheelFunctionKey]==1)
 	{
-		float dx,dy;
+		CGFloat dx,dy;
 		if(IsSmoothScrollEvent(event))
 		{
 			dx=[event deviceDeltaX];
@@ -618,7 +619,7 @@ static const void *XeeCopyGLGetBytePointer(void *bitmap) { return bitmap; }
     CGDataProviderDirectCallbacks callbacks={0,XeeCopyGLGetBytePointer,NULL,NULL,NULL};
     CGDataProviderRef provider=CGDataProviderCreateDirect(bitmap,bytesperrow*height,&callbacks);
     CGColorSpaceRef cs=CGColorSpaceCreateDeviceRGB();
-    CGImageRef cgimage=CGImageCreate(width,height,8,32,bytesperrow,cs,kCGImageAlphaNoneSkipFirst,provider,NULL,NO,kCGRenderingIntentDefault);
+    CGImageRef cgimage=CGImageCreate(width,height,8,32,bytesperrow,cs,(CGBitmapInfo)kCGImageAlphaNoneSkipFirst,provider,NULL,NO,kCGRenderingIntentDefault);
     
     CGContextRef gc=[[NSGraphicsContext currentContext] graphicsPort];
     CGContextDrawImage(gc,CGRectMake(0,0,width,height),cgimage);
@@ -668,7 +669,7 @@ static const void *XeeCopyGLGetBytePointer(void *bitmap) { return bitmap; }
 #define C2 0x8a222222
 #define C3 0x8bd5d5d5
 
-static uint32_t resize_data[256]=
+static const uint32_t resize_data[256]=
 {
 	C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,
 	C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,C0,

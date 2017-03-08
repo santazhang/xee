@@ -1,4 +1,5 @@
 #import "XeeTileImage.h"
+#import "XeePrefKeys.h"
 
 
 
@@ -157,7 +158,7 @@ glInternalFormat:(int)glintformat glFormat:(int)glformat glType:(int)gltype
 	{
 		context=[[NSOpenGLContext currentContext] retain];
 
-		if(![[NSUserDefaults standardUserDefaults] boolForKey:@"force2D"]&&
+		if(![[NSUserDefaults standardUserDefaults] boolForKey:XeeForce2DKey]&&
 		gluCheckExtension((unsigned char *)"GL_EXT_texture_rectangle",glGetString(GL_EXTENSIONS)))
 		[self allocTexturesRect];
 		else
@@ -186,7 +187,7 @@ glInternalFormat:(int)glintformat glFormat:(int)glformat glType:(int)gltype
 	if((x_scale<1||y_scale<1)&&textarget==GL_TEXTURE_RECTANGLE_EXT&&XeeSpanLength(uploaded)==height&&!lowquality)
 	{
 		XeeSampleSet *set=nil;
-		switch([[NSUserDefaults standardUserDefaults] integerForKey:@"antialiasQuality"])
+		switch([[NSUserDefaults standardUserDefaults] integerForKey:XeeAntialiasQualityKey])
 		{
 			case 1: set=[XeeSampleSet sampleSetWithCount:4 distribution:@"bestCandidate" filter:@"box"]; break;
 			case 2: set=[XeeSampleSet sampleSetWithCount:12 distribution:@"bestCandidate" filter:@"box"]; break;
@@ -487,7 +488,7 @@ glInternalFormat:(int)glintformat glFormat:(int)glformat glType:(int)gltype
 
 -(GLuint)magFilter
 {
-	if(![[NSUserDefaults standardUserDefaults] boolForKey:@"upsampleImage"]) return GL_NEAREST;
+	if(![[NSUserDefaults standardUserDefaults] boolForKey:XeeUpsampleImageKey]) return GL_NEAREST;
 	else return GL_LINEAR;
 }
 

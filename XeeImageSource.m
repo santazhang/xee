@@ -1,4 +1,5 @@
 #import "XeeImageSource.h"
+#import "XeePrefKeys.h"
 
 #import <pthread.h>
 
@@ -14,7 +15,7 @@ NSString *XeeErrorDomain=@"XeeErrorDomain";
 	{
 		delegate=nil;
 		icon=nil;
-		sortorder=[[NSUserDefaults standardUserDefaults] integerForKey:@"defaultSortingOrder"];
+		sortorder=[[NSUserDefaults standardUserDefaults] integerForKey:XeeDefaultSortingOrderKey];
 
 		actionsblocked=NO;
 		pendingimagechange=NO;

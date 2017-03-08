@@ -1,10 +1,13 @@
 #import <Cocoa/Cocoa.h>
 
 #import "XeeFSRef.h"
+#import "XeeImageSource.h"
 
-#define XeeNoMode 0
-#define XeeMoveMode 1
-#define XeeCopyMode 2
+typedef NS_ENUM(int, XeeDrawerMode) {
+	XeeNoMode = 0,
+	XeeMoveMode = 1,
+	XeeCopyMode = 2
+};
 
 #define XeeDrawerEdgeWidth 6.0
 
@@ -14,16 +17,16 @@
 
 
 
-@interface XeeController:NSObject
+@interface XeeController:NSObject <XeeImageSourceDelegate>
 {
 	XeeImageSource *source;
 	XeeImage *currimage;
 
-	float zoom;
-	float touchrotation,touchrotateleftpoint,touchrotaterightpoint;
-	int window_focus_x,window_focus_y;
+	CGFloat zoom;
+	CGFloat touchrotation,touchrotateleftpoint,touchrotaterightpoint;
+	NSInteger window_focus_x,window_focus_y;
 	BOOL blocked,awake,autofullscreen,delaysheet;
-	int drawer_mode;
+	XeeDrawerMode drawer_mode;
 
 	XeeMoveTool *movetool;
 	XeeCropTool *croptool;

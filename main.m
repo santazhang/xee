@@ -1,4 +1,5 @@
 #import <Cocoa/Cocoa.h>
+#import "XeePrefKeys.h"
 
 extern BOOL finderlaunch;
 
@@ -6,34 +7,34 @@ int main(int argc, char *argv[])
 {
 	NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
 	[[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithObjectsAndKeys:
-		@1,@"windowOpening",
-		@1,@"windowResizing",
-		@1,@"jpegYUV",
-		@1,@"shrinkToFit",
-		@0,@"enlargeToFit",
-		@0,@"useMipMapping",
-		@NO,@"ilbmUseTransparentColor",
-		@NO,@"ilbmUseMask",
-		@YES,@"pngStrip16Bit",
-		@NO,@"force2D",
-		@2,@"antialiasQuality",
-		@NO,@"useOrientation",
-		@NO,@"rememberZoom",
-		@NO,@"rememberFocus",
-		@1,@"savedZoom",
-		@1,@"scrollWheelFunction",
-		@NO,@"wrapImageBrowsing",
-		@NO,@"autoFullscreen",
-		@NO,@"randomizeSlideshow",
-		@5,@"slideshowDelay",
-		@0,@"slideshowCustomDelay",
-		@0,@"defaultSortingOrder",
-		@YES,@"openFilePanelOnLaunch",
-		@NO,@"upsampleImage",
-		@NO,@"quitOnClose",
-		[NSArchiver archivedDataWithRootObject:[NSColor whiteColor]],@"defaultImageBackground",
-		[NSArchiver archivedDataWithRootObject:[NSColor grayColor]],@"windowBackground",
-		[NSArchiver archivedDataWithRootObject:[NSColor grayColor]],@"fullScreenBackground",
+		@1,XeeWindowOpeningKey,
+		@1,XeeWindowResizingKey,
+		@YES,XeeJpegYUVKey,
+		@1,XeeShrinkToFitKey,
+		@0,XeeEnlargeToFitKey,
+		@0,XeeUseMipMappingKey,
+		@NO,XeeILBMUseTransparentColorKey,
+		@NO,XeeILBMUseMaskKey,
+		@YES,XeePNGStrip16BitKey,
+		@NO,XeeForce2DKey,
+		@2,XeeAntialiasQualityKey,
+		@NO,XeeUseOrientationKey,
+		@NO,XeeRememberZoomKey,
+		@NO,XeeRememberFocusKey,
+		@1,XeeSavedZoomKey,
+		@1,XeeScrollWheelFunctionKey,
+		@NO,XeeWrapImageBrowsingKey,
+		@NO,XeeAutoFullscreenKey,
+		@NO,XeeRandomizeSlideshowKey,
+		@5,XeeSlideshowDelayKey,
+		@0,XeeSlideshowCustomDelayKey,
+		@0,XeeDefaultSortingOrderKey,
+		@YES,XeeOpenFilePanelOnLaunchKey,
+		@NO,XeeUpsampleImageKey,
+		@NO,XeeQuitOnCloseKey,
+		[NSArchiver archivedDataWithRootObject:[NSColor whiteColor]],XeeDefaultImageBackgroundKey,
+		[NSArchiver archivedDataWithRootObject:[NSColor grayColor]],XeeWindowBackgroundKey,
+		[NSArchiver archivedDataWithRootObject:[NSColor grayColor]],XeeFullScreenBackgroundKey,
 	nil]];
 
 	// Include the system sound prefs on Leopard

@@ -1,4 +1,5 @@
 
+#include <CoreFoundation/CoreFoundation.h>
 
 //
 // Endian integer types
@@ -96,20 +97,19 @@ void XeeGLMultMatrix(XeeMatrix m);
 //
 // Transformations
 //
+typedef CF_ENUM(unsigned int, XeeTransformation) {
+	XeeUnknownTransformation = 0,
+	XeeNoTransformation = 1,
+	XeeMirrorHorizontalTransformation = 2,
+	XeeRotate180Transformation = 3,
+	XeeMirrorVerticalTransformation = 4,
+	XeeTransposeTransfromation = 5, // uncertain
+	XeeRotateCWTransformation = 6,
+	XeeTransverseTransformation = 7, // uncertain
+	XeeRotateCCWTransformation = 8,
 
-#define XeeUnknownTransformation 0
-#define XeeNoTransformation 1
-#define XeeMirrorHorizontalTransformation 2
-#define XeeRotate180Transformation 3
-#define XeeMirrorVerticalTransformation 4
-#define XeeTransposeTransfromation 5 // uncertain
-#define XeeRotateCWTransformation 6
-#define XeeTransverseTransformation 7 // uncertain
-#define XeeRotateCCWTransformation 8
-
-#define XeeFirstFlippedTransformation 5
-
-typedef unsigned int XeeTransformation;
+	XeeFirstFlippedTransformation = 5
+};
 
 static inline BOOL XeeTransformationIsFlipped(XeeTransformation trans) { return trans>=XeeFirstFlippedTransformation; }
 static inline BOOL XeeTransformationIsNonTrivial(XeeTransformation trans) { return trans!=XeeUnknownTransformation&&trans!=XeeNoTransformation; }

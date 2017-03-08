@@ -1,9 +1,11 @@
 #import <Cocoa/Cocoa.h>
 
-#define XeeDefaultSortOrder 0
-#define XeeNameSortOrder 1
-#define XeeDateSortOrder 2
-#define XeeSizeSortOrder 3
+typedef NS_ENUM(NSInteger, XeeSortOrder) {
+	XeeDefaultSortOrder = 0,
+	XeeNameSortOrder = 1,
+	XeeDateSortOrder = 2,
+	XeeSizeSortOrder = 3
+};
 
 extern NSString *XeeErrorDomain;
 

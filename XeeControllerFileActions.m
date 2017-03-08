@@ -19,7 +19,7 @@
 	NSString *filename=[window representedFilename];
 	if(!filename) return;
 
-	[[NSWorkspace sharedWorkspace] selectFile:filename inFileViewerRootedAtPath:nil];
+	[[NSWorkspace sharedWorkspace] selectFile:filename inFileViewerRootedAtPath:@""];
 }
 
 
@@ -86,7 +86,7 @@
 	CGColorSpaceRef cs = CGColorSpaceCreateDeviceRGB();
 	CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, bitmap, h*bytesperrow, NULL);
 	CGImageRef cgimage = CGImageCreate(w, h, 8, sizeof(uint32_t)*8, bytesperrow, cs,
-									   kCGImageAlphaNoneSkipFirst, provider, NULL, NO, kCGRenderingIntentDefault);
+									   (CGBitmapInfo)kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Host, provider, NULL, NO, kCGRenderingIntentDefault);
 	
 	NSImage *image = [[NSImage alloc] initWithCGImage:cgimage size:[imageview imageRect].size];
 	
@@ -100,8 +100,8 @@
 	[pi setBottomMargin:0];
 	[pi setRightMargin:0];
 	
-	if (w > h) [pi setOrientation:NSLandscapeOrientation];
-	else [pi setOrientation:NSPortraitOrientation];
+	if (w > h) [pi setOrientation:NSPaperOrientationLandscape];
+	else [pi setOrientation:NSPaperOrientationPortrait];
 	
 	NSImageView *view = [[NSImageView alloc] init];
 	[view setImage:image];
@@ -272,8 +272,9 @@
 
 		[source setActionsBlocked:YES];
 
-		[panel beginSheetForDirectory:nil file:nil types:nil modalForWindow:window modalDelegate:self
-		didEndSelector:@selector(destinationPanelEnd:returnCode:contextInfo:) contextInfo:NULL];
+		[panel beginSheetModalForWindow:window completionHandler:^(NSInteger result) {
+			[self destinationPanelEnd:panel returnCode:result contextInfo:NULL];
+		}];
 	}
 	else [self transferToDestination:index mode:drawer_mode];
 }
@@ -282,7 +283,7 @@
 {
 	if(res==NSOKButton)
 	{
-		NSString *destdir=[[panel filenames] objectAtIndex:0];
+		NSString *destdir=[[[panel URLs] objectAtIndex:0] path];
 		NSString *destination=[destdir stringByAppendingPathComponent:[source filenameOfCurrentImage]];
 
 		[XeeDestinationView suggestInsertion:destdir];

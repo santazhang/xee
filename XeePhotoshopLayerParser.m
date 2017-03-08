@@ -106,6 +106,8 @@
 		int bytesleft=extralen;
 
 		NSString *layername=nil;
+		NSString *adjustmentname=nil;
+		NSArray *typetoolfonts=nil,*typetooltext=nil;
 
 		if(bytesleft<4) goto outofbytes;
 		uint32_t masksize=[fh readUInt32BE]; bytesleft-=4;
@@ -125,8 +127,6 @@
 		if(bytesleft<padbytes) goto outofbytes;
 		[fh skipBytes:padbytes]; bytesleft-=padbytes;
 
-		NSString *adjustmentname=nil;
-		NSArray *typetoolfonts=nil,*typetooltext=nil;
 
 		while(bytesleft>=12)
 		{

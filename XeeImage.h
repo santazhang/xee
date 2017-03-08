@@ -107,8 +107,8 @@
 -(BOOL)transparent;
 -(NSColor *)backgroundColor;
 
--(XeeTransformation)orientation;
--(XeeTransformation)correctOrientation;
+@property (readonly) XeeTransformation orientation;
+@property (readonly) XeeTransformation correctOrientation;
 -(NSRect)croppingRect;
 -(NSRect)rawCroppingRect;
 -(BOOL)isTransformed;

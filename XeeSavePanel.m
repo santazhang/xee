@@ -26,16 +26,18 @@
 		NSString *path=[image filename];
 		NSString *directory=[path stringByDeletingLastPathComponent];
 		NSString *filename=[panel updateExtension:[path lastPathComponent]];
+		panel.directoryURL = [NSURL fileURLWithPath:directory];
+		panel.nameFieldStringValue = filename;
 
 		if([controller fullScreenWindow])
 		{
-			[panel savePanelDidEnd:panel returnCode:[panel runModalForDirectory:directory file:filename] contextInfo:NULL];
+			[panel savePanelDidEnd:panel returnCode:[panel runModal] contextInfo:NULL];
 		}
 		else
 		{
-			[panel beginSheetForDirectory:directory file:filename modalForWindow:[controller window]
-			modalDelegate:panel didEndSelector:@selector(savePanelDidEnd:returnCode:contextInfo:)
-			contextInfo:nil];
+			[panel beginSheetModalForWindow:[controller window] completionHandler:^(NSInteger result) {
+				[panel savePanelDidEnd:panel returnCode:result contextInfo:NULL];
+			}];
 		}
 	}
 }
@@ -109,7 +111,7 @@
 	return [super makeFirstResponder:responder];
 }
 
--(void)savePanelDidEnd:(NSSavePanel *)sheet returnCode:(int)res contextInfo:(void *)info
+-(void)savePanelDidEnd:(NSSavePanel *)sheet returnCode:(NSInteger)res contextInfo:(void *)info
 {
 	if(res==NSOKButton)
 	{
@@ -124,10 +126,10 @@
 
 -(void)saveTask
 {
-	NSString *filename=[self filename];
+	NSString *filename=[[self URL] path];
 
 	int page=[formats value];
-	if([(XeeImageSaver *)[savers objectAtIndex:page] save:filename])
+	if([[savers objectAtIndex:page] save:filename])
 	{
 		NSApplication *app=[NSApplication sharedApplication];
 		[[app delegate] application:app openFile:filename];

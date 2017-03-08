@@ -22,6 +22,6 @@
 -(IBAction)delayPanelCancel:(id)sender;
 
 -(void)slideshowStep:(NSTimer *)timer;
--(BOOL)isSlideshowRunning;
+@property (readonly, getter=isSlideshowRunning) BOOL slideshowRunning;
 
 @end
