@@ -2,18 +2,17 @@
 
 
 
-@interface XeeMultiImage:XeeImage
+@interface XeeMultiImage:XeeImage <XeeImageDelegate>
 {
 	NSMutableArray *subimages;
-	int currindex;
+	NSInteger currindex;
 	XeeImage *currloading;
 }
 
--(id)init;
--(void)dealloc;
+-(instancetype)init;
 
 -(void)addSubImage:(XeeImage *)subimage;
--(void)addSubImages:(NSArray *)array;
+-(void)addSubImages:(NSArray<XeeImage*> *)array;
 
 -(void)xeeImageLoadingProgress:(XeeImage *)image;
 -(void)xeeImageDidChange:(XeeImage *)image;
@@ -29,36 +28,32 @@
 
 -(void)runLoaderOnSubImage:(XeeImage *)image;
 
--(int)frames;
--(void)setFrame:(int)frame;
--(int)frame;
+@property (readonly) NSInteger frames;
+@property (nonatomic) NSInteger frame;
 
 -(NSRect)updatedAreaInRect:(NSRect)rect;
 -(void)drawInRect:(NSRect)rect bounds:(NSRect)bounds lowQuality:(BOOL)lowquality;
 
--(CGImageRef)createCGImage;
--(int)losslessSaveFlags;
--(NSString *)losslessFormat;
--(NSString *)losslessExtension;
--(BOOL)losslessSaveTo:(NSString *)path flags:(int)flags;
+-(CGImageRef)createCGImage CF_RETURNS_RETAINED;
+@property (readonly) XeeSaveFormatFlags losslessSaveFlags;
+@property (readonly, copy) NSString *losslessFormat;
+@property (readonly, copy) NSString *losslessExtension;
+-(BOOL)losslessSaveTo:(NSString *)path flags:(XeeSaveFormatFlags)flags;
 
--(int)width;
--(int)height;
--(int)fullWidth;
--(int)fullHeight;
--(NSString *)depth;
--(NSImage *)depthIcon;
--(BOOL)transparent;
--(NSColor *)backgroundColor;
--(NSRect)croppingRect;
--(XeeTransformation)orientation;
--(XeeTransformation)correctOrientation;
+@property (readonly) int width;
+@property (readonly) int height;
+@property (readonly) int fullWidth;
+@property (readonly) int fullHeight;
+//@property (readonly, copy) NSString *depth;
+//@property (readonly, retain) NSImage *depthIcon;
+@property (readonly) BOOL transparent;
+@property (readwrite, retain, nonatomic) NSColor *backgroundColor;
+@property (nonatomic) NSRect croppingRect;
+@property (nonatomic) XeeTransformation orientation;
+@property (nonatomic) XeeTransformation correctOrientation;
 
 -(NSArray *)properties;
 
--(void)setOrientation:(XeeTransformation)trans;
--(void)setCorrectOrientation:(XeeTransformation)trans;
--(void)setCroppingRect:(NSRect)rect;
 -(void)resetTransformations;
 
 @end

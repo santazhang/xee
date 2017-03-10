@@ -114,7 +114,7 @@
 
 	NSInteger delay=[[NSUserDefaults standardUserDefaults] integerForKey:XeeSlideshowCustomDelayKey];
 	if(!delay) delay=[[NSUserDefaults standardUserDefaults] integerForKey:XeeSlideshowDelayKey];
-	[delayfield setIntValue:delay];
+	[delayfield setIntegerValue:delay];
 
 	if(fullscreenwindow)
 	{
@@ -148,7 +148,7 @@
 	// Prevent sleeping
 	UpdateSystemActivity(UsrActivity);
 
-	int slideshowdelay=[[NSUserDefaults standardUserDefaults] integerForKey:XeeSlideshowDelayKey];
+	NSInteger slideshowdelay=[[NSUserDefaults standardUserDefaults] integerForKey:XeeSlideshowDelayKey];
 	if(++slideshowcount>=slideshowdelay)
 	{
 		slideshowcount=0;

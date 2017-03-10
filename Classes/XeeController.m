@@ -17,7 +17,7 @@
 #import "XeePrefKeys.h"
 #import "XeeControllerFileActions.h"
 
-#import <Carbon/Carbon.h>
+#include <Carbon/Carbon.h>
 
 extern CGFloat XeeZoomLevels[];
 extern NSInteger XeeNumberOfZoomLevels;
@@ -29,6 +29,8 @@ static NSMutableArray *controllers=nil;
 // XeeController
 
 @implementation XeeController
+@synthesize zoom;
+@synthesize image = currimage;
 
 -(id)init
 {
@@ -215,7 +217,7 @@ static NSMutableArray *controllers=nil;
 	{
 		if([self isCropping]) return;
 
-		float deltay=[event deltaY];
+		CGFloat deltay=[event deltaY];
 		if(deltay==0) return;
 
 		if(IsSmoothScrollEvent(event))
@@ -224,8 +226,8 @@ static NSMutableArray *controllers=nil;
 			static NSTimeInterval prevtime=0;
 			NSTimeInterval currtime=[event timestamp];
 
-			static float lastdistance=0;
-			static float distance=0;
+			static CGFloat lastdistance=0;
+			static CGFloat distance=0;
 
 			if(currtime-prevtime>delay)
 			{
@@ -292,7 +294,7 @@ static NSMutableArray *controllers=nil;
 
 -(void)swipeWithEvent:(NSEvent *)event
 {
-	float x=[event deltaX];
+	CGFloat x=[event deltaX];
 	if(x>0) [self skipPrev:nil];
 	else if(x<0) [self skipNext:nil];
 }
@@ -368,8 +370,6 @@ static NSMutableArray *controllers=nil;
 -(NSWindow *)window { return window; }
 
 -(XeeFullScreenWindow *)fullScreenWindow { return fullscreenwindow; }
-
--(XeeImage *)image { return currimage; }
 
 -(NSDrawer *)drawer { return drawer; }
 
@@ -559,11 +559,11 @@ static NSMutableArray *controllers=nil;
 	[undo removeAllActions];
 }
 
--(void)setZoom:(float)newzoom
+-(void)setZoom:(CGFloat)newzoom
 {
 	if(!currimage) return;
 
-	NSSize newsize=NSMakeSize(floor(newzoom*(float)[currimage width]+0.5),floor(newzoom*(float)[currimage height]+0.5));
+	NSSize newsize=NSMakeSize(floor(newzoom*(CGFloat)[currimage width]+0.5),floor(newzoom*(CGFloat)[currimage height]+0.5));
 	[self setImageSize:newsize];
 
 	zoom=newzoom;
@@ -572,7 +572,7 @@ static NSMutableArray *controllers=nil;
 	[self updateStatusBar];
 }
 
--(void)setFrame:(int)frame
+-(void)setFrame:(NSInteger)frame
 {
 	if(!currimage) return;
 	if(frame==[currimage frame]) return;
@@ -611,7 +611,7 @@ static NSMutableArray *controllers=nil;
     // Retina Support
     NSScreen *currentScreen = [imageview.window screen];
     if ([currentScreen respondsToSelector:@selector(backingScaleFactor)]) {
-        float scaleFactor = [currentScreen backingScaleFactor];
+        CGFloat scaleFactor = [currentScreen backingScaleFactor];
         size.width/=scaleFactor;
         size.height/=scaleFactor;
     }
@@ -619,10 +619,10 @@ static NSMutableArray *controllers=nil;
 	if(size.width<minsize.width) size.width=minsize.width;
 	if(size.height<minsize.height) size.height=minsize.height;
 
-	int borderwidth=windowframe.size.width-viewsize.width;
-	int borderheight=windowframe.size.height-viewsize.height;
-	int win_width=size.width+borderwidth;
-	int win_height=size.height+borderheight;
+	NSInteger borderwidth=windowframe.size.width-viewsize.width;
+	NSInteger borderheight=windowframe.size.height-viewsize.height;
+	NSInteger win_width=size.width+borderwidth;
+	NSInteger win_height=size.height+borderheight;
 
 	if(win_width>screenframe.size.width) win_width=screenframe.size.width;
 	if(win_height>screenframe.size.height) win_height=screenframe.size.height;
@@ -682,7 +682,7 @@ static NSMutableArray *controllers=nil;
 	if(shrink&&min_zoom<zoom) zoom=min_zoom;
 	if(enlarge&&min_zoom>zoom) zoom=min_zoom;
 
-	NSSize newsize=NSMakeSize(zoom*(float)[currimage width],zoom*(float)[currimage height]);
+	NSSize newsize=NSMakeSize(zoom*(CGFloat)[currimage width],zoom*(CGFloat)[currimage height]);
 
 	[self setImageSize:newsize resetFocus:!rememberfocus];
 }
@@ -775,7 +775,9 @@ static NSMutableArray *controllers=nil;
 -(void)displayAlert:(NSAlert *)alert
 {
 	if(fullscreenwindow) [alert runModal];
-	else [alert beginSheetModalForWindow:window modalDelegate:nil didEndSelector:NULL contextInfo:nil];
+	else [alert beginSheetModalForWindow:window completionHandler:^(NSModalResponse returnCode) {
+		// do nothing
+	}];
 }
 
 
@@ -971,8 +973,8 @@ static NSMutableArray *controllers=nil;
 
 -(BOOL)validateAction:(SEL)action
 {
-	int count=[source numberOfImages];
-	int curr=[source indexOfCurrentImage];
+	NSInteger count=[source numberOfImages];
+	NSInteger curr=[source indexOfCurrentImage];
 	BOOL wrap=[[NSUserDefaults standardUserDefaults] boolForKey:XeeWrapImageBrowsingKey];
 
 	if(action==@selector(toggleStatusBar:)) return fullscreenwindow?NO:YES;
@@ -1038,7 +1040,7 @@ static NSMutableArray *controllers=nil;
 	}
 
 	if([source canBrowse]) [statusbar addEntry:
-	[NSString stringWithFormat:@"%d/%d",[source indexOfCurrentImage]+1,[source numberOfImages]]
+	[NSString stringWithFormat:@"%ld/%ld",(long)[source indexOfCurrentImage]+1,(long)[source numberOfImages]]
 	image:[source icon]];
 
 	if(currimage)
@@ -1048,7 +1050,7 @@ static NSMutableArray *controllers=nil;
 		imageNamed:@"zoom"];
 
 		if([currimage frames]>1) [statusbar addEntry:
-		[NSString stringWithFormat:@"%d/%d",[currimage frame]+1,[currimage frames]]
+		[NSString stringWithFormat:@"%ld/%ld",(long)[currimage frame]+1,(long)[currimage frames]]
 		imageNamed:@"frames"];
 
 		[statusbar addEntry:

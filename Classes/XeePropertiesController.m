@@ -13,6 +13,9 @@
 -(void)awakeFromNib
 {
 	dataarray=nil;
+	dateFormatter = [[NSDateFormatter alloc] init];
+	dateFormatter.dateFormat = @"Y-MM-dd HH:mm";
+
 
 	NSMutableParagraphStyle *sectpara=[[NSParagraphStyle defaultParagraphStyle] mutableCopy];
 	[sectpara setAlignment:NSRightTextAlignment];
@@ -22,15 +25,17 @@
 		[NSFont boldSystemFontOfSize:14],NSFontAttributeName,
 		sectpara,NSParagraphStyleAttributeName,
 	nil] retain];
+	[sectpara release];
 
 	NSMutableParagraphStyle *labelpara=[[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-	[labelpara setAlignment:NSRightTextAlignment];
+	[labelpara setAlignment:NSTextAlignmentRight];
 	[labelpara setLineBreakMode:NSLineBreakByTruncatingTail];
 
 	labelattributes=[[NSDictionary dictionaryWithObjectsAndKeys:
 		[NSFont boldSystemFontOfSize:12],NSFontAttributeName,
 		labelpara,NSParagraphStyleAttributeName,
 	nil] retain];
+	[labelpara release];
 
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(frontImageDidChange:)
 	name:@"XeeFrontImageDidChangeNotification" object:nil];
@@ -157,14 +162,16 @@
 		else if(![item isSubSection])
 		{
 			id value=[item value];
-			if([value isKindOfClass:[NSDate class]]) return [value descriptionWithCalendarFormat:@"%Y-%m-%d %H:%M" timeZone:nil locale:nil];
-			else return value;
+			if([value isKindOfClass:[NSDate class]]) {
+				return [dateFormatter stringFromDate:value];
+			} else {
+				return value;
+			}
+		} else {
+			return nil;
 		}
-		else return nil;
 	}
 }
-
-
 
 -(BOOL)outlineView:(NSOutlineView *)view shouldEditTableColumn:(NSTableColumn *)col item:(XeePropertyItem *)item
 {
@@ -199,11 +206,10 @@
 -(NSString *)outlineView:(NSOutlineView *)view toolTipForCell:(NSCell *)cell rect:(NSRectPointer)rect
 tableColumn:(NSTableColumn *)col item:(XeePropertyItem *)item mouseLocation:(NSPoint)mouse
 {
-	if([item isSubSection]) return nil;
+	if([item isSubSection]) return @"";
 	if([[col identifier] isEqual:@"label"]) return [item label];
 	else return [[item value] description];
 }
-
 
 -(void)restoreCollapsedStatusForArray:(NSArray *)array
 {
@@ -223,6 +229,13 @@ tableColumn:(NSTableColumn *)col item:(XeePropertyItem *)item mouseLocation:(NSP
 	}
 }
 
+- (void)dealloc
+{
+	[dateFormatter release];
+
+	[super dealloc];
+}
+
 @end
 
 
@@ -230,7 +243,7 @@ tableColumn:(NSTableColumn *)col item:(XeePropertyItem *)item mouseLocation:(NSP
 // evil hack
 
 @interface NSOutlineView (EvilHack)
--(NSRect)_frameOfOutlineCellAtRow:(int)row;
+-(NSRect)_frameOfOutlineCellAtRow:(NSInteger)row;
 @end
 
 @implementation XeePropertyOutlineView

@@ -9,6 +9,18 @@
 
 @implementation XeeImage
 @synthesize delegate;
+@synthesize icon;
+@synthesize format;
+@synthesize backgroundColor = back;
+@synthesize loaded;
+@synthesize hasBeenStopped = stop;
+@synthesize handle;
+@synthesize depth;
+@synthesize depthIcon = depthicon;
+@synthesize transparent;
+@synthesize ref;
+@synthesize orientation;
+@synthesize correctOrientation = correctorientation;
 
 -(id)init
 {
@@ -38,7 +50,7 @@
 
 		delegate=nil;
 
-		properties=[[NSMutableArray array] retain];
+		properties=[[NSMutableArray alloc] init];
 
 	}
 
@@ -211,9 +223,9 @@
 	@try
 	{
 		do {
-			NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
-			nextselector=(SEL)[self performSelector:nextselector];
-			[pool release];
+			@autoreleasepool {
+				nextselector=(SEL)[self performSelector:nextselector];
+			}
 		} while(nextselector&&!stop);
 	}
 	@catch(id e)
@@ -229,10 +241,6 @@
 	}
 }
 
-
-
--(BOOL)loaded { return loaded; }
-
 //-(BOOL)failed { return nextselector==NULL&&!loaded; }
 
 //-(BOOL)needsLoading { return nextselector!=NULL; }
@@ -243,10 +251,6 @@
 
 -(void)stopLoading { stop=YES; }
 
--(BOOL)hasBeenStopped { return stop; }
-
--(CSHandle *)handle { return handle; }
-
 -(CSFileHandle *)fileHandle
 {
 	if([handle isKindOfClass:[CSFileHandle class]]) return (CSFileHandle *)handle;
@@ -256,11 +260,11 @@
 
 
 
--(int)frames { return 1; }
+-(NSInteger)frames { return 1; }
 
--(void)setFrame:(int)frame { }
+-(void)setFrame:(NSInteger)frame { }
 
--(int)frame { return 0; }
+-(NSInteger)frame { return 0; }
 
 
 
@@ -313,23 +317,15 @@
 
 -(CGImageRef)createCGImage { return NULL; }
 
--(int)losslessSaveFlags { return 0; }
+-(XeeSaveFormatFlags)losslessSaveFlags { return 0; }
 
 -(NSString *)losslessFormat { return nil; }
 
 -(NSString *)losslessExtension { return nil; }
 
--(BOOL)losslessSaveTo:(NSString *)path flags:(int)flags { return NO; }
-
-
-
--(XeeFSRef *)ref { return ref; }
+-(BOOL)losslessSaveTo:(NSString *)path flags:(XeeSaveFormatFlags)flags { return NO; }
 
 -(NSString *)filename { return [ref path]; }
-
--(NSString *)format { return format; }
-
--(NSImage *)icon { return icon; }
 
 -(int)width
 {
@@ -355,22 +351,12 @@
 	else return height;
 }
 
--(NSString *)depth { return depth; }
-
--(NSImage *)depthIcon { return depthicon; }
-
--(BOOL)transparent { return transparent; }
-
 -(NSColor *)backgroundColor
 {
 	if(!back) back=[[NSUnarchiver unarchiveObjectWithData:[[NSUserDefaults standardUserDefaults] dataForKey:XeeDefaultImageBackgroundKey]] retain];
 
 	return back;
 }
-
--(XeeTransformation)orientation { return orientation; }
-
--(XeeTransformation)correctOrientation { return correctorientation; }
 
 -(NSRect)croppingRect
 {
@@ -431,12 +417,6 @@
 	return nil;
 }
 
-
-
--(void)setFormat:(NSString *)fmt { [format autorelease]; format=[fmt retain]; }
-
--(void)setBackgroundColor:(NSColor *)col { [back autorelease]; back=[col retain]; }
-
 -(void)setProperties:(NSArray *)newproperties { [properties removeAllObjects]; [properties addObjectsFromArray:newproperties]; }
 
 -(void)setOrientation:(XeeTransformation)transformation
@@ -494,13 +474,6 @@
 	[self triggerSizeChangeAction];
 	[self triggerPropertyChangeAction];
 }
-
-
-
-
--(void)setDepth:(NSString *)d { [depth autorelease]; depth=[d retain]; }
-
--(void)setDepthIcon:(NSImage *)newicon { [depthicon autorelease]; depthicon=[newicon retain]; }
 
 -(void)setDepthIconName:(NSString *)iconname { [self setDepthIcon:[NSImage imageNamed:iconname]]; }
 

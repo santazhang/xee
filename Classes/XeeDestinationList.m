@@ -5,7 +5,7 @@
 #import "CSKeyboardShortcuts.h"
 #import "XeeControllerFileActions.h"
 
-#import <Carbon/Carbon.h>
+#include <Carbon/Carbon.h>
 
 
 
@@ -244,6 +244,24 @@ void XeePlayPoof(NSWindow *somewindow);
 	{
 		NSArray *files=[pboard propertyListForType:NSFilenamesPboardType];
 
+#ifdef __LP64__
+		for (NSString *file in files)
+		{
+			NSURL *fileURL = [NSURL fileURLWithPath:file];
+			NSURL *resolvedURL = [NSURL URLByResolvingAliasFileAtURL:fileURL options:NSURLBookmarkResolutionWithoutUI error:NULL];
+			if (resolvedURL) {
+				fileURL = resolvedURL;
+			}
+			
+			NSNumber *isFolder = nil;
+			
+			if ([fileURL getResourceValue:&isFolder forKey:NSURLIsDirectoryKey error:NULL]) {
+				if (!isFolder.boolValue) {
+					return NSDragOperationNone;
+				}
+			}
+		}
+#else
 		NSEnumerator *enumerator=[files objectEnumerator];
 		NSString *file;
 		while(file=[enumerator nextObject])
@@ -258,6 +276,7 @@ void XeePlayPoof(NSWindow *somewindow);
 				}
 			}
 		}
+#endif
 		[self setDropRow:row num:[files count]];
 	}
 	else
@@ -299,7 +318,7 @@ void XeePlayPoof(NSWindow *somewindow);
 	dropnum=0;
 
 	NSPasteboard *pboard=[sender draggingPasteboard];
-	int insindex=row-1;
+	NSInteger insindex=row-1;
 
 	NSArray *files;
 	if([[pboard types] containsObject:NSFilenamesPboardType]) files=[pboard propertyListForType:NSFilenamesPboardType];
@@ -309,7 +328,7 @@ void XeePlayPoof(NSWindow *somewindow);
 	NSString *file;
 	while(file=[enumerator nextObject])
 	{
-		int remindex=[XeeDestinationView findDestination:file];
+		NSInteger remindex=[XeeDestinationView findDestination:file];
 		if(remindex!=NSNotFound)
 		{
 			[destinations removeObjectAtIndex:remindex];
@@ -467,6 +486,14 @@ void XeePlayPoof(NSWindow *somewindow);
 
 		NSURL *url=[NSURL fileURLWithPath:directory];
 
+#if __LP64__
+		NSColor *tmpClr = nil;
+
+		if([url getResourceValue:&tmpClr forKey:NSURLLabelColorKey error:NULL])
+		{
+			color=[tmpClr colorWithAlphaComponent:0.2];
+		}
+#else
 		FSRef fsref;
 		FSSpec fsspec;
 		CFURLGetFSRef((CFURLRef)url,&fsref);
@@ -486,6 +513,7 @@ void XeePlayPoof(NSWindow *somewindow);
 				color=[NSColor colorWithCalibratedRed:rgbcol.red/65280.0 green:rgbcol.green/65280.0 blue:rgbcol.blue/65280.0 alpha:0.2];
 			}
 		}
+#endif
 
 		NSDictionary *dict=[NSDictionary dictionaryWithObjectsAndKeys:
 		directory,@"path",dirname,@"filename",icon,@"icon",color,@"color",nil];

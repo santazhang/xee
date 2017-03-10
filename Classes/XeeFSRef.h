@@ -1,5 +1,7 @@
 #import <Cocoa/Cocoa.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface XeeFSRef:NSObject <NSCopying>
 {
 	FSRef ref;
@@ -7,48 +9,49 @@
 	int hash;
 }
 
-+(instancetype)refForPath:(NSString *)path;
++ (nullable instancetype)refForPath:(NSString *)path NS_SWIFT_UNAVAILABLE("Use `init(path:)` instead");
 
--(instancetype)initWithPath:(NSString *)path;
--(instancetype)initWithFSRef:(FSRef *)fsref;
+- (nullable instancetype)initWithPath:(NSString *)path;
+- (instancetype)initWithFSRef:(FSRef *)fsref NS_DESIGNATED_INITIALIZER;
+- (instancetype)init UNAVAILABLE_ATTRIBUTE;
 
--(FSRef *)FSRef NS_RETURNS_INNER_POINTER;
+@property (readonly) FSRef *FSRef NS_RETURNS_INNER_POINTER;
 
 @property (readonly, getter=isValid) BOOL valid;
 @property (readonly, getter=isDirectory) BOOL directory;
 @property (readonly, getter=isRemote) BOOL remote;
 
--(NSString *)name;
--(NSString *)path;
--(NSURL *)URL;
--(XeeFSRef *)parent;
+@property (readonly, nullable) NSString *name;
+@property (readonly, nullable) NSString *path;
+@property (readonly, nullable) NSURL *URL;
+-(nullable XeeFSRef *)parent;
 
--(off_t)dataSize;
--(off_t)dataPhysicalSize;
--(off_t)resourceSize;
--(off_t)resourcePhysicalSize;
+@property (readonly) off_t dataSize;
+@property (readonly) off_t dataPhysicalSize;
+@property (readonly) off_t resourceSize;
+@property (readonly) off_t resourcePhysicalSize;
 
--(CFAbsoluteTime)creationTime;
--(CFAbsoluteTime)modificationTime;
--(CFAbsoluteTime)attributeModificationTime;
--(CFAbsoluteTime)accessTime;
--(CFAbsoluteTime)backupTime;
+@property (readonly) CFAbsoluteTime creationTime;
+@property (readonly) CFAbsoluteTime modificationTime;
+@property (readonly) CFAbsoluteTime attributeModificationTime;
+@property (readonly) CFAbsoluteTime accessTime;
+@property (readonly) CFAbsoluteTime backupTime;
 
--(NSString *)HFSTypeCode;
--(NSString *)HFSCreatorCode;
+@property (readonly, nullable) NSString *HFSTypeCode;
+@property (readonly, nullable) NSString *HFSCreatorCode;
 
--(BOOL)startReadingDirectoryWithRecursion:(BOOL)recursive;
+-(BOOL)startReadingDirectoryWithRecursion:(BOOL)recursive NS_SWIFT_UNAVAILABLE("Use the throwing version instead");
+-(BOOL)startReadingDirectoryWithRecursion:(BOOL)recursive error:(NSError**)error;
 -(void)stopReadingDirectory;
--(XeeFSRef *)nextDirectoryEntry;
--(NSArray *)directoryContents;
+-(nullable XeeFSRef *)nextDirectoryEntry;
+-(nullable NSArray<XeeFSRef*> *)directoryContents;
 
--(BOOL)isEqual:(XeeFSRef *)other;
 -(NSComparisonResult)compare:(XeeFSRef *)other;
--(NSComparisonResult)compare:(XeeFSRef *)other options:(int)options;
--(unsigned)hash;
+-(NSComparisonResult)compare:(XeeFSRef *)other options:(NSStringCompareOptions)options;
+//-(NSUInteger)hash;
 
--(NSString *)description;
-
--(id)copyWithZone:(NSZone *)zone;
+//-(NSString *)description;
 
 @end
+
+NS_ASSUME_NONNULL_END

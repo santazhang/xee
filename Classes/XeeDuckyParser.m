@@ -8,7 +8,7 @@
 {
 	if(self=[super init])
 	{
-		props=[[NSMutableArray array] retain];
+		props=[[NSMutableArray alloc] init];
 //NSLog(@"%@",[NSData dataWithBytes:duckydata length:len]);
 
 		int pos=0;

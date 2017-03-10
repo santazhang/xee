@@ -9,23 +9,22 @@
 	NSArray *types;
 
 	XeeListEntry *currentry,*nextentry,*preventry;
-	int changes,oldindex;
+	NSInteger changes,oldindex;
 
 	BOOL loader_running,exiting;
 	XeeImage *loadingimage;
 }
 
--(id)init;
--(void)dealloc;
+-(instancetype)init;
 
 -(void)stop;
 
--(int)numberOfImages;
--(int)indexOfCurrentImage;
+@property (readonly) NSInteger numberOfImages;
+@property (readonly) NSInteger indexOfCurrentImage;
 -(NSString *)descriptiveNameOfCurrentImage;
 
--(void)pickImageAtIndex:(int)index next:(int)next;
--(void)pickImageAtIndex:(int)index;
+-(void)pickImageAtIndex:(NSInteger)index next:(NSInteger)next;
+-(void)pickImageAtIndex:(NSInteger)index;
 
 -(void)startListUpdates;
 -(void)endListUpdates;
@@ -53,9 +52,8 @@
 	int imageretain;
 }
 
--(id)init;
--(id)initAsCopyOf:(XeeListEntry *)other;
--(void)dealloc;
+-(instancetype)init;
+-(instancetype)initAsCopyOf:(XeeListEntry *)other;
 
 -(NSString *)descriptiveName;
 -(BOOL)matchesObject:(id)obj;
@@ -64,9 +62,6 @@
 -(void)releaseImage;
 -(XeeImage *)image;
 -(XeeImage *)produceImage;
-
--(BOOL)isEqual:(id)other;
--(unsigned long)hash;
 
 -(id)copyWithZone:(NSZone *)zone;
 

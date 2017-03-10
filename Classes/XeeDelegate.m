@@ -337,7 +337,7 @@ NSString *XeeRefreshImageNotification = @"XeeRefreshImageNotification";
 	}
 	else
 	{
-		XeeFSRef *ref=[XeeFSRef refForPath:filename],*dirref;
+		XeeFSRef *ref=[XeeFSRef refForPath:filename],*dirref = nil;
 
 		XeeImageSource *source=nil;
 		if([ref isDirectory])
@@ -405,9 +405,9 @@ NSString *XeeRefreshImageNotification = @"XeeRefreshImageNotification";
 
 	NSInteger res=[panel runModal];
 
-	if(res==NSOKButton)
+	if(res==NSFileHandlingPanelOKButton)
 	{
-		[self application:[NSApplication sharedApplication] openFile:[[panel filenames] objectAtIndex:0]];
+		[self application:[NSApplication sharedApplication] openFile:[[[panel URLs] objectAtIndex:0] path]];
 	}
 }
 

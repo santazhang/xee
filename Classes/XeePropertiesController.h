@@ -10,6 +10,7 @@
 	NSArray *dataarray;
 
 	NSDictionary *sectionattributes,*labelattributes;
+	NSDateFormatter *dateFormatter;
 }
 
 -(void)awakeFromNib;

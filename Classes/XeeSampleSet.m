@@ -1,7 +1,7 @@
 #import "XeeSampleSet.h"
 
 #import <math.h>
-
+#import <tgmath.h>
 
 
 @interface XeeBestCandidateSamples:XeeSampleSet {}
@@ -12,11 +12,11 @@
 -(id)initWithCount:(int)count;
 @end
 
-#define PI M_PI
+#define PI ((CGFloat)(M_PI))
 
 static float XeeBoxFilter(float u,float v)
 {
-	if(fabsf(u)>0.5||fabsf(v)>0.5) return 0;
+	if(fabs(u)>0.5||fabs(v)>0.5) return 0;
 	return 1;
 }
 
@@ -27,7 +27,7 @@ static float XeeSincFilter(float u,float v)
 
 /*static float XeeWindowedSinc3Filter(float u,float v)
 {
-	if(fabsf(u)>3.0/2.0||fabsf(v)>3.0/2.0) return 0;
+	if(fabs(u)>3.0/2.0||fabs(v)>3.0/2.0) return 0;
 	return sin(2*u*PI)*sin(2*v*PI)*sin(2*u*PI/3)*sin(2*v*PI/3)/(4*u*u*v*v/9);
 }*/
 
@@ -39,7 +39,7 @@ static float XeeSincFilter(float u,float v)
 {
 	if(self=[super init])
 	{
-		if((samples=malloc(count*sizeof(XeeSamplePoint))))
+		if((samples=calloc(count, sizeof(XeeSamplePoint))))
 		{
 			num=count;
 			return self;
@@ -118,7 +118,7 @@ static int XeeSamplePointSorter(const void *a,const void *b)
 		for(int i=1;i<num;i++)
 		{
 			float maxdist=0;
-			XeeSamplePoint maxpoint;
+			XeeSamplePoint maxpoint = {0};
 
 			for(int j=0;j<100;j++) // should adapt the count
 			{

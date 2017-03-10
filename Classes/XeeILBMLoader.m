@@ -38,7 +38,7 @@
 		image=NULL;
 		mask=NULL;
 		iff=nil;
-		ranges=[[NSMutableArray array] retain];
+		ranges=[[NSMutableArray alloc] init];
 		comments=nil;
 		clock=0;
 		animationtimer=nil;

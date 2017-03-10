@@ -1,3 +1,4 @@
+#import <Foundation/Foundation.h>
 #ifndef MAC_OS_X_VERSION_MIN_REQUIRED
 #define MAC_OS_X_VERSION_MIN_REQUIRED MAC_OS_X_VERSION_10_1
 #endif
@@ -5,8 +6,9 @@
 #define MAC_OS_X_VERSION_MAX_ALLOWED MAC_OS_X_VERSION_10_4
 #endif
 #import "CSCoroutine.h"
-#import <pthread.h>
-#import <objc/objc-runtime.h>
+#include <pthread.h>
+#include <objc/runtime.h>
+#include <objc/message.h>
 
 
 @interface NSProxy (Hidden)
@@ -47,6 +49,8 @@ static void CSSetEntryPoint(jmp_buf env,void (*entry)(),void *stack,int stacksiz
 	#if defined(__i386__)
 	env[9]=(((int)stack+stacksize)&~15)-4; // -4 to pretend that a return address has just been pushed onto the stack
 	env[12]=(int)entry;
+	#elif defined(__x86_64__)
+	#warning TODO: implement!
 	#else
 	env[0]=((int)stack+stacksize-64)&~3;
 	env[21]=(int)entry;
@@ -102,6 +106,7 @@ static void CSSetEntryPoint(jmp_buf env,void (*entry)(),void *stack,int stacksiz
 	if(_setjmp(env)==0) _longjmp(caller->env,1);
 }
 
+#if 0
 static void CSTigerCoroutineStart()
 {
 	CSCoroutine *coro=CSCurrentCoroutine();
@@ -127,6 +132,7 @@ static void CSTigerCoroutineStart()
 	[self switchTo];
 	return nil;
 }
+#endif
 
 -(NSMethodSignature *)methodSignatureForSelector:(SEL)sel { return [target methodSignatureForSelector:sel]; }
 

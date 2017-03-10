@@ -22,7 +22,7 @@
 
 -(NSError *)renameCurrentImageTo:(NSString *)newname;
 -(NSError *)deleteCurrentImage;
--(NSError *)copyCurrentImageTo:(NSString *)destination;
+-(NSError *)copyCurrentImageTo:(NSString *)destination NS_RETURNS_NOT_RETAINED;
 -(NSError *)moveCurrentImageTo:(NSString *)destination;
 -(NSError *)openCurrentImageInApp:(NSString *)app;
 
@@ -48,7 +48,7 @@
 -(uint64_t)size;
 -(double)time;
 
--(void)prepareForSortingBy:(int)sortorder;
+-(void)prepareForSortingBy:(XeeSortOrder)sortorder;
 -(void)finishSorting;
 -(NSComparisonResult)comparePaths:(XeeFileEntry *)other;
 -(NSComparisonResult)compareSizes:(XeeFileEntry *)other;

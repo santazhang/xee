@@ -153,12 +153,15 @@
 	[source setActionsBlocked:YES];
 
 	if(fullscreenwindow) [self deleteAlertEnd:alert returnCode:[alert runModal] contextInfo:NULL];
-	else [alert beginSheetModalForWindow:window modalDelegate:self didEndSelector:@selector(deleteAlertEnd:returnCode:contextInfo:) contextInfo:NULL];
+	else [alert beginSheetModalForWindow:window completionHandler:^(NSModalResponse returnCode) {
+		[self deleteAlertEnd:alert returnCode:returnCode contextInfo:NULL];
+	}];
+	[alert autorelease];
 
 	[self setResizeBlock:NO];
 }
 
--(void)deleteAlertEnd:(NSAlert *)alert returnCode:(int)res contextInfo:(void *)info
+-(void)deleteAlertEnd:(NSAlert *)alert returnCode:(NSInteger)res contextInfo:(void *)info
 {
 	if(res==NSAlertFirstButtonReturn) [self displayPossibleError:[source deleteCurrentImage]];
 
@@ -201,13 +204,13 @@
 -(IBAction)moveToDestination9:(id)sender { [self transferToDestination:9 mode:XeeMoveMode]; }
 -(IBAction)moveToDestination10:(id)sender { [self transferToDestination:10 mode:XeeMoveMode]; }
 
--(void)triggerDrawer:(int)mode
+-(void)triggerDrawer:(XeeDrawerMode)mode
 {
 	int newseg;
 	if(mode==XeeCopyMode) newseg=0;
 	else newseg=1;
 
-	int state=[drawer state];
+	NSInteger state=[drawer state];
 
 	if(state==NSDrawerClosedState||state==NSDrawerClosingState)
 	{
@@ -279,9 +282,9 @@
 	else [self transferToDestination:index mode:drawer_mode];
 }
 
--(void)destinationPanelEnd:(NSOpenPanel *)panel returnCode:(int)res contextInfo:(void *)info
+-(void)destinationPanelEnd:(NSOpenPanel *)panel returnCode:(NSInteger)res contextInfo:(void *)info
 {
-	if(res==NSOKButton)
+	if(res==NSFileHandlingPanelOKButton)
 	{
 		NSString *destdir=[[[panel URLs] objectAtIndex:0] path];
 		NSString *destination=[destdir stringByAppendingPathComponent:[source filenameOfCurrentImage]];
@@ -296,7 +299,7 @@
 	}
 }
 
--(void)transferToDestination:(int)index mode:(int)mode
+-(void)transferToDestination:(NSInteger)index mode:(XeeDrawerMode)mode
 {
 	if(mode==XeeCopyMode&&![source canCopyCurrentImage]) { NSBeep(); return; }
 	else if(mode==XeeMoveMode&&![source canMoveCurrentImage]) { NSBeep(); return; }
@@ -307,7 +310,7 @@
 	[self attemptToTransferCurrentImageTo:destination mode:mode];
 }
 
--(void)attemptToTransferCurrentImageTo:(NSString *)destination mode:(int)mode
+-(void)attemptToTransferCurrentImageTo:(NSString *)destination mode:(XeeDrawerMode)mode
 {
 	if([source isCurrentImageAtPath:destination])
 	{
@@ -341,7 +344,7 @@
 	}
 }
 
--(void)collisionPanelEnd:(XeeCollisionPanel *)panel returnCode:(int)res path:(NSString *)destination mode:(int)mode
+-(void)collisionPanelEnd:(XeeCollisionPanel *)panel returnCode:(NSInteger)res path:(NSString *)destination mode:(XeeDrawerMode)mode
 {
 	if(res==1)
 	{
@@ -358,7 +361,7 @@
 	}
 }
 
--(void)transferCurrentImageTo:(NSString *)destination mode:(int)mode
+-(void)transferCurrentImageTo:(NSString *)destination mode:(XeeDrawerMode)mode
 {
 	if(mode==XeeMoveMode) [self displayPossibleError:[source moveCurrentImageTo:destination]];
 	else [self displayPossibleError:[source copyCurrentImageTo:destination]];

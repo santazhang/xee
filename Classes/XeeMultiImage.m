@@ -3,6 +3,7 @@
 
 
 @implementation XeeMultiImage
+@dynamic backgroundColor;
 
 -(id)init
 {
@@ -109,7 +110,7 @@
 	currloading=nil;
 }
 
--(int)frames
+-(NSInteger)frames
 {
 	NSEnumerator *enumerator=[subimages objectEnumerator];
 	XeeImage *image;
@@ -118,25 +119,25 @@
 	return frames;
 }
 
--(void)setFrame:(int)frame
+-(void)setFrame:(NSInteger)frame
 {
 	if([subimages count]==0) return;
 
 	if(frame<0) frame=0;
 	if(frame==[self frame]) return;
 
-	int count=[subimages count];
-	int newindex,prevframes=0;
+	NSInteger count=[subimages count];
+	NSInteger newindex,prevframes=0;
 	for(newindex=0;newindex<count-1;newindex++)
 	{
-		int frames=[[subimages objectAtIndex:newindex] frames];
+		NSInteger frames=[[subimages objectAtIndex:newindex] frames];
 		if(prevframes+frames>frame) break;
 		else prevframes+=frames;
 	}
 
 	XeeImage *subimage=[subimages objectAtIndex:newindex];
-	int frames=[subimage frames];
-	int subframe=frame-prevframes;
+	NSInteger frames=[subimage frames];
+	NSInteger subframe=frame-prevframes;
 	if(subframe>=frames) subframe=frames-1;
 
 	int oldwidth=[self width];
@@ -153,10 +154,10 @@
 	[self triggerPropertyChangeAction];
 }
 
--(int)frame
+-(NSInteger)frame
 {
-	int prevframes=0;
-	for(int i=0;i<currindex;i++) prevframes+=[[subimages objectAtIndex:i] frames];
+	NSInteger prevframes=0;
+	for(NSInteger i=0;i<currindex;i++) prevframes+=[[subimages objectAtIndex:i] frames];
 	return prevframes+[(XeeImage *)[subimages objectAtIndex:currindex] frame];
 }
 
@@ -178,21 +179,26 @@
 
 -(CGImageRef)createCGImage { return [[self currentSubImage] createCGImage]; }
 
--(int)losslessSaveFlags { return [[self currentSubImage] losslessSaveFlags]; }
+-(XeeSaveFormatFlags)losslessSaveFlags { return [[self currentSubImage] losslessSaveFlags]; }
 
 -(NSString *)losslessFormat { return [[self currentSubImage] losslessFormat]; }
 
 -(NSString *)losslessExtension { return [[self currentSubImage] losslessExtension]; }
 
--(BOOL)losslessSaveTo:(NSString *)path flags:(int)flags { return [[self currentSubImage] losslessSaveTo:path flags:flags]; }
+-(BOOL)losslessSaveTo:(NSString *)path flags:(XeeSaveFormatFlags)flags
+{
+	return [[self currentSubImage] losslessSaveTo:path flags:flags];
+}
 
 
 
 -(int)width
 {
 	XeeImage *curr=[self currentSubImage];
-	if(curr) return [curr width];
-	else return [super width];
+	if(curr)
+		return [curr width];
+	else
+		return [super width];
 }
 
 -(int)height

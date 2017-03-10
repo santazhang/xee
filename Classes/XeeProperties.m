@@ -1,6 +1,12 @@
 #import "XeeProperties.h"
 
 @implementation XeePropertyItem
+@synthesize label;
+@synthesize value;
+@synthesize identifier = ident;
+@synthesize heading;
+@synthesize position = pos;
+
 
 +(XeePropertyItem *)itemWithLabel:(NSString *)itemlabel value:(id)itemvalue
 {
@@ -42,13 +48,13 @@
 
 +(NSArray *)itemsWithLabel:(NSString *)itemlabel valueArray:(NSArray *)values
 {
-	int count=[values count];
+	NSInteger count=[values count];
 	if(!values||count==0) return nil;
 
 	XeePropertyItem *heading=[self itemWithLabel:itemlabel value:[values objectAtIndex:0]];
 	NSMutableArray *items=[NSMutableArray arrayWithObject:heading];
 
-	for(int i=1;i<count;i++) [items addObject:[self itemWithLabel:@"" value:[values objectAtIndex:i] heading:heading position:i]];
+	for(NSInteger i=1;i<count;i++) [items addObject:[self itemWithLabel:@"" value:[values objectAtIndex:i] heading:heading position:i]];
 
 	return items;
 }
@@ -87,12 +93,12 @@
 	{
 		if(itemlabel&&[itemlabel length])
 		{
-			if([itemvalue isKindOfClass:[NSArray class]]) label=[itemlabel retain];
+			if([itemvalue isKindOfClass:[NSArray class]]) label=[itemlabel copy];
 			else label=[[itemlabel stringByAppendingString:@":"] retain];
 		}
 		else label=@"";
 		value=[itemvalue retain];
-		ident=[identifier retain];
+		ident=[identifier copy];
 
 		heading=[headingitem retain];
 		pos=position;
@@ -109,11 +115,6 @@
 	[super dealloc];
 }
 
--(NSString *)label { return label; }
--(id)value { return value; }
--(NSString *)identifier { return ident; }
--(XeePropertyItem *)heading { return heading; }
--(int)position { return pos; }
 -(BOOL)isSubSection { return [value isKindOfClass:[NSArray class]]; }
 
 -(BOOL)isEqual:(XeePropertyItem *)other
@@ -132,7 +133,7 @@
 			else return NSOrderedAscending;
 		}
 		else if(otherheading) return [heading compare:otherheading];
-		else [heading compare:other];
+		else return [heading compare:other];
 	}
 	else if(otherheading) return [self compare:otherheading];
 
