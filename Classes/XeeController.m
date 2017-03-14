@@ -509,7 +509,7 @@ static NSMutableArray *controllers=nil;
 
 -(BOOL)isFullscreen { return fullscreenwindow?YES:NO; }
 
--(float)zoom { return zoom; }
+-(CGFloat)zoom { return zoom; }
 
 
 

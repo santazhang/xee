@@ -96,7 +96,9 @@
 +(XeeKQueue *)defaultKQueue
 {
 	static XeeKQueue *kqueue=nil;
-	if(!kqueue) kqueue=[[XeeKQueue alloc] init];
+	if (!kqueue) {
+		kqueue = [[XeeKQueue alloc] init];
+	}
 	return kqueue;
 }
 
@@ -126,7 +128,10 @@
 	[super dealloc];
 }
 
--(int)flags { return ev.fflags; }
+-(int)flags
+{
+	return ev.fflags;
+}
 
 -(void)triggerForEvent:(struct kevent *)event
 {
@@ -163,7 +168,10 @@
 	return [ref isEqual:[other ref]]&&target==[other target];
 }
 
--(NSUInteger)hash { return (uintptr_t)target; }
+-(NSUInteger)hash
+{
+	return (uintptr_t)target;
+}
 
 -(id)copyWithZone:(NSZone *)zone
 {

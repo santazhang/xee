@@ -84,6 +84,15 @@
 	return self.URL.path;
 }
 
+- (const char*)fileSystemRepresentation
+{
+	if ([NSURL instancesRespondToSelector:@selector(fileSystemRepresentation)]) {
+		return self.URL.fileSystemRepresentation;
+	} else {
+		return self.path.fileSystemRepresentation;
+	}
+}
+
 -(NSURL *)URL
 {
 	return CFBridgingRelease(CFURLCreateFromFSRef(kCFAllocatorDefault, &ref));

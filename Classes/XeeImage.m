@@ -327,25 +327,25 @@
 
 -(NSString *)filename { return [ref path]; }
 
--(int)width
+-(NSInteger)width
 {
 	if(XeeTransformationIsFlipped(orientation)) return crop_height?crop_height:height;
 	else return crop_width?crop_width:width;
 }
 
--(int)height
+-(NSInteger)height
 {
 	if(XeeTransformationIsFlipped(orientation)) return crop_width?crop_width:width;
 	else return crop_height?crop_height:height;
 }
 
--(int)fullWidth
+-(NSInteger)fullWidth
 {
 	if(XeeTransformationIsFlipped(orientation)) return height;
 	else return width;
 }
 
--(int)fullHeight
+-(NSInteger)fullHeight
 {
 	if(XeeTransformationIsFlipped(orientation)) return width;
 	else return height;
@@ -556,8 +556,8 @@
 
 -(id)description
 {
-	return [NSString stringWithFormat:@"<%@> %@ (%dx%d %@ %@, %@, created on %@)",
-	[[self class] description],[[self descriptiveFilename] lastPathComponent],[self width],[self height],
+	return [NSString stringWithFormat:@"<%@> %@ (%ldx%ld %@ %@, %@, created on %@)",
+			[[self class] description],[[self descriptiveFilename] lastPathComponent],(long)[self width],(long)[self height],
 	[self depth],[self format],XeeDescribeSize([self fileSize]),XeeDescribeDate([self date])];
 }
 
@@ -578,7 +578,7 @@ NSMutableArray *imageclasses=nil;
 {
 	NSString *filename=[ref path];
 
-	NSDictionary *attrs=[[NSFileManager defaultManager] fileAttributesAtPath:filename traverseLink:YES];
+	NSDictionary *attrs=[[NSFileManager defaultManager] attributesOfItemAtPath:filename error:NULL];
 	if(!attrs) return nil;
 
 	CSFileHandle *fh=[CSFileHandle fileHandleForReadingAtPath:filename];
