@@ -6,6 +6,11 @@
 #define XeeDeletionChange 0x0002
 #define XeeSortingChange 0x0004
 
+static NSString *findCoreAudioSoundNamed(NSString *name)
+{
+	return [NSString stringWithFormat:@"/System/Library/Components/CoreAudio.component/Contents/SharedSupport/SystemSounds/%@.aif", name];
+}
+
 @implementation XeeFileSource
 
 -(id)init
@@ -158,7 +163,7 @@
 	}
 	
 	// success, let kqueue update list
-	[self playSound:@"/System/Library/Components/CoreAudio.component/Contents/SharedSupport/SystemSounds/dock/drag to trash.aif"];
+	[self playSound:findCoreAudioSoundNamed(@"dock/drag to trash")];
 	
 	return YES;
 }
@@ -187,7 +192,7 @@
 	}
 	
 	// "copied" message in status bar
-	[self playSound:@"/System/Library/Components/CoreAudio.component/Contents/Resources/SystemSounds/system/Volume Mount.aif"];
+	[self playSound:findCoreAudioSoundNamed(@"system/Volume Mount")];
 	
 	return YES;
 }
@@ -215,7 +220,7 @@
 	}
 	
 	// "moved" message in status bar
-	[self playSound:@"/System/Library/Components/CoreAudio.component/Contents/Resources/SystemSounds/system/Volume Mount.aif"];
+	[self playSound:findCoreAudioSoundNamed(@"system/Volume Mount")];
 	// success, let kqueue update list
 	
 	return YES;
