@@ -54,7 +54,7 @@ NSString *XeeRefreshImageNotification = @"XeeRefreshImageNotification";
 		iconwindow=nil;
 		iconfield=nil;
 
-		controllers=[[NSMutableDictionary dictionary] retain];
+		controllers=[[NSMutableDictionary alloc] init];
 	}
 	return self;
 }

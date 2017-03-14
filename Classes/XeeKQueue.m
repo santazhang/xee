@@ -9,7 +9,7 @@
 {
 	if(self=[super init])
 	{
-		observers=[[NSMutableDictionary dictionary] retain];
+		observers=[[NSMutableDictionary alloc] init];
 
 		queue=kqueue();
 		if(queue==-1)

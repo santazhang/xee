@@ -556,7 +556,7 @@ void XeePlayPoof(NSWindow *somewindow);
 	static NSMutableArray *def=nil;
 	if(!def)
 	{
-		def=[[NSMutableArray array] retain];
+		def=[[NSMutableArray alloc] init];
 		[self loadArray];
 	}
 

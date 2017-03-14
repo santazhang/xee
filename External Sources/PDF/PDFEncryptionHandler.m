@@ -24,7 +24,7 @@ static const char PDFPasswordPadding[32]=
 		encrypt=[[[parser trailerDictionary] objectForKey:@"Encrypt"] retain];
 		permanentid=[[parser permanentID] retain];
 		password=nil;
-		keys=[[NSMutableDictionary dictionary] retain];
+		keys=[[NSMutableDictionary alloc] init];
 
 		version=[encrypt intValueForKey:@"V" default:0];
 		revision=[encrypt intValueForKey:@"R" default:0];
@@ -46,7 +46,7 @@ static const char PDFPasswordPadding[32]=
 		}
 		else
 		{
-			algorithms=[[NSMutableDictionary dictionary] retain];
+			algorithms=[[NSMutableDictionary alloc] init];
 
 			NSDictionary *filters=[encrypt objectForKey:@"CF"];
 			NSEnumerator *enumerator=[filters keyEnumerator];

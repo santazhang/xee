@@ -77,7 +77,7 @@ static int XeeGIFReadData(GifFileType *gif,GifByteType *buf,int len)
 	if(![self allocWithType:XeeBitmapTypeARGB8 width:width height:height]) return NULL;
 	transparent=NO; // hack transparent status
 
-	frames=[[NSMutableArray array] retain];
+	frames=[[NSMutableArray alloc] init];
 	globalpal=[[XeeGIFPalette alloc] initWithColorMap:gif->SColorMap];
 
 	return @selector(loadRecord);

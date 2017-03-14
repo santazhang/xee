@@ -9,7 +9,7 @@
 {
 	if(self=[super init])
 	{
-		subimages=[[NSMutableArray array] retain];
+		subimages=[[NSMutableArray alloc] init];
 		currindex=0;
 		currloading=nil;
 

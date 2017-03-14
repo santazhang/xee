@@ -1,10 +1,9 @@
 #import "XeeFileSource.h"
 
-#define NSUInteger unsigned long
 #import <XADMaster/XADArchive.h>
 
 
-@interface XeeArchiveSource:XeeFileSource <XADArchiveParserDelegate>
+@interface XeeArchiveSource:XeeFileSource
 {
 	NSString *filename;
 	XADArchiveParser *parser;

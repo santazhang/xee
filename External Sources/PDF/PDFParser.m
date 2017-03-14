@@ -35,8 +35,8 @@ static BOOL IsWhiteSpace(uint8_t c);
 	{
 		fh=[handle retain];
 
-		objdict=[[NSMutableDictionary dictionary] retain];
-		unresolved=[[NSMutableArray array] retain];
+		objdict=[[NSMutableDictionary alloc] init];
+		unresolved=[[NSMutableArray alloc] init];
 
 		encryption=nil;
 

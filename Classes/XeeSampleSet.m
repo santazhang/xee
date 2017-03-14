@@ -76,7 +76,7 @@ static int XeeSamplePointSorter(const void *a,const void *b)
 +(XeeSampleSet *)sampleSetWithCount:(int)count distribution:(NSString *)distname filter:(NSString *)filtername;
 {
 	static NSMutableDictionary *setdict=nil;
-	if(!setdict) setdict=[[NSMutableDictionary dictionary] retain];
+	if(!setdict) setdict=[[NSMutableDictionary alloc] init];
 
 	NSString *name=[NSString stringWithFormat:@"%@-%@-%d",distname,filtername,count];
 	XeeSampleSet *set=[setdict objectForKey:name];
