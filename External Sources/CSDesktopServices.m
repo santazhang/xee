@@ -145,8 +145,8 @@ NSDictionary *CSParseDSStore(NSString *filename)
 					if(length<chunk+4) goto end; // Truncated file.
 					// Hmm, integer or string...
 					// Let's go string.
-					OSType type = CSGetUInt32(bytes+chunk);
-					value = CFBridgingRelease(UTCreateStringForOSType(type));
+					OSType type2 = CSGetUInt32(bytes+chunk);
+					value = CFBridgingRelease(UTCreateStringForOSType(type2));
 				}
 					chunk+=4;
 					break;

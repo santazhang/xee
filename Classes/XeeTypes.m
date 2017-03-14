@@ -5,11 +5,6 @@
 #include <sys/time.h>
 #include <tgmath.h>
 
-@interface NSEvent (DeviceDelta)
--(CGFloat)deviceDeltaX;
--(CGFloat)deviceDeltaY;
-@end
-
 
 //
 // Spans
@@ -210,8 +205,8 @@ BOOL IsSmoothScrollEvent(NSEvent *event)
 	const EventRef carbonevent=(EventRef)[event eventRef];
 	if(!carbonevent) return NO;
 	if(GetEventKind(carbonevent)!=kEventMouseScroll) return NO;
-	if(![event respondsToSelector:@selector(deviceDeltaX)]) return NO;
-	if(![event respondsToSelector:@selector(deviceDeltaY)]) return NO;
+	if(![event respondsToSelector:@selector(scrollingDeltaX)]) return NO;
+	if(![event respondsToSelector:@selector(scrollingDeltaY)]) return NO;
 	return YES;
 }
 

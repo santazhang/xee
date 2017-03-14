@@ -41,7 +41,7 @@
 		imgref=dirref=nil;
 		scheduledimagerename=scheduledimagerefresh=scheduleddirrefresh=NO;
 
-		first=[[XeeDirectoryEntry entryWithRef:ref image:image] retain];
+		first=[[XeeDirectoryEntry alloc] initWithRef:ref image:image];
 		dirref=[[ref parent] retain];
 
 		if(dirref) return self;

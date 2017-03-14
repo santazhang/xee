@@ -73,6 +73,7 @@
 -(void)eventLoop
 {
 	@autoreleasepool {
+	[NSThread currentThread].name = @"XeeKQueue";
 
 	for(;;)
 	{

@@ -603,9 +603,7 @@ NSMutableArray *imageclasses=nil;
 
 	[fh seekToFileOffset:0];
 
-	NSEnumerator *enumerator=[imageclasses objectEnumerator];
-	Class class;
-	while(class=[enumerator nextObject])
+	for (Class class in imageclasses)
 	{
 		if([class canOpenFile:filename firstBlock:block attributes:attrs])
 		{
