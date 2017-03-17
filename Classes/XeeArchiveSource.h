@@ -3,7 +3,7 @@
 #import <XADMaster/XADArchive.h>
 
 
-@interface XeeArchiveSource:XeeFileSource
+@interface XeeArchiveSource:XeeFileSource <XADArchiveParserDelegate>
 {
 	NSString *filename;
 	XADArchiveParser *parser;
