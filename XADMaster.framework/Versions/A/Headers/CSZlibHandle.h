@@ -10,7 +10,7 @@
 
 #define CSZlibHandle XADZlibHandle
 
-extern NSString *CSZlibException;
+extern NSString *const CSZlibException;
 
 @interface CSZlibHandle:CSStreamHandle
 {
@@ -28,9 +28,8 @@ extern NSString *CSZlibException;
 +(CSZlibHandle *)deflateHandleWithHandle:(CSHandle *)handle length:(off_t)length;
 
 // Intializers
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length header:(BOOL)header name:(NSString *)descname;
--(id)initAsCopyOf:(CSZlibHandle *)other;
--(void)dealloc;
+-(instancetype)initWithHandle:(CSHandle *)handle length:(off_t)length header:(BOOL)header name:(NSString *)descname;
+-(instancetype)initAsCopyOf:(CSZlibHandle *)other;
 
 // Public methods
 -(void)setSeekBackAtEOF:(BOOL)seekateof;
@@ -41,6 +40,6 @@ extern NSString *CSZlibException;
 -(int)streamAtMost:(int)num toBuffer:(void *)buffer;
 
 // Internal methods
--(void)_raiseZlib;
+-(void)_raiseZlib NS_SWIFT_UNAVAILABLE("Call throws");
 
 @end

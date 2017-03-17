@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 
-#import "SWFGeometry.h"
+#import <XADMaster/XADSWFGeometry.h>
 
 #import <XADMaster/CSHandle.h>
 
@@ -28,8 +28,8 @@
 #define SWFPlaceObject3Tag 70
 #define SWFDefineFont3Tag 75
 
-extern NSString *SWFWrongMagicException;
-extern NSString *SWFNoMoreTagsException;
+//extern NSString *SWFWrongMagicException;
+//extern NSString *SWFNoMoreTagsException;
 
 @interface SWFParser:NSObject
 {

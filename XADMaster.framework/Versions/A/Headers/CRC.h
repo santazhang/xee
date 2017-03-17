@@ -1,10 +1,10 @@
 #import <Foundation/Foundation.h>
 
 uint32_t XADCRC(uint32_t prevcrc,uint8_t byte,const uint32_t *table);
-uint32_t XADCalculateCRC(uint32_t prevcrc,const uint8_t *buffer,int length,const uint32_t *table);
+uint32_t XADCalculateCRC(uint32_t prevcrc,const uint8_t *buffer,size_t length,const uint32_t *table);
 
 uint64_t XADCRC64(uint64_t prevcrc,uint8_t byte,const uint64_t *table);
-uint64_t XADCalculateCRC64(uint64_t prevcrc,const uint8_t *buffer,int length,const uint64_t *table);
+uint64_t XADCalculateCRC64(uint64_t prevcrc,const uint8_t *buffer,size_t length,const uint64_t *table);
 
 int XADUnReverseCRC16(int val);
 

@@ -14,18 +14,17 @@ typedef struct XADSkipRegion
 	int numregions;
 }
 
--(id)initWithHandle:(CSHandle *)handle;
--(id)initAsCopyOf:(XADSkipHandle *)other;
--(void)dealloc;
+-(instancetype)initWithHandle:(CSHandle *)handle NS_DESIGNATED_INITIALIZER;
+-(instancetype)initAsCopyOf:(XADSkipHandle *)other NS_DESIGNATED_INITIALIZER;
 
 -(void)addSkipFrom:(off_t)start length:(off_t)length;
 -(void)addSkipFrom:(off_t)start to:(off_t)end;
 -(off_t)actualOffsetForSkipOffset:(off_t)skipoffset;
 -(off_t)skipOffsetForActualOffset:(off_t)actualoffset;
 
--(off_t)fileSize;
--(off_t)offsetInFile;
--(BOOL)atEndOfFile;
+@property (NS_NONATOMIC_IOSONLY, readonly) off_t fileSize;
+@property (NS_NONATOMIC_IOSONLY, readonly) off_t offsetInFile;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL atEndOfFile;
 
 -(void)seekToFileOffset:(off_t)offs;
 -(void)seekToEndOfFile;

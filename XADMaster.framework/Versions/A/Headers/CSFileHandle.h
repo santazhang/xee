@@ -4,8 +4,8 @@
 
 #define CSFileHandle XADFileHandle
 
-extern NSString *CSCannotOpenFileException;
-extern NSString *CSFileErrorException;
+extern NSString *const CSCannotOpenFileException;
+extern NSString *const CSFileErrorException;
 
 @interface CSFileHandle:CSHandle
 {
@@ -22,18 +22,17 @@ extern NSString *CSFileErrorException;
 +(CSFileHandle *)fileHandleForPath:(NSString *)path modes:(NSString *)modes;
 
 // Initializers
--(id)initWithFilePointer:(FILE *)file closeOnDealloc:(BOOL)closeondealloc name:(NSString *)descname;
--(id)initAsCopyOf:(CSFileHandle *)other;
--(void)dealloc;
+-(instancetype)initWithFilePointer:(FILE *)file closeOnDealloc:(BOOL)closeondealloc name:(NSString *)descname;
+-(instancetype)initAsCopyOf:(CSFileHandle *)other;
 -(void)close;
 
 // Public methods
 -(FILE *)filePointer;
 
 // Implemented by this class
--(off_t)fileSize;
--(off_t)offsetInFile;
--(BOOL)atEndOfFile;
+@property (NS_NONATOMIC_IOSONLY, readonly) off_t fileSize;
+@property (NS_NONATOMIC_IOSONLY, readonly) off_t offsetInFile;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL atEndOfFile;
 
 -(void)seekToFileOffset:(off_t)offs;
 -(void)seekToEndOfFile;

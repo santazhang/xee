@@ -18,10 +18,10 @@
 #endif
 
 
-extern NSString *CSOutOfMemoryException;
-extern NSString *CSEndOfFileException;
-extern NSString *CSNotImplementedException;
-extern NSString *CSNotSupportedException;
+extern NSString *const CSOutOfMemoryException;
+extern NSString *const CSEndOfFileException;
+extern NSString *const CSNotImplementedException;
+extern NSString *const CSNotSupportedException;
 
 
 
@@ -33,17 +33,17 @@ extern NSString *CSNotSupportedException;
 	uint8_t writebyte,writebitsleft;
 }
 
--(id)initWithName:(NSString *)descname;
--(id)initAsCopyOf:(CSHandle *)other;
--(void)dealloc;
+-(instancetype)initWithName:(NSString *)descname;
+-(instancetype)initAsCopyOf:(CSHandle *)other;
 -(void)close;
 
 
 // Methods implemented by subclasses
 
--(off_t)fileSize;
--(off_t)offsetInFile;
--(BOOL)atEndOfFile;
+@property (NS_NONATOMIC_IOSONLY, readonly) off_t fileSize;
+@property (NS_NONATOMIC_IOSONLY, readonly) off_t offsetInFile;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL atEndOfFile;
+
 -(void)seekToFileOffset:(off_t)offs;
 -(void)seekToEndOfFile;
 -(void)pushBackByte:(int)byte;
@@ -72,6 +72,13 @@ extern NSString *CSNotSupportedException;
 -(uint16_t)readUInt16LE;
 -(uint32_t)readUInt32LE;
 -(uint64_t)readUInt64LE;
+
+-(int16_t)readInt16InBigEndianOrder:(BOOL)isbigendian;
+-(int32_t)readInt32InBigEndianOrder:(BOOL)isbigendian;
+-(int64_t)readInt64InBigEndianOrder:(BOOL)isbigendian;
+-(uint16_t)readUInt16InBigEndianOrder:(BOOL)isbigendian;
+-(uint32_t)readUInt32InBigEndianOrder:(BOOL)isbigendian;
+-(uint64_t)readUInt64InBigEndianOrder:(BOOL)isbigendian;
 
 -(uint32_t)readID;
 
@@ -134,10 +141,8 @@ extern NSString *CSNotSupportedException;
 -(void)_raiseNotImplemented:(SEL)selector;
 -(void)_raiseNotSupported:(SEL)selector;
 
--(NSString *)name;
+@property (readonly, copy) NSString *name;
 -(NSString *)description;
-
--(id)copyWithZone:(NSZone *)zone;
 
 @end
 

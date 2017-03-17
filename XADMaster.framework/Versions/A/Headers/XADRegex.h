@@ -1,5 +1,10 @@
 #import <Foundation/Foundation.h>
+
+#ifdef _WIN32
+#import "regex.h"
+#else
 #import <regex.h>
+#endif
 
 @interface XADRegex:NSObject
 {
@@ -18,17 +23,17 @@
 
 +(NSString *)null;
 
--(id)initWithPattern:(NSString *)pattern options:(int)options;
--(void)dealloc;
+-(instancetype)init UNAVAILABLE_ATTRIBUTE;
+-(instancetype)initWithPattern:(NSString *)pattern options:(int)options NS_DESIGNATED_INITIALIZER;
 
 -(void)beginMatchingString:(NSString *)string;
 //-(void)beginMatchingString:(NSString *)string range:(NSRange)range;
 -(void)beginMatchingData:(NSData *)data;
 -(void)beginMatchingData:(NSData *)data range:(NSRange)range;
 -(void)finishMatching;
--(BOOL)matchNext;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL matchNext;
 -(NSString *)stringForMatch:(int)n;
--(NSArray *)allMatches;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray<NSString*> *allMatches;
 
 -(BOOL)matchesString:(NSString *)string;
 -(NSString *)matchedSubstringOfString:(NSString *)string;
@@ -41,8 +46,8 @@
 -(NSString *)expandReplacementString:(NSString *)replacement;
 */
 
--(NSString *)pattern;
--(NSString *)description;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *pattern;
+@property (readonly, copy) NSString *description;
 
 @end
 
@@ -54,19 +59,19 @@
 -(NSString *)substringMatchedByPattern:(NSString *)pattern;
 -(NSString *)substringMatchedByPattern:(NSString *)pattern options:(int)options;
 
--(NSArray *)substringsCapturedByPattern:(NSString *)pattern;
--(NSArray *)substringsCapturedByPattern:(NSString *)pattern options:(int)options;
+-(NSArray<NSString*> *)substringsCapturedByPattern:(NSString *)pattern;
+-(NSArray<NSString*> *)substringsCapturedByPattern:(NSString *)pattern options:(int)options;
 
--(NSArray *)allSubstringsMatchedByPattern:(NSString *)pattern;
--(NSArray *)allSubstringsMatchedByPattern:(NSString *)pattern options:(int)options;
+-(NSArray<NSString*> *)allSubstringsMatchedByPattern:(NSString *)pattern;
+-(NSArray<NSString*> *)allSubstringsMatchedByPattern:(NSString *)pattern options:(int)options;
 
--(NSArray *)allSubstringsCapturedByPattern:(NSString *)pattern;
--(NSArray *)allSubstringsCapturedByPattern:(NSString *)pattern options:(int)options;
+-(NSArray<NSString*> *)allSubstringsCapturedByPattern:(NSString *)pattern;
+-(NSArray<NSString*> *)allSubstringsCapturedByPattern:(NSString *)pattern options:(int)options;
 
--(NSArray *)componentsSeparatedByPattern:(NSString *)pattern;
--(NSArray *)componentsSeparatedByPattern:(NSString *)pattern options:(int)options;
+-(NSArray<NSString*> *)componentsSeparatedByPattern:(NSString *)pattern;
+-(NSArray<NSString*> *)componentsSeparatedByPattern:(NSString *)pattern options:(int)options;
 
--(NSString *)escapedPattern;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *escapedPattern;
 
 @end
 
