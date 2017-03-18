@@ -74,7 +74,7 @@ NSDictionary *CSParseDSStore(NSString *filename)
 			if(length<chunk+12+namelen*2) goto end; // Truncated file.
 
 			NSString *filename=[[[NSString alloc] initWithBytes:bytes+chunk+4 length:namelen*2
-			encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingUTF16BE)] autorelease];
+			encoding:NSUTF16BigEndianStringEncoding] autorelease];
 			chunk+=4+namelen*2;
 
 			NSString *attrname=[[[NSString alloc] initWithBytes:bytes+chunk length:4

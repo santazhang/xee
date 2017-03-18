@@ -40,12 +40,13 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 		encryption=nil;
 
-		@try
-		{
+		@try {
 			if([fh readUInt8]!='%'||[fh readUInt8]!='P'||[fh readUInt8]!='D'||[fh readUInt8]!='F'||[fh readUInt8]!='-')
 			[NSException raise:PDFWrongMagicException format:@"Not a PDF file."];
+		} @catch(NSException *e) {
+			[self release];
+			@throw;
 		}
-		@catch(id e) { [self release]; @throw; }
 	}
 	return self;
 }
@@ -59,8 +60,6 @@ static BOOL IsWhiteSpace(uint8_t c);
 	[super dealloc];
 }
 
-
-
 -(BOOL)isEncrypted
 {
 	return encryption?YES:NO;
@@ -68,7 +67,8 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 -(BOOL)needsPassword
 {
-	if(!encryption) return NO;
+	if(!encryption)
+		return NO;
 	return [encryption needsPassword];
 }
 
@@ -181,7 +181,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 			if(entry[17]!='n') continue;
 
 			off_t objoffs=atoll(entry);
-			int objgen=atol(entry+11);
+			int objgen=(int)atol(entry+11);
 
 			if(!objoffs) continue; // kludge to handle broken Apple PDF files
 
@@ -578,7 +578,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 	if(offs<100)
 	{
 		[fh seekToFileOffset:0];
-		start=[fh readDataOfLength:offs];
+		start=[fh readDataOfLength:(int)offs];
 	}
 	else
 	{
@@ -586,10 +586,14 @@ static BOOL IsWhiteSpace(uint8_t c);
 		start=[fh readDataOfLength:100];
 	}
 
-	int length=[start length];
+	NSInteger length=[start length];
 	const uint8_t *bytes=[start bytes];
-	int skip=0;
-	for(int i=0;i<length;i++) if(bytes[i]=='\n'||bytes[i]=='\r') skip=i+1;
+	NSInteger skip=0;
+	for (NSInteger i=0;i<length;i++) {
+		if(bytes[i]=='\n'||bytes[i]=='\r') {
+			skip=i+1;
+		}
+	}
 	NSString *startstr=[[[NSString alloc] initWithBytes:bytes+skip length:length-skip encoding:NSISOLatin1StringEncoding] autorelease];
 
 	NSData *end=[fh readDataOfLengthAtMost:100];
@@ -606,6 +610,8 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 
 @implementation PDFString
+@synthesize rawData = data;
+@synthesize reference = ref;
 
 -(id)initWithData:(NSData *)bytes parent:(PDFObjectReference *)parent parser:(PDFParser *)owner
 {
@@ -625,10 +631,6 @@ static BOOL IsWhiteSpace(uint8_t c);
 	[super dealloc];
 }
 
--(NSData *)rawData { return data; }
-
--(PDFObjectReference *)reference { return ref; }
-
 -(NSData *)data
 {
 	PDFEncryptionHandler *encryption=[parser encryptionHandler];
@@ -639,10 +641,10 @@ static BOOL IsWhiteSpace(uint8_t c);
 -(NSString *)string
 {
 	NSData *characters=[self data];
-	int length=[characters length];
+	NSUInteger length=[characters length];
 	const unsigned char *bytes=[characters bytes];
 	if(length>=2&&bytes[0]==0xfe&&bytes[1]==0xff) return [[[NSString alloc] initWithBytes:bytes+2 length:length-2
-	encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingUTF16BE)] autorelease];
+	encoding:NSUTF16BigEndianStringEncoding] autorelease];
 	else return [[[NSString alloc] initWithData:characters encoding:NSISOLatin1StringEncoding] autorelease];
 }
 
@@ -651,7 +653,10 @@ static BOOL IsWhiteSpace(uint8_t c);
 	return [other isKindOfClass:[PDFString class]]&&[data isEqual:((PDFString *)other)->data];
 }
 
--(unsigned)hash { return [data hash]; }
+-(NSUInteger)hash
+{
+	return [data hash];
+}
 
 -(id)copyWithZone:(NSZone *)zone
 {
@@ -669,6 +674,8 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 
 @implementation PDFObjectReference
+@synthesize number = num;
+@synthesize generation = gen;
 
 +(PDFObjectReference *)referenceWithNumber:(int)objnum generation:(int)objgen
 {
@@ -690,18 +697,20 @@ static BOOL IsWhiteSpace(uint8_t c);
 	return self;
 }
 
--(int)number { return num; }
-
--(int)generation { return gen; }
-
 -(BOOL)isEqual:(id)other
 {
 	return [other isKindOfClass:[PDFObjectReference class]]&&((PDFObjectReference *)other)->num==num&&((PDFObjectReference *)other)->gen==gen;
 }
 
--(unsigned)hash { return num^(gen*69069); }
+-(NSUInteger)hash
+{
+	return num^(gen*69069);
+}
 
--(id)copyWithZone:(NSZone *)zone { return [[[self class] allocWithZone:zone] initWithNumber:num generation:gen]; }
+-(id)copyWithZone:(NSZone *)zone
+{
+	return [[self allocWithZone:zone] initWithNumber:num generation:gen];
+}
 
 -(NSString *)description { return [NSString stringWithFormat:@"<Reference to object %d, generation %d>",num,gen]; }
 

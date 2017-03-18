@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 
+#import "PDFNameCollisionPreventer.h"
 #import "PDFStream.h"
 #import "PDFEncryptionHandler.h"
 
@@ -21,11 +22,10 @@ extern NSString *PDFParserException;
 +(PDFParser *)parserWithHandle:(CSHandle *)handle;
 +(PDFParser *)parserForPath:(NSString *)path;
 
--(id)initWithHandle:(CSHandle *)handle;
--(void)dealloc;
+-(instancetype)initWithHandle:(CSHandle *)handle;
 
--(BOOL)isEncrypted;
--(BOOL)needsPassword;
+@property (readonly, getter=isEncrypted) BOOL encrypted;
+@property (readonly) BOOL needsPassword;
 -(BOOL)setPassword:(NSString *)password;
 
 -(NSDictionary *)objectDictionary;
@@ -69,23 +69,15 @@ extern NSString *PDFParserException;
 {
 	NSData *data;
 	PDFObjectReference *ref;
-	PDFParser *parser;
+	__unsafe_unretained PDFParser *parser;
 }
 
 -(id)initWithData:(NSData *)bytes parent:(PDFObjectReference *)parent parser:(PDFParser *)owner;
--(void)dealloc;
 
--(NSData *)data;
--(PDFObjectReference *)reference;
--(NSData *)rawData;
--(NSString *)string;
-
--(BOOL)isEqual:(id)other;
--(unsigned)hash;
-
--(id)copyWithZone:(NSZone *)zone;
-
--(NSString *)description;
+@property (readonly, retain) NSData *data;
+@property (readonly, retain) PDFObjectReference *reference;
+@property (readonly, copy) NSData *rawData;
+@property (readonly, copy) NSString *string;
 
 @end
 
@@ -99,16 +91,10 @@ extern NSString *PDFParserException;
 +(PDFObjectReference *)referenceWithNumber:(int)objnum generation:(int)objgen;
 +(PDFObjectReference *)referenceWithNumberObject:(NSNumber *)objnum generationObject:(NSNumber *)objgen;
 
--(id)initWithNumber:(int)objnum generation:(int)objgen;
+-(instancetype)initWithNumber:(int)objnum generation:(int)objgen NS_DESIGNATED_INITIALIZER;
+- (instancetype)init UNAVAILABLE_ATTRIBUTE;
 
--(int)number;
--(int)generation;
-
--(BOOL)isEqual:(id)other;
--(unsigned)hash;
-
--(id)copyWithZone:(NSZone *)zone;
-
--(NSString *)description;
+@property (readonly) int number;
+@property (readonly) int generation;
 
 @end

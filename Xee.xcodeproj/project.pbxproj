@@ -635,6 +635,7 @@
 		5571AAAE1E70A3FC00697829 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		5571AAB11E70A7CD00697829 /* XeePrefKeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XeePrefKeys.h; path = Classes/XeePrefKeys.h; sourceTree = "<group>"; };
 		5571AAB21E70AE9200697829 /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
+		558A1FA71E70FBAD00C41ADA /* PDFNameCollisionPreventer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDFNameCollisionPreventer.h; sourceTree = "<group>"; };
 		558DB12B1E78855E00566997 /* XeeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeParser.h; sourceTree = "<group>"; };
 		7FC411DD17DC0A8600626F23 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		8D15AC360486D014006FF6A4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Info.plist; sourceTree = "<group>"; };
@@ -734,6 +735,7 @@
 		1BCA06990E9C3DE60016D207 /* PDF */ = {
 			isa = PBXGroup;
 			children = (
+				558A1FA71E70FBAD00C41ADA /* PDFNameCollisionPreventer.h */,
 				1BCA069B0E9C3E110016D207 /* PDFParser.h */,
 				1BCA069C0E9C3E110016D207 /* PDFParser.m */,
 				1BA51CF90E9921C200554F95 /* PDFStream.h */,

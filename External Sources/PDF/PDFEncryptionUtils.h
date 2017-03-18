@@ -1,12 +1,11 @@
 #import <Foundation/Foundation.h>
 #import <XADMaster/CSHandle.h>
 #import <XADMaster/CSBlockStreamHandle.h>
+#import "PDFNameCollisionPreventer.h"
 #include <CommonCrypto/CommonDigest.h>
 #include <Security/Security.h>
 
 extern NSString *PDFMD5FinishedException;
-
-
 
 @interface PDFMD5Engine:NSObject
 {
@@ -17,22 +16,17 @@ extern NSString *PDFMD5FinishedException;
 
 +(instancetype)engine;
 +(NSData *)digestForData:(NSData *)data;
-+(NSData *)digestForBytes:(const void *)bytes length:(int)length;
++(NSData *)digestForBytes:(const void *)bytes length:(NSUInteger)length;
 
 -(instancetype)init;
 
 -(void)updateWithData:(NSData *)data;
--(void)updateWithBytes:(const void *)bytes length:(unsigned long)length;
+-(void)updateWithBytes:(const void *)bytes length:(NSUInteger)length;
 
 -(NSData *)digest;
 -(NSString *)hexDigest;
 
--(NSString *)description;
-
 @end
-
-
-
 
 @interface PDFAESHandle:CSBlockStreamHandle
 {
@@ -46,7 +40,6 @@ extern NSString *PDFMD5FinishedException;
 }
 
 -(instancetype)initWithHandle:(CSHandle *)handle key:(NSData *)keydata;
--(void)dealloc;
 
 -(void)resetBlockStream;
 -(int)produceBlockAtOffset:(off_t)pos;

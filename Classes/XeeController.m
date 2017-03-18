@@ -1054,7 +1054,7 @@ static NSMutableArray *controllers=nil;
 		imageNamed:@"frames"];
 
 		[statusbar addEntry:
-		[NSString stringWithFormat:@"%dx%d",[currimage width],[currimage height]]
+		[NSString stringWithFormat:@"%ldx%ld",(long)[currimage width],(long)[currimage height]]
 		imageNamed:@"size"];
 
 		[statusbar addEntry:[currimage depth] image:[currimage depthIcon]];
