@@ -137,8 +137,8 @@
 		1BE7D7D10B2F58FD009166F5 /* XeeCropTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE7D7D00B2F58FD009166F5 /* XeeCropTool.m */; };
 		1BECC3C81082A788000385AB /* UniversalDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BECC3C61082A787000385AB /* UniversalDetector.framework */; };
 		1BECC3C91082A788000385AB /* XADMaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BECC3C71082A788000385AB /* XADMaster.framework */; };
-		1BECC3FF1082A7B7000385AB /* UniversalDetector.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1BECC3C61082A787000385AB /* UniversalDetector.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		1BECC4001082A7B7000385AB /* XADMaster.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1BECC3C71082A788000385AB /* XADMaster.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		1BECC3FF1082A7B7000385AB /* UniversalDetector.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 1BECC3C61082A787000385AB /* UniversalDetector.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		1BECC4001082A7B7000385AB /* XADMaster.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 1BECC3C71082A788000385AB /* XADMaster.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		1BEEDCCA0A648BDC00603584 /* raw.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1BEEDCC90A648BDC00603584 /* raw.icns */; };
 		1BF142280B094080003A8D57 /* asahi.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BF1420F0B094080003A8D57 /* asahi.c */; };
 		1BF142290B094080003A8D57 /* canon.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BF142100B094080003A8D57 /* canon.c */; };
@@ -233,15 +233,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		1BECC4061082A7DC000385AB /* CopyFiles */ = {
+		1BECC4061082A7DC000385AB /* Copy Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				1BECC3FF1082A7B7000385AB /* UniversalDetector.framework in CopyFiles */,
-				1BECC4001082A7B7000385AB /* XADMaster.framework in CopyFiles */,
+				1BECC3FF1082A7B7000385AB /* UniversalDetector.framework in Copy Frameworks */,
+				1BECC4001082A7B7000385AB /* XADMaster.framework in Copy Frameworks */,
 			);
+			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -1212,7 +1213,7 @@
 			buildConfigurationList = 1B74976D08D33EA2003CCA48 /* Build configuration list for PBXNativeTarget "Xee" */;
 			buildPhases = (
 				8D15AC2B0486D014006FF6A4 /* Resources */,
-				1BECC4061082A7DC000385AB /* CopyFiles */,
+				1BECC4061082A7DC000385AB /* Copy Frameworks */,
 				8D15AC300486D014006FF6A4 /* Sources */,
 				8D15AC330486D014006FF6A4 /* Frameworks */,
 			);
@@ -1659,6 +1660,7 @@
 				IBC_STRIP_NIBS = NO;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = cx.c3.xee;
 				PRODUCT_NAME = Xee;
@@ -1689,6 +1691,7 @@
 				IBC_STRIP_NIBS = NO;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = cx.c3.xee;
 				PRODUCT_NAME = Xee;

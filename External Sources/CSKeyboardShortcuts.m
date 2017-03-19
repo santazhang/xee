@@ -729,7 +729,7 @@ static CSKeyboardShortcuts *defaultshortcuts=nil;
 	if ((mod & NSShiftKeyMask) || ![[chr lowercaseString] isEqual:chr])
 		[str appendString:@"\u21e7"];
 
-	return str;
+	return [NSString stringWithString:str];
 }
 
 -(NSString *)descriptionOfCharacter
