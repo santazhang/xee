@@ -225,6 +225,7 @@
 		1C14FE761C70CEB300200498 /* transupp.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C14FE441C70CEB300200498 /* transupp.c */; };
 		5571AAA91E70A3DF00697829 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5571AAA81E70A3DF00697829 /* Security.framework */; };
 		5571AAB31E70AE9200697829 /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5571AAB21E70AE9200697829 /* Icons.xcassets */; };
+		558372A21E7F71DD007221B7 /* XeeQuicktimeLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B262C3408BE6A4900648EBC /* XeeQuicktimeLoader.m */; };
 		7FC411DE17DC0A8600626F23 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FC411DD17DC0A8600626F23 /* libz.dylib */; };
 		8D15AC2D0486D014006FF6A4 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B6FDCFA73011CA2CEA /* MainMenu.nib */; };
 		8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165FFE840EACC02AAC07 /* InfoPlist.strings */; };
@@ -1420,6 +1421,7 @@
 				1C14FE641C70CEB300200498 /* jdmerge.c in Sources */,
 				1C14FE531C70CEB300200498 /* jcparam.c in Sources */,
 				1C14FE731C70CEB300200498 /* jquant1.c in Sources */,
+				558372A21E7F71DD007221B7 /* XeeQuicktimeLoader.m in Sources */,
 				1BB983620B187BAA000B4425 /* XeeControllerImageActions.m in Sources */,
 				1BB983670B187BB8000B4425 /* XeeControllerNavigationActions.m in Sources */,
 				1BB9836C0B187BC7000B4425 /* XeeControllerFileActions.m in Sources */,

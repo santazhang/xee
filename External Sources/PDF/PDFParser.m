@@ -709,10 +709,13 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 -(id)copyWithZone:(NSZone *)zone
 {
-	return [[self allocWithZone:zone] initWithNumber:num generation:gen];
+	return [[[self class] allocWithZone:zone] initWithNumber:num generation:gen];
 }
 
--(NSString *)description { return [NSString stringWithFormat:@"<Reference to object %d, generation %d>",num,gen]; }
+-(NSString *)description
+{
+	return [NSString stringWithFormat:@"<Reference to object %d, generation %d>",num,gen];
+}
 
 @end
 

@@ -45,10 +45,10 @@ typedef NS_OPTIONS(unsigned int, XeeSaveFormatFlags) {
 	NSInteger crop_x,crop_y,crop_width,crop_height;
 	NSMutableArray *properties;
 
-	id<XeeImageDelegate> delegate;
+	__unsafe_unretained id<XeeImageDelegate> delegate;
 }
 
--(instancetype)init;
+-(instancetype)init NS_DESIGNATED_INITIALIZER;
 -(instancetype)initWithHandle:(CSHandle *)fh;
 -(instancetype)initWithHandle:(CSHandle *)fh ref:(XeeFSRef *)fsref attributes:(NSDictionary *)attributes;
 -(instancetype)initWithHandle2:(CSHandle *)fh ref:(XeeFSRef *)fsref attributes:(NSDictionary *)attributes;
