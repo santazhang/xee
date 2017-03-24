@@ -38,13 +38,13 @@
 	[labelpara release];
 
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(frontImageDidChange:)
-	name:@"XeeFrontImageDidChangeNotification" object:nil];
+	name:XeeFrontImageDidChangeNotification object:nil];
 
 	[outlineview setDoubleAction:@selector(doubleClick:)];
 	[outlineview setTarget:self];
 
 	XeeController *delegate=[maindelegate focusedController];
-	if(delegate) [[NSNotificationCenter defaultCenter] postNotificationName:@"XeeFrontImageDidChangeNotification" object:delegate];
+	if(delegate) [[NSNotificationCenter defaultCenter] postNotificationName:XeeFrontImageDidChangeNotification object:delegate];
 }
 
 
