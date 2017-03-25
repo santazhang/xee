@@ -4,16 +4,16 @@
 
 
 
-#define CSCmd NSCommandKeyMask
-#define CSAlt NSAlternateKeyMask
-#define CSCtrl NSControlKeyMask
-#define CSShift NSShiftKeyMask
+#define CSCmd NSEventModifierFlagCommand
+#define CSAlt NSEventModifierFlagOption
+#define CSCtrl NSEventModifierFlagControl
+#define CSShift NSEventModifierFlagShift
 
 
 
 @class CSKeyStroke,CSAction;
 
-
+NS_ASSUME_NONNULL_BEGIN
 
 @interface CSKeyboardShortcuts:NSObject
 {
@@ -23,7 +23,7 @@
 +(NSArray<CSAction*> *)parseMenu:(NSMenu *)menu;
 +(NSArray<CSAction*> *)parseMenu:(NSMenu *)menu namespace:(NSMutableSet<NSString*> *)aNamespace;
 
-@property (class, readonly, retain) CSKeyboardShortcuts *defaultShortcuts;
+@property (class, readonly, retain, nullable) CSKeyboardShortcuts *defaultShortcuts;
 +(void)installWindowClass;
 
 -(instancetype)init;
@@ -37,13 +37,11 @@
 -(void)resetToDefaults;
 
 -(BOOL)handleKeyEvent:(NSEvent *)event;
--(CSAction *)actionForEvent:(NSEvent *)event;
--(CSAction *)actionForEvent:(NSEvent *)event ignoringModifiers:(NSEventModifierFlags)ignoredmods;
--(CSKeyStroke *)findKeyStrokeForEvent:(NSEvent *)event index:(NSInteger *)index;
+-(nullable CSAction *)actionForEvent:(NSEvent *)event;
+-(nullable CSAction *)actionForEvent:(NSEvent *)event ignoringModifiers:(NSEventModifierFlags)ignoredmods;
+-(nullable CSKeyStroke *)findKeyStrokeForEvent:(NSEvent *)event index:(NSInteger *)index;
 
 @end
-
-
 
 @interface CSAction:NSObject
 {
@@ -58,26 +56,24 @@
 }
 
 +(CSAction *)actionWithTitle:(NSString *)acttitle selector:(SEL)selector;
-+(CSAction *)actionWithTitle:(NSString *)acttitle identifier:(NSString *)ident selector:(SEL)selector;
-+(CSAction *)actionWithTitle:(NSString *)acttitle identifier:(NSString *)ident selector:(SEL)selector defaultShortcut:(CSKeyStroke *)defshortcut;
++(CSAction *)actionWithTitle:(NSString *)acttitle identifier:(nullable NSString *)ident selector:(SEL)selector;
++(CSAction *)actionWithTitle:(NSString *)acttitle identifier:(nullable NSString *)ident selector:(SEL)selector defaultShortcut:(CSKeyStroke *)defshortcut;
 +(CSAction *)actionWithTitle:(NSString *)acttitle identifier:(NSString *)ident;
 +(CSAction *)actionFromMenuItem:(NSMenuItem *)item namespace:(NSMutableSet<NSString*> *)aNamespace NS_SWIFT_UNAVAILABLE("use CSAction(menuItem:namespace:) instead");
 
--(instancetype)initWithTitle:(NSString *)acttitle identifier:(NSString *)ident selector:(SEL)selector target:(id)acttarget defaultShortcut:(CSKeyStroke *)defshortcut;
--(instancetype)initWithMenuItem:(NSMenuItem *)menuitem namespace:(NSMutableSet<NSString*> *)namespace;
+-(instancetype)initWithTitle:(NSString *)acttitle identifier:(nullable NSString *)ident selector:(nullable SEL)selector target:(nullable id)acttarget defaultShortcut:(nullable CSKeyStroke *)defshortcut;
+-(instancetype)initWithMenuItem:(NSMenuItem *)menuitem namespace:(NSMutableSet<NSString*> *)aNamespace;
 
-@property (readonly) NSString *title;
-@property (readonly) NSString *identifier;
-@property (readonly) SEL selector;
+@property (readonly, copy) NSString *title;
+@property (readonly, copy) NSString *identifier;
+@property (readonly, nullable) SEL selector;
 @property (readonly, getter=isMenuItem) BOOL menuItem;
 
--(void)setDefaultShortcuts:(NSArray *)shortcutarray;
+-(void)setDefaultShortcuts:(NSArray<CSKeyStroke*> *)shortcutarray;
 -(void)addDefaultShortcut:(CSKeyStroke *)shortcut;
--(void)addDefaultShortcuts:(NSArray *)shortcutarray;
+-(void)addDefaultShortcuts:(NSArray<CSKeyStroke*> *)shortcutarray;
 
-@property (copy) NSArray *shortcuts;
--(void)setShortcuts:(NSArray *)shortcutarray;
--(NSArray *)shortcuts;
+@property (copy, null_resettable) NSArray<CSKeyStroke*> *shortcuts;
 
 -(void)resetToDefaults;
 -(void)loadCustomizations;
@@ -85,15 +81,15 @@
 
 -(BOOL)perform:(NSEvent *)event;
 
--(NSImage *)shortcutsImage;
+@property (readonly, retain, nullable) NSImage *shortcutsImage;
 -(void)clearImage;
 
 -(NSSize)imageSizeWithDropSize:(NSSize)dropsize;
--(void)drawAtPoint:(NSPoint)point selected:(CSKeyStroke *)selected dropBefore:(CSKeyStroke *)dropbefore dropSize:(NSSize)dropsize;
+-(void)drawAtPoint:(NSPoint)point selected:(nullable CSKeyStroke *)selected dropBefore:(nullable CSKeyStroke *)dropbefore dropSize:(NSSize)dropsize;
 
--(CSKeyStroke *)findKeyAtPoint:(NSPoint)point offset:(NSPoint)offset;
+-(nullable CSKeyStroke *)findKeyAtPoint:(NSPoint)point offset:(NSPoint)offset;
 -(NSPoint)findLocationOfKey:(CSKeyStroke *)searchkey offset:(NSPoint)offset;
--(CSKeyStroke *)findKeyAfterDropPoint:(NSPoint)point offset:(NSPoint)offset;
+-(nullable CSKeyStroke *)findKeyAfterDropPoint:(NSPoint)point offset:(NSPoint)offset;
 
 -(NSComparisonResult)compare:(CSAction *)other;
 
@@ -110,7 +106,7 @@
 
 +(CSKeyStroke *)keyForCharacter:(NSString *)character modifiers:(NSEventModifierFlags)modifiers;
 +(CSKeyStroke *)keyForCharCode:(unichar)character modifiers:(NSEventModifierFlags)modifiers;
-+(CSKeyStroke *)keyFromMenuItem:(NSMenuItem *)item;
++(nullable CSKeyStroke *)keyFromMenuItem:(NSMenuItem *)item;
 +(CSKeyStroke *)keyFromEvent:(NSEvent *)event;
 +(CSKeyStroke *)keyFromDictionary:(NSDictionary *)dict;
 
@@ -123,73 +119,58 @@
 @property (readonly) NSEventModifierFlags modifiers;
 @property (readonly) NSDictionary<NSString*,id> *dictionary;
 
--(NSImage *)image;
+@property (readonly, retain) NSImage *image;
 
 -(BOOL)matchesEvent:(NSEvent *)event ignoringModifiers:(NSEventModifierFlags)ignoredmods;
 
--(NSString *)description;
--(NSString *)descriptionOfModifiers;
--(NSString *)descriptionOfCharacter;
+@property (readonly, copy) NSString *description;
+@property (readonly, copy) NSString *descriptionOfModifiers;
+@property (readonly, copy) NSString *descriptionOfCharacter;
 
 @end
 
 
-
-
-
-@interface CSKeyboardList:KFTypeSelectTableView <NSTableViewDataSource, NSDraggingSource>
+@interface CSKeyboardList:KFTypeSelectTableView <NSTableViewDataSource, NSTableViewDelegate, NSDraggingSource, NSDraggingDestination>
 {
-	CSKeyStroke *selected;
-	CSAction *dropaction;
-	CSKeyStroke *dropbefore;
+	__unsafe_unretained CSKeyStroke *selected;
+	__unsafe_unretained CSAction *dropaction;
+	__unsafe_unretained CSKeyStroke *dropbefore;
 	NSSize dropsize;
 
-	IBOutlet CSKeyboardShortcuts *keyboardShortcuts;
+	CSKeyboardShortcuts *keyboardShortcuts;
 	IBOutlet NSTextField *infoTextField;
 	IBOutlet NSControl *addButton;
 	IBOutlet NSControl *removeButton;
 	IBOutlet NSControl *resetButton;
 }
 
--(instancetype)initWithCoder:(NSCoder *)decoder;
-
 -(void)awakeFromNib;
 
 -(void)mouseDown:(NSEvent *)event;
 
--(CSAction *)getActionForLocation:(NSPoint)point hasFrame:(NSRect *)frame;
+-(nullable CSAction *)getActionForLocation:(NSPoint)point hasFrame:(nullable NSRect *)frame;
 
 -(void)updateButtons;
 
--(void)setKeyboardShortcuts:(CSKeyboardShortcuts *)shortcuts;
--(CSKeyboardShortcuts *)keybardShortcuts;
+@property (strong, nonatomic) IBOutlet CSKeyboardShortcuts *keyboardShortcuts;
 
 -(CSAction *)getSelectedAction;
 
--(IBAction)addShortcut:(id)sender;
--(IBAction)removeShortcut:(id)sender;
--(IBAction)resetToDefaults:(id)sender;
--(IBAction)resetAll:(id)sender;
+-(IBAction)addShortcut:(nullable id)sender;
+-(IBAction)removeShortcut:(nullable id)sender;
+-(IBAction)resetToDefaults:(nullable id)sender;
+-(IBAction)resetAll:(nullable id)sender;
 
 @end
 
 
-
-
-
-
-
 @interface CSKeyListenerWindow:NSWindow
-{
-}
 
 +(void)install;
 
 -(BOOL)performKeyEquivalent:(NSEvent *)event;
 
 @end
-
-
 
 @interface NSEvent (CSKeyboardShortcutsAdditions)
 
@@ -200,3 +181,5 @@
 -(NSString *)remappedCharactersIgnoringAllModifiers;
 
 @end
+
+NS_ASSUME_NONNULL_END
