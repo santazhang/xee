@@ -81,8 +81,8 @@ NSInteger XeeNumberOfZoomLevels=21;
 
 				unsigned long size;
 				if (GraphicsExportDoExport(exporter, &size) == noErr) {
-					NSData *data=[NSData dataWithBytes:*outhandle+512 length:size-512];
-					NSLog(@"%@",[data subdataWithRange:NSMakeRange(0,2*1024)]);
+					NSData *data=[NSData dataWithBytes:*outhandle + 512 length:size - 512];
+					NSLog(@"%@", [data subdataWithRange:NSMakeRange(0, 2 * 1024)]);
 					[pboard setData:data forType:type];
 					res = YES;
 				}
@@ -110,15 +110,14 @@ NSInteger XeeNumberOfZoomLevels=21;
 
 -(IBAction)save:(id)sender
 {
-	if(![self validateAction:_cmd])
-	{
+	if (![self validateAction:_cmd]) {
 		NSBeep();
 		return;
 	}
 
 	[source beginSavingImage:currimage];
 
-	[self detachBackgroundTaskWithMessage:NSLocalizedString(@"Saving...",@"Message when saving an image")
+	[self detachBackgroundTaskWithMessage:NSLocalizedString(@"Saving...", @"Message when saving an image")
 	selector:@selector(saveTask:) target:self object:[currimage retain]];
 }
 
@@ -127,9 +126,9 @@ NSInteger XeeNumberOfZoomLevels=21;
 	NSString *filename=[saveimage filename];
 	if (![saveimage losslessSaveTo:filename flags:XeeRetainUntransformableBlocksFlag]) {
 		NSAlert *alert=[[[NSAlert alloc] init] autorelease];
-		[alert setMessageText:NSLocalizedString(@"Image saving failed",@"Title of the file saving failure dialog")];
+		[alert setMessageText:NSLocalizedString(@"Image saving failed", @"Title of the file saving failure dialog")];
 		[alert setInformativeText:[NSString stringWithFormat:NSLocalizedString(@"Couldn't save the file \"%@\".",
-		@"Content of the file saving failure dialog"),[filename lastPathComponent]]];
+		@"Content of the file saving failure dialog"), [filename lastPathComponent]]];
 		[alert addButtonWithTitle:NSLocalizedString(@"OK",@"OK button")];
 		[alert performSelectorOnMainThread:@selector(runModal) withObject:nil waitUntilDone:NO];
 
@@ -151,8 +150,7 @@ NSInteger XeeNumberOfZoomLevels=21;
 
 -(IBAction)saveAs:(id)sender
 {
-	if(![self validateAction:_cmd])
-	{
+	if (![self validateAction:_cmd]) {
 		NSBeep();
 		return;
 	}
@@ -165,10 +163,10 @@ NSInteger XeeNumberOfZoomLevels=21;
 -(IBAction)frameSkipNext:(id)sender
 {
 	[self setResizeBlockFromSender:sender];
-	if(currimage) {
-		int frame=[currimage frame];
-		int frames=[currimage frames];
-		[self setFrame:(frame+1)%frames];
+	if (currimage) {
+		int frame = [currimage frame];
+		int frames = [currimage frames];
+		[self setFrame:(frame + 1) % frames];
 	}
 	[self setResizeBlock:NO];
 }
@@ -176,20 +174,20 @@ NSInteger XeeNumberOfZoomLevels=21;
 -(IBAction)frameSkipPrev:(id)sender
 {
 	[self setResizeBlockFromSender:sender];
-	if(currimage)
-	{
-		int frame=[currimage frame];
-		int frames=[currimage frames];
-		[self setFrame:(frame+frames-1)%frames];
+	if (currimage) {
+		int frame = [currimage frame];
+		int frames = [currimage frames];
+		[self setFrame: (frame + frames - 1) % frames];
 	}
 	[self setResizeBlock:NO];
 }
 
 -(IBAction)toggleAnimation:(id)sender
 {
-	if(!currimage||![currimage animated]) return;
+	if (!currimage || ![currimage animated])
+		return;
 
-	[currimage setAnimating:![currimage animating]];
+	currimage.animating = !currimage.animating;
 }
 
 
@@ -199,9 +197,13 @@ NSInteger XeeNumberOfZoomLevels=21;
 	[self setResizeBlockFromSender:sender];
 
 	int i;
-	for(i=0;i<XeeNumberOfZoomLevels-1;i++) if(XeeZoomLevels[i]>zoom) break;
-
-	[self setZoom:XeeZoomLevels[i]];
+	for (i = 0; i < XeeNumberOfZoomLevels - 1; i++) {
+		if (XeeZoomLevels[i] > zoom) {
+			break;
+		}
+	}
+	
+	self.zoom = XeeZoomLevels[i];
 
 	[self setResizeBlock:NO];
 }

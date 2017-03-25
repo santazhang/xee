@@ -22,6 +22,7 @@ static int CalculateMipmapSize(int width,int height)
 	return sum+1;
 }
 
+__unused
 static uint32_t InterleavedCoords(uint32_t x,uint32_t y)
 {
 	x=(x|(x<<8))&0x00ff00ff;

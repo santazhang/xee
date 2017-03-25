@@ -19,7 +19,7 @@ extern NSString * const XeeFrontImageDidChangeNotification;
 
 
 
-@interface XeeController:NSObject <XeeImageSourceDelegate, NSToolbarDelegate>
+@interface XeeController:NSObject <XeeImageSourceDelegate, NSToolbarDelegate, NSWindowDelegate>
 {
 	XeeImageSource *source;
 	XeeImage *currimage;
@@ -63,8 +63,6 @@ extern NSString * const XeeFrontImageDidChangeNotification;
 }
 
 -(id)init;
--(void)dealloc;
--(void)awakeFromNib;
 
 -(void)windowWillClose:(NSNotification *)notification;
 -(void)windowDidBecomeMain:(NSNotification *)notification;

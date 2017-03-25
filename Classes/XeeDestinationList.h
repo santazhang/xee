@@ -4,7 +4,7 @@
 
 @class XeeController;
 
-@interface XeeDestinationView:KFTypeSelectTableView <NSTableViewDataSource>
+@interface XeeDestinationView:KFTypeSelectTableView <NSTableViewDataSource, NSTableViewDelegate>
 {
 	NSMutableArray *destinations;
 	NSInteger droprow,dropnum;
@@ -42,6 +42,6 @@
 +(NSInteger)findDestination:(NSString *)directory;
 +(void)loadArray;
 +(void)saveArray;
-+(NSMutableArray *)defaultArray;
++(NSMutableArray<NSDictionary*> *)defaultArray;
 
 @end

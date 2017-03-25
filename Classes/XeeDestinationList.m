@@ -22,13 +22,13 @@ void XeePlayPoof(NSWindow *somewindow);
 
 -(void)awakeFromNib
 {
-	destinations=[XeeDestinationView defaultArray];
-	droprow=dropnum=0;
-	movemode=NO;
-	surpressshortcut=NO;
+	destinations = [XeeDestinationView defaultArray];
+	droprow = dropnum = 0;
+	movemode = NO;
+	surpressshortcut = NO;
 
-	[self setDataSource:(id)self];
-	[self setDelegate:(id)self];
+	[self setDataSource:self];
+	[self setDelegate:self];
     [self registerForDraggedTypes:[NSArray arrayWithObjects:@"XeeDestinationPath",NSFilenamesPboardType,nil]];
 
 	[self setDoubleAction:@selector(destinationListClick:)];
@@ -68,8 +68,6 @@ void XeePlayPoof(NSWindow *somewindow);
 	return [destinations count]+1+dropnum;
 }
 
-
-
 -(void)drawRow:(NSInteger)row clipRect:(NSRect)clipRect
 {
 	NSInteger index=[self indexForRow:row];
@@ -84,7 +82,7 @@ void XeePlayPoof(NSWindow *somewindow);
 	}
 
 	if (row >= droprow && row < droprow + dropnum) {
-//		[[[NSColor blueColor] colorWithAlphaComponent:0.2] set];
+		//[[[NSColor blueColor] colorWithAlphaComponent:0.2] set];
 		[[NSColor colorWithDeviceWhite:0 alpha:0.2] set];
 		XeeDrawRoundedBar([self rectOfRow:row]);
 	}
@@ -138,12 +136,9 @@ void XeePlayPoof(NSWindow *somewindow);
 	return NSZeroRect;
 }
 
-
-
-
 -(void)keyDown:(NSEvent *)event
 {
-	unichar c=[[event characters] characterAtIndex:0];
+	unichar c = [[event characters] characterAtIndex:0];
 
 	if (c == 13 || c == 3) {
 		[[NSApplication sharedApplication] sendAction:@selector(destinationListClick:) to:nil from:self];
@@ -160,8 +155,6 @@ void XeePlayPoof(NSWindow *somewindow);
 	return [super menuForEvent:event];
 }
 
-
-
 -(void)mouseDown:(NSEvent *)event
 {
 	NSPoint clickpoint=[self convertPoint:[event locationInWindow] fromView:nil];
@@ -170,13 +163,11 @@ void XeePlayPoof(NSWindow *somewindow);
 
 //	if(row>=0) [self selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
 
-	if(index>=0)
-	{
+	if (index >= 0) {
 		NSEvent *newevent=[[self window] nextEventMatchingMask:(NSLeftMouseDraggedMask|NSLeftMouseUpMask)
 		untilDate:[NSDate distantFuture] inMode:NSEventTrackingRunLoopMode dequeue:NO];
 
-		if(newevent&&[newevent type]==NSLeftMouseDragged)
-		{
+		if (newevent && [newevent type] == NSLeftMouseDragged) {
 			NSMutableDictionary *dict=[[destinations objectAtIndex:index] retain];
 			NSPasteboard *pboard=[NSPasteboard pasteboardWithName:NSDragPboard];
 			[pboard declareTypes:[NSArray arrayWithObject:@"XeeDestinationPath"] owner:self];
@@ -239,13 +230,11 @@ void XeePlayPoof(NSWindow *somewindow);
 	NSPasteboard *pboard=[sender draggingPasteboard];
 	NSInteger row=[self rowForDropPoint:[self convertPoint:[sender draggingLocation] fromView:nil]];
 
-	if([[pboard types] containsObject:NSFilenamesPboardType])
-	{
+	if ([[pboard types] containsObject:NSFilenamesPboardType]) {
 		NSArray *files=[pboard propertyListForType:NSFilenamesPboardType];
 
 #ifdef __LP64__
-		for (NSString *file in files)
-		{
+		for (NSString *file in files) {
 			NSURL *fileURL = [NSURL fileURLWithPath:file];
 			NSURL *resolvedURL = [NSURL URLByResolvingAliasFileAtURL:fileURL options:NSURLBookmarkResolutionWithoutUI error:NULL];
 			if (resolvedURL) {
@@ -261,10 +250,7 @@ void XeePlayPoof(NSWindow *somewindow);
 			}
 		}
 #else
-		NSEnumerator *enumerator=[files objectEnumerator];
-		NSString *file;
-		while(file=[enumerator nextObject])
-		{
+		for (NSString *file in files) {
 			FSRef ref;
 			if(CFURLGetFSRef((CFURLRef)[NSURL fileURLWithPath:file],&ref))
 			{
@@ -277,9 +263,7 @@ void XeePlayPoof(NSWindow *somewindow);
 		}
 #endif
 		[self setDropRow:row num:[files count]];
-	}
-	else
-	{
+	} else {
 		[self setDropRow:row num:1];
 	}
 
@@ -291,7 +275,9 @@ void XeePlayPoof(NSWindow *somewindow);
 
 -(NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender
 {
-	if(!dropnum) return NSDragOperationNone;
+	if (!dropnum) {
+		return NSDragOperationNone;
+	}
 
 	[self setDropRow:[self rowForDropPoint:[self convertPoint:[sender draggingLocation] fromView:nil]]];
 	[self reloadData];
@@ -311,7 +297,9 @@ void XeePlayPoof(NSWindow *somewindow);
 
 -(BOOL)performDragOperation:(id <NSDraggingInfo>)sender
 {
-	if(!dropnum) return NO;
+	if (!dropnum) {
+		return NO;
+	}
 
 	NSInteger row=droprow;
 	droprow=0;
@@ -321,18 +309,19 @@ void XeePlayPoof(NSWindow *somewindow);
 	NSInteger insindex=row-1;
 
 	NSArray *files;
-	if([[pboard types] containsObject:NSFilenamesPboardType]) files=[pboard propertyListForType:NSFilenamesPboardType];
-	else files=[NSArray arrayWithObject:[pboard stringForType:@"XeeDestinationPath"]];
+	if ([[pboard types] containsObject:NSFilenamesPboardType]) {
+		files = [pboard propertyListForType:NSFilenamesPboardType];
+	} else {
+		files = [NSArray arrayWithObject:[pboard stringForType:@"XeeDestinationPath"]];
+	}
 
-	NSEnumerator *enumerator=[files objectEnumerator];
-	NSString *file;
-	while(file=[enumerator nextObject])
-	{
+	for (NSString *file in files) {
 		NSInteger remindex=[XeeDestinationView findDestination:file];
-		if(remindex!=NSNotFound)
-		{
+		if (remindex != NSNotFound) {
 			[destinations removeObjectAtIndex:remindex];
-			if(remindex<insindex) insindex--;
+			if (remindex < insindex) {
+				insindex--;
+			}
 		}
 	}
 
@@ -345,27 +334,36 @@ void XeePlayPoof(NSWindow *somewindow);
 
 -(NSInteger)rowForDropPoint:(NSPoint)point
 {
-	NSInteger row=[self rowAtPoint:point];
+	NSInteger row = [self rowAtPoint:point];
 
-	if(row==0) return 1;
-	else if(row<0||row>[destinations count]) return [destinations count]+1;
-	else return row;
+	if (row == 0) {
+		return 1;
+	} else if (row < 0 || row > [destinations count]) {
+		return [destinations count] + 1;
+	} else {
+		return row;
+	}
 }
 
 -(void)setDropRow:(NSInteger)row num:(NSInteger)num
 {
-	NSInteger sel=[self selectedRow];
+	NSInteger sel = [self selectedRow];
 
-	if(sel>=0)
-	{
-		if(sel>=droprow+dropnum) sel-=dropnum;
-		if(sel>=row) sel+=num;
+	if (sel >= 0) {
+		if (sel >= droprow + dropnum) {
+			sel -= dropnum;
+		}
+		if (sel >= row) {
+			sel += num;
+		}
 	}
 
-	droprow=row;
-	dropnum=num;
+	droprow = row;
+	dropnum = num;
 
-	if(sel>=0) [self selectRowIndexes:[NSIndexSet indexSetWithIndex:sel] byExtendingSelection:NO];
+	if (sel >= 0) {
+		[self selectRowIndexes:[NSIndexSet indexSetWithIndex:sel] byExtendingSelection:NO];
+	}
 }
 
 -(void)setDropRow:(NSInteger)row
@@ -402,9 +400,10 @@ void XeePlayPoof(NSWindow *somewindow);
 
 -(IBAction)openInFinder:(id)sender
 {
-	NSInteger index=[self indexForRow:[self selectedRow]];
-	if (index < 0)
+	NSInteger index = [self indexForRow:[self selectedRow]];
+	if (index < 0) {
 		return;
+	}
 
 	NSString *filename=[[destinations objectAtIndex:index] objectForKey:@"path"];
 	[[NSWorkspace sharedWorkspace] openFile:filename];
@@ -412,8 +411,10 @@ void XeePlayPoof(NSWindow *somewindow);
 
 -(IBAction)removeFromList:(id)sender
 {
-	NSInteger index=[self indexForRow:[self selectedRow]];
-	if(index<0) return;
+	NSInteger index = [self indexForRow:[self selectedRow]];
+	if (index < 0) {
+		return;
+	}
 
 	[destinations removeObjectAtIndex:index];
 	[XeeDestinationView updateTables];
@@ -422,45 +423,66 @@ void XeePlayPoof(NSWindow *somewindow);
 
 -(void)menuNeedsUpdate:(NSMenu *)menu
 {
-	BOOL enabled=[self selectedRow]==0?NO:YES;
-	NSInteger count=[menu numberOfItems];
+	BOOL enabled = [self selectedRow] != 0;
+	NSInteger count = [menu numberOfItems];
 
-	for(int i=0;i<count;i++) [[menu itemAtIndex:i] setEnabled:enabled];
+	for (NSInteger i = 0; i < count; i++) {
+		[menu itemAtIndex:i].enabled = enabled;
+	}
 }
 
 
 
 -(NSInteger)indexForRow:(NSInteger)row
 {
-	if(row<1) return -1;
+	if (row < 1) {
+		return -1;
+	}
 
 	NSInteger index;
-	if(row>=droprow+dropnum) index=row-dropnum-1;
-	else if(row>=droprow) return -1;
-	else index=row-1;
+	if (row >= droprow + dropnum) {
+		index = row - dropnum - 1;
+	} else if (row >= droprow) {
+		return -1;
+	} else {
+		index = row - 1;
+	}
 
-	if(index>=[destinations count]) return -1;
+	if (index >= [destinations count]) {
+		return -1;
+	}
 	return index;
 }
 
 -(NSString *)pathForRow:(NSInteger)row
 {
 	NSInteger index=[self indexForRow:row];
-	if(index<0) return nil;
+	if (index < 0) {
+		return nil;
+	}
 	return [[destinations objectAtIndex:index] objectForKey:@"path"];
 }
 
 -(NSString *)shortcutForRow:(NSInteger)row
 {
-	if(row==0||row>10) return nil;
-	if(row>=droprow&&row<droprow+dropnum) return nil;
-	if(row>[destinations count]) return nil;
+	if (row == 0 || row > 10) {
+		return nil;
+	}
+	if (row >= droprow && row < droprow + dropnum) {
+		return nil;
+	}
+	if (row > [destinations count]) {
+		return nil;
+	}
 
-	CSAction **actions=[maindelegate copyAndMoveActions];
-	NSInteger index=movemode?row+9:row-1;
-	NSArray *shortcuts=[actions[index] shortcuts];
-	if([shortcuts count]) return [[shortcuts objectAtIndex:0] description];
-	else return nil;
+	CSAction **actions = [maindelegate copyAndMoveActions];
+	NSInteger index = movemode ? row + 9 : row - 1;
+	NSArray *shortcuts = [actions[index] shortcuts];
+	if ([shortcuts count]) {
+		return [[shortcuts objectAtIndex:0] description];
+	} else {
+		return nil;
+	}
 }
 
 
@@ -472,8 +494,9 @@ void XeePlayPoof(NSWindow *somewindow);
 
 +(void)suggestInsertion:(NSString *)directory
 {
-	if([self findDestination:directory]==NSNotFound)
-	[self addDestinations:[NSArray arrayWithObject:directory] index:[[self defaultArray] count]];
+	if([self findDestination:directory] == NSNotFound) {
+		[self addDestinations:@[directory] index:[[self defaultArray] count]];
+	}
 
 	[self updateTables];
 	[self saveArray];
@@ -483,46 +506,47 @@ void XeePlayPoof(NSWindow *somewindow);
 {
 	NSMutableArray *destinations=[self defaultArray];
 	for (NSString *directory in directories) {
-		NSString *dirname=[directory lastPathComponent];
-		NSImage *icon=[[NSWorkspace sharedWorkspace] iconForFile:directory];
-		NSColor *color=[NSColor clearColor];
+		NSString *dirname = [directory lastPathComponent];
+		NSImage *icon = [[NSWorkspace sharedWorkspace] iconForFile:directory];
+		NSColor *color = [NSColor clearColor];
 
-		NSURL *url=[NSURL fileURLWithPath:directory];
+		NSURL *url = [NSURL fileURLWithPath:directory];
 
 #if __LP64__
 		NSColor *tmpClr = nil;
 
-		if([url getResourceValue:&tmpClr forKey:NSURLLabelColorKey error:NULL])
-		{
-			color=[tmpClr colorWithAlphaComponent:0.2];
+		if ([url getResourceValue:&tmpClr forKey:NSURLLabelColorKey error:NULL]) {
+			color = [tmpClr colorWithAlphaComponent:0.2];
 		}
 #else
 		FSRef fsref;
 		FSSpec fsspec;
 		CFURLGetFSRef((CFURLRef)url,&fsref);
-		FSGetCatalogInfo(&fsref,kFSCatInfoNone,NULL,NULL,&fsspec,NULL);
+		FSGetCatalogInfo(&fsref, kFSCatInfoNone, NULL, NULL, &fsspec, NULL);
 
 		IconRef dummyicon;
 		SInt16 label;
 		RGBColor rgbcol;
 		Str255 labelstr;
-		if(GetIconRefFromFile(&fsspec,&dummyicon,&label)==noErr)
-		{
+		if (GetIconRefFromFile(&fsspec, &dummyicon, &label) == noErr) {
 			ReleaseIconRef(dummyicon);
 
-			if(label)
-			if(GetLabel(label,&rgbcol,labelstr)==noErr)
-			{
-				color=[NSColor colorWithCalibratedRed:rgbcol.red/65280.0 green:rgbcol.green/65280.0 blue:rgbcol.blue/65280.0 alpha:0.2];
+			if (label) {
+				if (GetLabel(label,&rgbcol,labelstr) == noErr) {
+					color=[NSColor colorWithCalibratedRed:rgbcol.red/65280.0 green:rgbcol.green/65280.0 blue:rgbcol.blue/65280.0 alpha:0.2];
+				}
 			}
 		}
 #endif
 
-		NSDictionary *dict=[NSDictionary dictionaryWithObjectsAndKeys:
+		NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
 		directory,@"path",dirname,@"filename",icon,@"icon",color,@"color",nil];
 
-		if(index<[destinations count]) [destinations insertObject:dict atIndex:index];
-		else [destinations addObject:dict];
+		if (index < [destinations count]) {
+			[destinations insertObject:dict atIndex:index];
+		} else {
+			[destinations addObject:dict];
+		}
 	}
 }
 
@@ -530,26 +554,30 @@ void XeePlayPoof(NSWindow *somewindow);
 {
 	NSMutableArray *destinations=[self defaultArray];
 
-	NSInteger count=[destinations count];
-	for(int i=0;i<count;i++) if([[[destinations objectAtIndex:i] objectForKey:@"path"] isEqual:directory]) return i;
+	NSInteger count = [destinations count];
+	for (NSInteger i = 0; i < count; i++) {
+		if ([[[destinations objectAtIndex:i] objectForKey:@"path"] isEqual:directory]) {
+			return i;
+		}
+	}
 
 	return NSNotFound;
 }
 
 +(void)loadArray
 {
-	NSArray *destarray=[[NSUserDefaults standardUserDefaults] objectForKey:@"destinations"];
+	NSArray *destarray = [[NSUserDefaults standardUserDefaults] objectForKey:@"destinations"];
 	[self addDestinations:destarray index:0];
 }
 
 +(void)saveArray
 {
-	NSMutableArray *destinations=[self defaultArray];
-	NSMutableArray *array=[NSMutableArray arrayWithCapacity:[destinations count]];
+	NSMutableArray *destinations = [self defaultArray];
+	NSMutableArray *array = [NSMutableArray arrayWithCapacity:[destinations count]];
 
-	NSEnumerator *enumerator=[destinations objectEnumerator];
-	NSDictionary *destination;
-	while(destination=[enumerator nextObject]) [array addObject:[destination objectForKey:@"path"]];
+	for (NSDictionary *destination in destinations) {
+		[array addObject:[destination objectForKey:@"path"]];
+	}
 
 	[[NSUserDefaults standardUserDefaults] setObject:array forKey:@"destinations"];
 }
@@ -557,9 +585,8 @@ void XeePlayPoof(NSWindow *somewindow);
 +(NSMutableArray *)defaultArray
 {
 	static NSMutableArray *def=nil;
-	if(!def)
-	{
-		def=[[NSMutableArray alloc] init];
+	if (!def) {
+		def = [[NSMutableArray alloc] init];
 		[self loadArray];
 	}
 

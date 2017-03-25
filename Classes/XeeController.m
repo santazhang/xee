@@ -23,8 +23,9 @@ extern CGFloat XeeZoomLevels[];
 extern NSInteger XeeNumberOfZoomLevels;
 
 NSString * const XeeFrontImageDidChangeNotification = @"XeeFrontImageDidChangeNotification";
+NSString * const XeeSetStatusBarHiddenNotification = @"XeeSetStatusBarHiddenNotification";
 
-static NSMutableArray *controllers=nil;
+static NSMutableArray *controllers = nil;
 
 
 
@@ -36,8 +37,7 @@ static NSMutableArray *controllers=nil;
 
 -(id)init
 {
-	if(self=[super init])
-	{
+	if (self = [super init]) {
 		source=nil;
 		currimage=nil;
 
@@ -85,7 +85,9 @@ static NSMutableArray *controllers=nil;
 
 	[window release];
 	[fullscreenwindow release];
-	if(fullscreenwindow) SetSystemUIMode(kUIModeNormal,0);
+	if (fullscreenwindow) {
+		SetSystemUIMode(kUIModeNormal, 0);
+	}
 
 	CGImageRelease(copiedcgimage);
 
@@ -112,7 +114,7 @@ static NSMutableArray *controllers=nil;
 
 	[[NSNotificationCenter defaultCenter] addObserver:self
 	selector:@selector(setStatusBarHiddenNotification:)
-	name:@"XeeSetStatusBarHiddenNotification" object:nil];
+	name:XeeSetStatusBarHiddenNotification object:nil];
 
 	[[NSNotificationCenter defaultCenter] addObserver:self
 	selector:@selector(refreshImageNotification:)
@@ -127,7 +129,7 @@ static NSMutableArray *controllers=nil;
 	window.toolbar = toolbar;
 	[toolbar release];
 
-	[self setStatusBarHidden:[[NSUserDefaults standardUserDefaults] boolForKey:@"hideStatusBar"]];
+	[self setStatusBarHidden:[[NSUserDefaults standardUserDefaults] boolForKey:XeeHideStatusBarKey]];
 
 	[self updateWindowPosition];
 }
@@ -154,7 +156,8 @@ static NSMutableArray *controllers=nil;
 
 -(void)windowWillClose:(NSNotification *)notification
 {
-	if([notification object]!=window) return; // ignore messages from the fullscreen window
+	if ([notification object] != window)
+		return; // ignore messages from the fullscreen window
 	[self performSelector:@selector(dismantle) withObject:nil afterDelay:0];
 }
 
@@ -185,14 +188,16 @@ static NSMutableArray *controllers=nil;
 
 -(void)windowWillMiniaturize:(NSNotification *)notification
 {
-	if([notification object]!=window) return;
+	if ([notification object] != window)
+		return;
 	[imageview copyGLtoQuartz];
 	[window setOpaque:NO]; // required to make the Quartz underlay and the window shadow appear correctly
 }
 
 -(void)windowDidMiniaturize:(NSNotification *)notification
 {
-	if([notification object]!=window) return;
+	if ([notification object] != window)
+		return;
 	[window setOpaque:YES];
 }
 
@@ -216,15 +221,15 @@ static NSMutableArray *controllers=nil;
 
 -(void)scrollWheel:(NSEvent *)event
 {
-	if([[NSUserDefaults standardUserDefaults] integerForKey:XeeScrollWheelFunctionKey]==0)
-	{
-		if([self isCropping]) return;
+	if ([[NSUserDefaults standardUserDefaults] integerForKey:XeeScrollWheelFunctionKey]==0) {
+		if ([self isCropping])
+			return;
 
-		CGFloat deltay=[event deltaY];
-		if(deltay==0) return;
+		CGFloat deltay = [event deltaY];
+		if (deltay == 0)
+			return;
 
-		if(IsSmoothScrollEvent(event))
-		{
+		if (IsSmoothScrollEvent(event)) {
 			static const NSTimeInterval delay=0.25;
 			static NSTimeInterval prevtime=0;
 			NSTimeInterval currtime=[event timestamp];
@@ -297,9 +302,12 @@ static NSMutableArray *controllers=nil;
 
 -(void)swipeWithEvent:(NSEvent *)event
 {
-	CGFloat x=[event deltaX];
-	if(x>0) [self skipPrev:nil];
-	else if(x<0) [self skipNext:nil];
+	CGFloat x = [event deltaX];
+	if (x > 0) {
+		[self skipPrev:nil];
+	} else if (x < 0) {
+		[self skipNext:nil];
+	}
 }
 
 
@@ -311,7 +319,8 @@ static NSMutableArray *controllers=nil;
 	else [window setTitle:@"Xee"];
 
 	NSString *filename=[source windowRepresentedFilename];
-	if(filename) [window setRepresentedFilename:filename];
+	if (filename)
+		[window setRepresentedFilename:filename];
 
 	[self setImage:image];
 	[self updateStatusBar];
@@ -324,8 +333,7 @@ static NSMutableArray *controllers=nil;
 
 -(NSString *)xeeImageSourceDemandsPassword:(XeeImageSource *)source
 {
-	if(!passwordpanel)
-	{
+	if (!passwordpanel) {
 		NSNib *nib=[[[NSNib alloc] initWithNibNamed:@"PasswordPanel" bundle:nil] autorelease];
 		[nib instantiateNibWithOwner:self topLevelObjects:nil];
 	}
@@ -357,8 +365,11 @@ static NSMutableArray *controllers=nil;
 	[[NSNotificationCenter defaultCenter] postNotificationName:XeeFrontImageDidChangeNotification object:self];
 
 	NSString *title=[source windowTitle];
-	if(title) [window setTitle:title];
-	else [window setTitle:@"Xee"];
+	if (title) {
+		[window setTitle:title];
+	} else {
+		[window setTitle:@"Xee"];
+	}
 
 	NSString *filename=[source windowRepresentedFilename];
 	if(filename) [window setRepresentedFilename:filename];
@@ -376,7 +387,10 @@ static NSMutableArray *controllers=nil;
 
 -(NSDrawer *)drawer { return drawer; }
 
--(XeeFSRef *)currentRef { return [currimage ref]; }
+-(XeeFSRef *)currentRef
+{
+	return [currimage ref];
+}
 
 -(NSString *)currentFilename // should probably be removed
 {
@@ -394,9 +408,9 @@ static NSMutableArray *controllers=nil;
 	identifier:@"common.image"
 	labelsAndValues:
 		NSLocalizedString(@"Image width",@"Image width property label"),
-		[NSNumber numberWithInt:[currimage width]],
+		@([currimage width]),
 		NSLocalizedString(@"Image height",@"Image height property label"),
-		[NSNumber numberWithInt:[currimage height]],
+		@([currimage height]),
 		NSLocalizedString(@"File format",@"File format property label"),
 		[currimage format],
 		NSLocalizedString(@"Colour format",@"Colour format property label"),
@@ -404,8 +418,7 @@ static NSMutableArray *controllers=nil;
 	nil]];
 
 	NSRect crop=[currimage croppingRect];
-	if([self isCropping])
-	{
+	if ([self isCropping]) {
 		NSRect currcrop=[croptool croppingRect];
 
 		[proparray addObject:[XeePropertyItem subSectionItemWithLabel:
@@ -413,9 +426,9 @@ static NSMutableArray *controllers=nil;
 		identifier:@"common.cropping"
 		labelsAndValues:
 			NSLocalizedString(@"Full image width",@"Full image width property label"),
-			[NSNumber numberWithInt:[currimage fullWidth]],
+			@([currimage fullWidth]),
 			NSLocalizedString(@"Full image height",@"Full image height property label"),
-			[NSNumber numberWithInt:[currimage fullHeight]],
+			@([currimage fullHeight]),
 			NSLocalizedString(@"Current crop width",@"Current crop width property label"),
 			[NSNumber numberWithInt:currcrop.size.width],
 			NSLocalizedString(@"Current crop height",@"Current crop height property label"),
@@ -429,17 +442,15 @@ static NSMutableArray *controllers=nil;
 			NSLocalizedString(@"Cropping bottom",@"Cropping bottom property label"),
 			[NSNumber numberWithInt:[currimage fullHeight]-currcrop.size.height-crop.origin.y-currcrop.origin.y],
 		nil]];
-	}
-	else if(crop.size.width!=[currimage fullWidth]||crop.size.height!=[currimage fullHeight])
-	{
+	} else if (crop.size.width != [currimage fullWidth] || crop.size.height != [currimage fullHeight]) {
 		[proparray addObject:[XeePropertyItem subSectionItemWithLabel:
 		NSLocalizedString(@"Cropping properties",@"Cropping properties section title")
 		identifier:@"common.cropping"
 		labelsAndValues:
 			NSLocalizedString(@"Full image width",@"Full image width property label"),
-			[NSNumber numberWithInt:[currimage fullWidth]],
+			@([currimage fullWidth]),
 			NSLocalizedString(@"Full image height",@"Full image height property label"),
-			[NSNumber numberWithInt:[currimage fullHeight]],
+			@([currimage fullHeight]),
 			NSLocalizedString(@"Cropping left",@"Cropping left property label"),
 			[NSNumber numberWithInt:crop.origin.x],
 			NSLocalizedString(@"Cropping right",@"Cropping right property label"),
@@ -453,8 +464,7 @@ static NSMutableArray *controllers=nil;
 
 	XeeFSRef *ref=[currimage ref];
 	NSDictionary *attrs=[currimage attributes];
-	if(ref&&attrs)
-	{
+	if (ref && attrs) {
 		NSString *filename=[currimage filename];
 		XeePropertyItem *item;
 
@@ -479,24 +489,24 @@ static NSMutableArray *controllers=nil;
 		NSMutableArray *fileprops=[item value];
 
 		// Check for futaba timestamp name
-		NSString *namepart=[[filename lastPathComponent] stringByDeletingPathExtension];
-		NSInteger len=[namepart length];
+		NSString *namepart = [[filename lastPathComponent] stringByDeletingPathExtension];
+		NSInteger len = [namepart length];
 
-		if(len==10||len==13||len==17)
-		{
+		if (len == 10 || len == 13 || len == 17) {
 			BOOL matches=YES;
-			for(int i=0;i<len;i++)
-			{
+			for (int i = 0; i < len; i++) {
 				unichar c=[namepart characterAtIndex:i];
-				if(i<13&&!(c>='0'||c<='9')) matches=NO;
-				if(i>=13&&!((c>='0'&&c<='9')||(c>='a'||c<='f')||(c>='A'||c<='F'))) matches=NO;
+				if (i < 13 && !(c >= '0' || c <= '9')) {
+					matches=NO;
+				}
+				if (i >= 13 && !((c >= '0' && c <= '9') || (c >= 'a' || c <= 'f') || (c >= 'A' || c <= 'F'))) {
+					matches = NO;
+				}
 			}
 
-			if(matches)
-			{
-				int seconds=[[namepart substringToIndex:10] intValue];
-				if(seconds>1000000000)
-				{
+			if (matches) {
+				int seconds = [[namepart substringToIndex:10] intValue];
+				if (seconds > 1000000000) {
 					[fileprops addObject:[XeePropertyItem itemWithLabel:
 					NSLocalizedString(@"Futaba timestamp",@"Futaba timestamp property label")
 					value:[NSDate dateWithTimeIntervalSince1970:seconds]]];
@@ -510,21 +520,21 @@ static NSMutableArray *controllers=nil;
 	return proparray;
 }
 
--(BOOL)isFullscreen { return fullscreenwindow?YES:NO; }
-
--(CGFloat)zoom { return zoom; }
-
-
+-(BOOL)isFullscreen
+{
+	return fullscreenwindow != nil;
+}
 
 -(void)setImageSource:(XeeImageSource *)newsource
 {
-	if(source==newsource) return;
+	if (source == newsource)
+		return;
 
 	[source setDelegate:nil];
 	[source stop];
 	[source release];
 
-	source=[newsource retain];
+	source = [newsource retain];
 	[source setDelegate:self];
 	[source start];
 	//[source pickCurrentImage];
@@ -534,22 +544,18 @@ static NSMutableArray *controllers=nil;
 
 -(void)setImage:(XeeImage *)image
 {
-	if(image!=currimage)
-	{
+	if (image != currimage) {
 		[currimage release];
-		currimage=[image retain];
+		currimage = [image retain];
 	}
 
-	if(currimage)
-	{
+	if (currimage) {
 		[currimage setFrame:0];
 		[currimage resetTransformations];
 		[imageview setTool:movetool];
 		[imageview setImage:currimage];
 		[self setStandardImageSize];
-	}
-	else
-	{
+	} else {
 		[imageview setImage:nil];
 	}
 
@@ -565,12 +571,13 @@ static NSMutableArray *controllers=nil;
 
 -(void)setZoom:(CGFloat)newzoom
 {
-	if(!currimage) return;
+	if (!currimage)
+		return;
 
-	NSSize newsize=NSMakeSize(floor(newzoom*(CGFloat)[currimage width]+0.5),floor(newzoom*(CGFloat)[currimage height]+0.5));
+	NSSize newsize = NSMakeSize(floor(newzoom * (CGFloat)[currimage width] + 0.5), floor(newzoom * (CGFloat)[currimage height] + 0.5));
 	[self setImageSize:newsize];
 
-	zoom=newzoom;
+	zoom = newzoom;
 	[[NSUserDefaults standardUserDefaults] setFloat:zoom forKey:@"savedZoom"];
 
 	[self updateStatusBar];
@@ -578,12 +585,19 @@ static NSMutableArray *controllers=nil;
 
 -(void)setFrame:(NSInteger)frame
 {
-	if(!currimage) return;
-	if(frame==[currimage frame]) return;
-	if([currimage frames]==0) return;
+	if (!currimage)
+		return;
+	if (frame == [currimage frame])
+		return;
+	if ([currimage frames] == 0)
+		return;
 
-	if(frame<0) frame=0;
-	if(frame>=[currimage frames]) frame=[currimage frame]-1;
+	if (frame < 0) {
+		frame = 0;
+	}
+	if (frame >= [currimage frames]) {
+		frame = [currimage frame] - 1;
+	}
 
 	[imageview setTool:movetool];
 	[currimage setFrame:frame];
@@ -596,37 +610,50 @@ static NSMutableArray *controllers=nil;
 	window_focus_y=windowframe.origin.y+windowframe.size.height/2;
 }
 
--(void)setImageSize:(NSSize)size { [self setImageSize:size resetFocus:NO]; }
+-(void)setImageSize:(NSSize)size
+{
+	[self setImageSize:size resetFocus:NO];
+}
 
 -(void)setImageSize:(NSSize)size resetFocus:(BOOL)reset
 {
 	[imageview setImageSize:size];
-	if(reset) [imageview setFocus:NSMakePoint(0,0)];
+	if (reset) {
+		[imageview setFocus:NSMakePoint(0,0)];
+	}
 
-	if([self isResizeBlocked]) return;
+	if ([self isResizeBlocked]) {
+		return;
+	}
 
-	if(fullscreenwindow) return;
+	if (fullscreenwindow) {
+		return;
+	}
 
-	NSRect screenframe=[self availableScreenSpace];
-	NSRect windowframe=[window frame];
-	NSSize viewsize=[imageview bounds].size;
-	NSSize minsize=[self minViewSize];
+	NSRect screenframe = [self availableScreenSpace];
+	NSRect windowframe = [window frame];
+	NSSize viewsize = [imageview bounds].size;
+	NSSize minsize = [self minViewSize];
 
     // Retina Support
     NSScreen *currentScreen = [imageview.window screen];
     if ([currentScreen respondsToSelector:@selector(backingScaleFactor)]) {
         CGFloat scaleFactor = [currentScreen backingScaleFactor];
-        size.width/=scaleFactor;
-        size.height/=scaleFactor;
+        size.width /= scaleFactor;
+        size.height /= scaleFactor;
     }
 
-	if(size.width<minsize.width) size.width=minsize.width;
-	if(size.height<minsize.height) size.height=minsize.height;
+	if (size.width < minsize.width) {
+		size.width = minsize.width;
+	}
+	if (size.height < minsize.height) {
+		size.height = minsize.height;
+	}
 
-	NSInteger borderwidth=windowframe.size.width-viewsize.width;
-	NSInteger borderheight=windowframe.size.height-viewsize.height;
-	NSInteger win_width=size.width+borderwidth;
-	NSInteger win_height=size.height+borderheight;
+	NSInteger borderwidth = windowframe.size.width - viewsize.width;
+	NSInteger borderheight = windowframe.size.height - viewsize.height;
+	NSInteger win_width = size.width + borderwidth;
+	NSInteger win_height = size.height + borderheight;
 
 	if(win_width>screenframe.size.width) win_width=screenframe.size.width;
 	if(win_height>screenframe.size.height) win_height=screenframe.size.height;
@@ -636,10 +663,14 @@ static NSMutableArray *controllers=nil;
 	NSInteger win_x=window_focus_x-win_width/2;
 	NSInteger win_y=window_focus_y-win_height/2;
 
-	if(win_x<screenframe.origin.x) win_x=screenframe.origin.x;
-	if(win_y<screenframe.origin.y) win_y=screenframe.origin.y;
-	if(win_x+win_width>screenframe.origin.x+screenframe.size.width) win_x=screenframe.origin.x+screenframe.size.width-win_width;
-	if(win_y+win_height>screenframe.origin.y+screenframe.size.height) win_y=screenframe.origin.y+screenframe.size.height-win_height;
+	if (win_x < screenframe.origin.x)
+		win_x = screenframe.origin.x;
+	if (win_y < screenframe.origin.y)
+		win_y = screenframe.origin.y;
+	if (win_x + win_width > screenframe.origin.x + screenframe.size.width)
+		win_x = screenframe.origin.x + screenframe.size.width - win_width;
+	if (win_y + win_height > screenframe.origin.y + screenframe.size.height)
+		win_y = screenframe.origin.y + screenframe.size.height - win_height;
 
 //	int width=win_width-borderwidth;
 //	int height=win_height-borderheight;
@@ -656,13 +687,14 @@ static NSMutableArray *controllers=nil;
 
 -(void)setStandardImageSize
 {
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	NSSize maxsize=[self maxViewSize];
 
-	BOOL shrink=[[NSUserDefaults standardUserDefaults] boolForKey:XeeShrinkToFitKey];
-	BOOL enlarge=[[NSUserDefaults standardUserDefaults] boolForKey:XeeEnlargeToFitKey];
-	BOOL remember=[[NSUserDefaults standardUserDefaults] boolForKey:XeeRememberZoomKey];
-	BOOL rememberfocus=[[NSUserDefaults standardUserDefaults] boolForKey:XeeRememberFocusKey];
-	CGFloat savedzoom=[[NSUserDefaults standardUserDefaults] floatForKey:XeeSavedZoomKey];
+	BOOL shrink=[defaults boolForKey:XeeShrinkToFitKey];
+	BOOL enlarge=[defaults boolForKey:XeeEnlargeToFitKey];
+	BOOL remember=[defaults boolForKey:XeeRememberZoomKey];
+	BOOL rememberfocus=[defaults boolForKey:XeeRememberFocusKey];
+	CGFloat savedzoom=[defaults floatForKey:XeeSavedZoomKey];
 
     CGFloat imgWidthInPoints = (CGFloat)[currimage width];
     CGFloat imgHeightInPoints = (CGFloat)[currimage height];
@@ -670,28 +702,34 @@ static NSMutableArray *controllers=nil;
     // Retina Support
     NSScreen *currentScreen = [imageview.window screen];
     if ([currentScreen respondsToSelector:@selector(backingScaleFactor)]) {
-        float scaleFactor = [currentScreen backingScaleFactor];
-        imgWidthInPoints/=scaleFactor;
-        imgHeightInPoints/=scaleFactor;
+        CGFloat scaleFactor = [currentScreen backingScaleFactor];
+        imgWidthInPoints /= scaleFactor;
+        imgHeightInPoints /= scaleFactor;
     }
     
-	CGFloat horiz_zoom=maxsize.width/imgWidthInPoints;
-	CGFloat vert_zoom=maxsize.height/imgHeightInPoints;
+	CGFloat horiz_zoom = maxsize.width / imgWidthInPoints;
+	CGFloat vert_zoom = maxsize.height / imgHeightInPoints;
     
 	CGFloat min_zoom=fmin(horiz_zoom,vert_zoom);
 
-	if(remember) zoom=savedzoom;
-	else zoom=1;
+	if (remember)
+		zoom = savedzoom;
+	else
+		zoom = 1;
 
-	if(shrink&&min_zoom<zoom) zoom=min_zoom;
-	if(enlarge&&min_zoom>zoom) zoom=min_zoom;
+	if (shrink && min_zoom < zoom) {
+		zoom = min_zoom;
+	}
+	if (enlarge && min_zoom > zoom) {
+		zoom = min_zoom;
+	}
 
-	NSSize newsize=NSMakeSize(zoom*(CGFloat)[currimage width],zoom*(CGFloat)[currimage height]);
+	NSSize newsize = NSMakeSize(zoom*(CGFloat)[currimage width],zoom*(CGFloat)[currimage height]);
 
 	[self setImageSize:newsize resetFocus:!rememberfocus];
 }
 
--(void)setResizeBlock:(BOOL)block { blocked=block; }
+@synthesize resizeBlocked = blocked;
 
 -(void)setResizeBlockFromSender:(id)sender
 {
@@ -701,29 +739,26 @@ static NSMutableArray *controllers=nil;
 
 -(BOOL)isResizeBlocked
 {
-	switch([[NSUserDefaults standardUserDefaults] integerForKey:@"windowResizing"])
-	{
-		case 1: return blocked;
-		case 2: return YES;
-		default: return NO;
+	switch ([[NSUserDefaults standardUserDefaults] integerForKey:@"windowResizing"]) {
+		case 1:
+			return blocked;
+		case 2:
+			return YES;
+		default:
+			return NO;
 	}
 }
 
 -(NSSize)maxViewSize
 {
-	if(fullscreenwindow)
-	{
+	if (fullscreenwindow) {
 		return [fullscreenwindow frame].size;
-	}
-	else if([self isResizeBlocked])
-	{
+	} else if ([self isResizeBlocked]) {
 		return [imageview bounds].size;
-	}
-	else
-	{
-		NSSize screensize=[self availableScreenSpace].size;
-		NSSize windowsize=[window frame].size;
-		NSSize viewsize=[imageview bounds].size;
+	} else {
+		NSSize screensize = [self availableScreenSpace].size;
+		NSSize windowsize = [window frame].size;
+		NSSize viewsize = [imageview bounds].size;
 
 		return NSMakeSize(screensize.width-windowsize.width+viewsize.width,screensize.height-windowsize.height+viewsize.height);
 	}
@@ -733,21 +768,23 @@ static NSMutableArray *controllers=nil;
 {
 	NSSize size=NSMakeSize(256,128);
 
-	if([drawer state]==NSDrawerOpenState)
-	{
-		NSInteger drawerheight=[destinationtable numberOfRows]*19;
-		drawerheight+=[drawer leadingOffset];
-		drawerheight+=[drawer trailingOffset];
-		drawerheight+=19; // uh-huh, right...
-		if(size.height<drawerheight) size.height=drawerheight;
+	if ([drawer state] == NSDrawerOpenState) {
+		NSInteger drawerheight = [destinationtable numberOfRows] * 19;
+		drawerheight += [drawer leadingOffset];
+		drawerheight += [drawer trailingOffset];
+		drawerheight += 19; // uh-huh, right...
+		if (size.height < drawerheight) {
+			size.height = drawerheight;
+		}
 	}
 	return size;
 }
 
 -(NSRect)availableScreenSpace
 {
-	NSRect rect=[[window screen] visibleFrame];
-	if([drawer state]==NSDrawerOpenState) rect.size.width-=[drawer contentSize].width+XeeDrawerEdgeWidth;
+	NSRect rect = [[window screen] visibleFrame];
+	if([drawer state]==NSDrawerOpenState)
+		rect.size.width -= [drawer contentSize].width + XeeDrawerEdgeWidth;
 	return rect;
 }
 
@@ -767,8 +804,7 @@ static NSMutableArray *controllers=nil;
 
 -(void)displayPossibleError:(NSError *)error
 {
-	if(error)
-	{
+	if (error) {
 		NSAlert *alert=[NSAlert alertWithError:error];
 		[alert setAlertStyle:NSCriticalAlertStyle];
 
@@ -778,10 +814,13 @@ static NSMutableArray *controllers=nil;
 
 -(void)displayAlert:(NSAlert *)alert
 {
-	if(fullscreenwindow) [alert runModal];
-	else [alert beginSheetModalForWindow:window completionHandler:^(NSModalResponse returnCode) {
+	if (fullscreenwindow) {
+		[alert runModal];
+	} else {
+		[alert beginSheetModalForWindow:window completionHandler:^(NSModalResponse returnCode) {
 		// do nothing
 	}];
+	}
 }
 
 
@@ -805,16 +844,13 @@ static NSMutableArray *controllers=nil;
 
 -(void)detachBackgroundTask:(NSDictionary *)task
 {
-	NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
+	@autoreleasepool {
 
-	@try
-	{
+	@try {
 		[[task objectForKey:@"target"]
 		performSelector:[[task objectForKey:@"selector"] pointerValue]
 		withObject:[task objectForKey:@"object"]];
-	}
-	@catch(id e)
-	{
+	} @catch(NSException *e) {
 		NSLog(@"Error performing task \"%@\": %@",[task objectForKey:@"message"],e);
 	}
 
@@ -822,7 +858,7 @@ static NSMutableArray *controllers=nil;
 	[self performSelectorOnMainThread:@selector(updateStatusBar) withObject:nil waitUntilDone:NO];
 
 	[self release];
-	[pool release];
+	}
 }
 
 
@@ -846,8 +882,9 @@ static NSMutableArray *controllers=nil;
 
 -(void)setupToolbarItems
 {
-	NSArray *items=[self makeToolbarItems];
-	if(!items) return;
+	NSArray *items = [self makeToolbarItems];
+	if (!items)
+		return;
 
 	NSEnumerator *enumerator;
 	NSToolbarItem *item;
@@ -871,7 +908,7 @@ static NSMutableArray *controllers=nil;
 
 -(NSArray *)makeToolbarItems
 {
-	NSMutableArray *array=[NSMutableArray array];
+	NSMutableArray *array = [NSMutableArray array];
 
 	XeeSegmentedItem *navitool=[XeeSegmentedItem itemWithIdentifier:@"navi"
 	label:NSLocalizedString(@"Navigation",@"Navigation toolbar segment title")
@@ -1036,81 +1073,73 @@ static NSMutableArray *controllers=nil;
 
 	[statusbar removeAllCells];
 
-	if([source indexOfCurrentImage]==NSNotFound)
-	{
+	if ([source indexOfCurrentImage] == NSNotFound) {
 		[statusbar addEntry:NSLocalizedString(@"No images available",@"Status bar message when no images are available")
 		imageNamed:@"message"];
 		return;
 	}
 
-	if([source canBrowse]) [statusbar addEntry:
-	[NSString stringWithFormat:@"%ld/%ld",(long)[source indexOfCurrentImage]+1,(long)[source numberOfImages]]
-	image:[source icon]];
-
-	if(currimage)
-	{
+	if ([source canBrowse]) {
 		[statusbar addEntry:
-		[NSString stringWithFormat:@"%d%%",(int)(zoom*100)]
-		imageNamed:@"zoom"];
+		 [NSString stringWithFormat:@"%ld/%ld",(long)[source indexOfCurrentImage]+1,(long)[source numberOfImages]]
+					  image:[source icon]];
+	}
 
-		if([currimage frames]>1) [statusbar addEntry:
-		[NSString stringWithFormat:@"%ld/%ld",(long)[currimage frame]+1,(long)[currimage frames]]
-		imageNamed:@"frames"];
+	if (currimage) {
+		[statusbar addEntry:
+		 [NSString stringWithFormat:@"%d%%",(int)(zoom*100)]
+				 imageNamed:@"zoom"];
+
+		if ([currimage frames] > 1) {
+			[statusbar addEntry:
+			 [NSString stringWithFormat:@"%ld/%ld", (long)[currimage frame] + 1, (long)[currimage frames]]
+					 imageNamed:@"frames"];
+		}
 
 		[statusbar addEntry:
-		[NSString stringWithFormat:@"%ldx%ld",(long)[currimage width],(long)[currimage height]]
-		imageNamed:@"size"];
+		 [NSString stringWithFormat:@"%ldx%ld",(long)[currimage width], (long)[currimage height]]
+				 imageNamed:@"size"];
 
-		[statusbar addEntry:[currimage depth] image:[currimage depthIcon]];
+		[statusbar addEntry:currimage.depth image:currimage.depthIcon];
 	}
 
 	[statusbar addEntry:XeeDescribeSize([source sizeOfCurrentImage]) imageNamed:@"filesize"];
 
-	NSDate *date=[source dateOfCurrentImage];
-	if(date) [statusbar addEntry:XeeDescribeDate(date)];
-
-	if(currimage&&[currimage filename])
-	{
-		[statusbar addEntry:[currimage format] image:[currimage icon]];
+	NSDate *date = [source dateOfCurrentImage];
+	if (date) {
+		[statusbar addEntry:XeeDescribeDate(date)];
 	}
 
-	if(!currimage)
-	{
+	if (currimage && [currimage filename]) {
+		[statusbar addEntry:currimage.format image:currimage.icon];
+	}
+
+	if (!currimage) {
 		[statusbar addEntry:[NSString stringWithFormat:
-		NSLocalizedString(@"Couldn't display file \"%@\".",@"Statusbar message when image loading fails to even identify a file"),
+		NSLocalizedString(@"Couldn't display file \"%@\".", @"Statusbar message when image loading fails to even identify a file"),
 		[source descriptiveNameOfCurrentImage]] imageNamed:@"error"];
-	}
-	else if([tasks count])
-	{
+	} else if([tasks count]) {
 		[statusbar addEntry:[[tasks objectAtIndex:0] objectForKey:@"message"] imageNamed:@"message"];
-	}
-	else if([currimage failed])
-	{
+	} else if([currimage failed]) {
 		[statusbar addEntry:[NSString stringWithFormat:
-		NSLocalizedString(@"Error loading image \"%@\".",@"Statusbar message when image loading fails"),
+		NSLocalizedString(@"Error loading image \"%@\".", @"Statusbar message when image loading fails"),
 		[source descriptiveNameOfCurrentImage]] imageNamed:@"error"];
-	}
-	else if([currimage needsLoading])
-	{
+	} else if ([currimage needsLoading]) {
 		[statusbar addEntry:[NSString stringWithFormat:
-		NSLocalizedString(@"Loading \"%@\"...",@"Statusbar message while loading"),
+		NSLocalizedString(@"Loading \"%@\"...", @"Statusbar message while loading"),
 		[source descriptiveNameOfCurrentImage]] imageNamed:@"message"];
-	}
-	else if([self isCropping])
-	{
-		NSRect crop=[currimage croppingRect];
-		NSRect currcrop=[croptool croppingRect];
-		int left=crop.origin.x+currcrop.origin.x;
-		int width=currcrop.size.width;
-		int right=[currimage fullWidth]-currcrop.size.width-crop.origin.x-currcrop.origin.x;
-		int top=crop.origin.y+currcrop.origin.y;
-		int height=currcrop.size.height;
-		int bottom=[currimage fullWidth]-currcrop.size.height-crop.origin.y-currcrop.origin.y;
-		[statusbar addEntry:[NSString stringWithFormat:@"%C%d %C%d %C%d,%d %C%d,%d",
-		0x2194,width,0x2195,height,0x21f1,left,top,(unichar)0x21f2,right,bottom]];
-	}
-	else
-	{
+	} else if([self isCropping]) {
+		NSRect crop = [currimage croppingRect];
+		NSRect currcrop = [croptool croppingRect];
+		int left = crop.origin.x + currcrop.origin.x;
+		int width = currcrop.size.width;
+		int right = [currimage fullWidth] - currcrop.size.width - crop.origin.x - currcrop.origin.x;
+		int top = crop.origin.y + currcrop.origin.y;
+		int height = currcrop.size.height;
+		int bottom = [currimage fullWidth] - currcrop.size.height - crop.origin.y - currcrop.origin.y;
+		[statusbar addEntry:[NSString stringWithFormat:@"\u2194%d \u2195%d \u21f1%d,%d \u21f2%d,%d",
+		width,height,left,top,right,bottom]];
+	} else {
 		[statusbar addEntry:[source descriptiveNameOfCurrentImage]];
 	}
 }
@@ -1120,21 +1149,24 @@ static NSMutableArray *controllers=nil;
 	NSRect imageframe=[imageview frame];
 	NSRect statusframe=[statusbar frame];
 
-	if([statusbar isHidden])
-	{
-		if(hidden) return;
+	if ([statusbar isHidden]) {
+		if(hidden) {
+			return;
+		}
 		[statusbar setHidden:NO];
-		imageframe.size.height-=statusframe.size.height+1;
-		imageframe.origin.y+=statusframe.size.height+1;
+		imageframe.size.height -= statusframe.size.height+1;
+		imageframe.origin.y += statusframe.size.height+1;
 		[imageview setFrame:imageframe];
 		[imageview setDrawResizeCorner:NO];
 	}
 	else
 	{
-		if(!hidden) return;
+		if (!hidden) {
+			return;
+		}
 		[statusbar setHidden:YES];
-		imageframe.size.height+=statusframe.size.height+1;
-		imageframe.origin.y-=statusframe.size.height+1;
+		imageframe.size.height += statusframe.size.height+1;
+		imageframe.origin.y -= statusframe.size.height+1;
 		[imageview setFrame:imageframe];
 		[imageview setDrawResizeCorner:YES];
 	}
@@ -1147,12 +1179,12 @@ static NSMutableArray *controllers=nil;
 
 -(IBAction)toggleStatusBar:(id)sender
 {
-	BOOL newstate=![statusbar isHidden];
+	BOOL newstate = ![statusbar isHidden];
 
-	[[NSUserDefaults standardUserDefaults] setBool:newstate forKey:@"hideStatusBar"];
+	[[NSUserDefaults standardUserDefaults] setBool:newstate forKey:XeeHideStatusBarKey];
 
 	[[NSNotificationCenter defaultCenter]
-	postNotificationName:@"XeeSetStatusBarHiddenNotification"
+	postNotificationName:XeeSetStatusBarHiddenNotification
 	object:[NSNumber numberWithBool:newstate]];
 }
 
@@ -1160,28 +1192,21 @@ static NSMutableArray *controllers=nil;
 
 -(void)setDrawerEnableState
 {
-	BOOL cancopy=[source canCopyCurrentImage];
-	BOOL canmove=[source canMoveCurrentImage];
+	BOOL cancopy = [source canCopyCurrentImage];
+	BOOL canmove = [source canMoveCurrentImage];
 
-	if(cancopy&&canmove)
-	{
+	if (cancopy && canmove) {
 		[drawerseg setEnabled:YES forSegment:0];
 		[drawerseg setEnabled:YES forSegment:1];
-	}
-	else if(cancopy)
-	{
+	} else if (cancopy) {
 		[drawerseg setSelectedSegment:0];
 		[drawerseg setEnabled:YES forSegment:0];
 		[drawerseg setEnabled:NO forSegment:1];
-	}
-	else if(canmove)
-	{
+	} else if(canmove) {
 		[drawerseg setSelectedSegment:1];
 		[drawerseg setEnabled:NO forSegment:0];
 		[drawerseg setEnabled:YES forSegment:1];
-	}
-	else
-	{
+	} else {
 		[drawerseg setEnabled:NO forSegment:0];
 		[drawerseg setEnabled:NO forSegment:1];
 		[drawer close];
@@ -1192,39 +1217,36 @@ static NSMutableArray *controllers=nil;
 
 -(IBAction)fullScreen:(id)sender
 {
-	if(!fullscreenwindow)
-	{
+	if (!fullscreenwindow) {
 		fullscreenwindow=[[XeeFullScreenWindow alloc] initWithContentRect:[[window screen] frame]
 		styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
-		[fullscreenwindow setDelegate:(id)self];
+		[fullscreenwindow setDelegate:self];
 		[fullscreenwindow setAcceptsMouseMovedEvents:YES];
 
 		[window orderOut:nil];
 
-		savedsuperview=[imageview superview];
-		savedframe=[imageview frame];
+		savedsuperview = [imageview superview];
+		savedframe = [imageview frame];
 		[imageview removeFromSuperview];
 		[[fullscreenwindow contentView] addSubview:imageview];
 		[fullscreenwindow makeFirstResponder:imageview];
 
-		[imageview setFrame:[[fullscreenwindow contentView] bounds]];
+		imageview.frame = [[fullscreenwindow contentView] bounds];
 		[fullscreenwindow setFrame:[[window screen] frame] display:NO];
 
-		NSMenu *menu=[[NSApplication sharedApplication] mainMenu];
+		NSMenu *menu = [[NSApplication sharedApplication] mainMenu];
 		[[menu itemAtIndex:0] setTitle:@"Xee"]; // eek, hack!
 		[imageview setMenu:menu];
 
 		[[maindelegate propertiesController] setFullscreenMode:YES];
-		SetSystemUIMode(kUIModeAllHidden,kUIOptionAutoShowMenuBar);
+		SetSystemUIMode(kUIModeAllHidden, kUIOptionAutoShowMenuBar);
 
 		[self setStandardImageSize];
 		[imageview update];
 		[fullscreenwindow makeKeyAndOrderFront:nil];
 
 		[imageview setCursorShouldHide:YES];
-	}
-	else
-	{
+	} else {
 		[fullscreenwindow orderOut:nil];
 
 		[imageview removeFromSuperview];
@@ -1236,7 +1258,7 @@ static NSMutableArray *controllers=nil;
 		[imageview setMenu:nil];
 
 		[[maindelegate propertiesController] setFullscreenMode:NO];
-		SetSystemUIMode(kUIModeNormal,0);
+		SetSystemUIMode(kUIModeNormal, 0);
 
 		[fullscreenwindow release];
 		fullscreenwindow=nil;
@@ -1246,13 +1268,12 @@ static NSMutableArray *controllers=nil;
 
 		[imageview setCursorShouldHide:NO];
 	}
-	autofullscreen=NO;
+	autofullscreen = NO;
 }
 
 -(void)autoFullScreen
 {
-	if([[NSUserDefaults standardUserDefaults] boolForKey:XeeAutoFullscreenKey])
-	{
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:XeeAutoFullscreenKey]) {
 		[self fullScreen:nil];
 		autofullscreen=YES;
 	}
@@ -1261,8 +1282,9 @@ static NSMutableArray *controllers=nil;
 
 -(IBAction)confirm:(id)sender
 {
-	if ([self isCropping])
+	if ([self isCropping]) {
 		[self crop:nil];
+	}
 }
 
 -(IBAction)cancel:(id)sender

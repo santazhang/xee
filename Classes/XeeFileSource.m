@@ -307,8 +307,9 @@ static NSString *findCoreAudioSoundNamed(NSString *name)
 
 -(void)playSound:(NSString *)filename
 {
-	if([[NSUserDefaults standardUserDefaults] boolForKey:@"com.apple.sound.uiaudio.enabled"])
-	[self performSelector:@selector(actuallyPlaySound:) withObject:filename afterDelay:0];
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"com.apple.sound.uiaudio.enabled"]) {
+		[self performSelector:@selector(actuallyPlaySound:) withObject:filename afterDelay:0];
+	}
 }
 
 -(void)actuallyPlaySound:(NSString *)filename
@@ -324,9 +325,8 @@ static NSString *findCoreAudioSoundNamed(NSString *name)
 
 -(id)init
 {
-	if(self=[super init])
-	{
-		pathbuf=NULL;
+	if (self = [super init]) {
+		pathbuf = NULL;
 	}
 	return self;
 }
@@ -337,15 +337,10 @@ static NSString *findCoreAudioSoundNamed(NSString *name)
 	[super dealloc];
 }
 
-
-
-
 -(XeeImage *)produceImage
 {
 	return [XeeImage imageForRef:[self ref]];
 }
-
-
 
 -(XeeFSRef *)ref { return nil; }
 
@@ -361,55 +356,69 @@ static NSString *findCoreAudioSoundNamed(NSString *name)
 
 -(void)prepareForSortingBy:(XeeSortOrder)sortorder
 {
-	switch(sortorder)
-	{
-		case XeeDateSortOrder: break;
-		case XeeSizeSortOrder: break;
-		default:
-		{
-			NSString *path=[self descriptiveName];
-			pathlen=[path length];
-			pathbuf=malloc(pathlen*sizeof(UniChar));
+	switch (sortorder) {
+		case XeeDateSortOrder:
+			break;
+			
+		case XeeSizeSortOrder:
+			break;
+			
+		default: {
+			NSString *path = [self descriptiveName];
+			pathlen = [path length];
+			pathbuf = malloc(pathlen * sizeof(UniChar));
 			[path getCharacters:pathbuf];
 		}
+			break;
 	}
 }
 
 -(void)finishSorting
 {
 	free(pathbuf);
-	pathbuf=NULL;
+	pathbuf = NULL;
 }
 
 -(NSComparisonResult)comparePaths:(XeeFileEntry *)other
 {
 	SInt32 res;
-	UCCompareTextDefault(kUCCollateComposeInsensitiveMask|kUCCollateWidthInsensitiveMask|
-	kUCCollateCaseInsensitiveMask|kUCCollateDigitsOverrideMask|kUCCollateDigitsAsNumberMask|
-	kUCCollatePunctuationSignificantMask,pathbuf,pathlen,other->pathbuf,other->pathlen,NULL,&res);
+	UCCompareTextDefault(kUCCollateComposeInsensitiveMask | kUCCollateWidthInsensitiveMask |
+	kUCCollateCaseInsensitiveMask | kUCCollateDigitsOverrideMask | kUCCollateDigitsAsNumberMask |
+	kUCCollatePunctuationSignificantMask, pathbuf, pathlen, other->pathbuf, other->pathlen, NULL, &res);
 	return res;
 }
 
 -(NSComparisonResult)compareSizes:(XeeFileEntry *)other
 {
-	uint64_t size1=[self size];
-	uint64_t size2=[other size];
+	uint64_t size1 = [self size];
+	uint64_t size2 = [other size];
 
-	if(size1==size2) return NSOrderedSame;
-	else if(size1>size2) return NSOrderedAscending;
-	else return NSOrderedDescending;
+	if (size1 == size2) {
+		return NSOrderedSame;
+	} else if(size1>size2) {
+		return NSOrderedAscending;
+	} else {
+		return NSOrderedDescending;
+	}
 }
 
 -(NSComparisonResult)compareTimes:(XeeFileEntry *)other
 {
-	double time1=[self time];
-	double time2=[other time];
+	double time1 = [self time];
+	double time2 = [other time];
 
-	if(time1==time2) return NSOrderedSame;
-	else if(time1>time2) return NSOrderedAscending;
-	else return NSOrderedDescending;
+	if (time1 == time2) {
+		return NSOrderedSame;
+	} else if (time1 > time2) {
+		return NSOrderedAscending;
+	} else {
+		return NSOrderedDescending;
+	}
 }
 
--(NSString *)description { return [NSString stringWithFormat:@"%@",[self path]]; }
+-(NSString *)description
+{
+	return [NSString stringWithFormat:@"%@",[self path]];
+}
 
 @end
