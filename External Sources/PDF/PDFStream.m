@@ -456,7 +456,7 @@ components:(int)components bitsPerComponent:(int)bitspercomp
 {
 	if(bpc<=8)
 	{
-		int row=pos/(cols*comps);
+		int row=(int)(pos/(cols*comps));
 		int col=pos%(cols*comps);
 		int buflen=cols*comps+2*comps;
 		int bufoffs=((col-comps*row)%buflen+buflen)%buflen;

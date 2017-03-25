@@ -29,14 +29,13 @@
 	{
 		image=nil;
 
-		NSString *type=[pboard availableTypeFromArray:[NSArray arrayWithObjects:NSTIFFPboardType,NSPICTPboardType,nil]];
+		NSString *type=[pboard availableTypeFromArray:@[NSTIFFPboardType, NSPICTPboardType]];
 		NSData *data=[pboard dataForType:type];
 
 		size=[data length];
 
 		CSHandle *handle;
-		if([type isEqual:NSPICTPboardType])
-		{
+		if ([type isEqual:NSPICTPboardType]) {
 			NSMutableData *head=[NSMutableData dataWithLength:512];
 			handle=[CSMultiHandle multiHandleWithHandles:
 				[CSMemoryHandle memoryHandleForReadingData:head],
@@ -50,8 +49,11 @@
 */
 		image=[[XeeImage imageForHandle:handle] retain];
 
-		if(image) return self;
-		else NSBeep();
+		if(!image) {
+			NSBeep();
+			[self release];
+			return nil;
+		}
 
 /*		NSBitmapImageRep *rep=[NSBitmapImageRep imageRepWithPasteboard:pboard];
 		if(rep)
@@ -59,10 +61,9 @@
 			image=[[XeeNSImage alloc] initWithNSBitmapImageRep:rep];
 			if(image) return self;
 		}*/
-		[self release];
 	}
 
-	return nil;
+	return self;
 }
 
 -(id)initWithGeneralPasteboard
@@ -82,9 +83,15 @@
 	[self triggerImageChangeAction:image];
 }
 
--(NSInteger)numberOfImages { return 1; }
+-(NSInteger)numberOfImages
+{
+	return 1;
+}
 
--(NSInteger)indexOfCurrentImage { return 0; }
+-(NSInteger)indexOfCurrentImage
+{
+	return 0;
+}
 
 -(NSString *)windowTitle { return NSLocalizedString(@"Clipboard contents",@"Window title when showing the contents of the clipboard"); }
 

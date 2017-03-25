@@ -37,7 +37,6 @@
 }
 
 -(id)initWithTitle:(NSString *)title;
--(void)dealloc;
 
 -(int)height;
 -(int)topSpacing;
@@ -61,7 +60,6 @@
 }
 
 -(id)initWithControls:(NSArray *)controlarray;
--(void)dealloc;
 
 -(int)height;
 -(int)topSpacing;
@@ -96,7 +94,7 @@
 -(void)layoutContent:(NSRect)contentrect title:(NSRect)titlerect;
 -(void)setHidden:(BOOL)hidden;
 
--(NSInteger)value;
+@property (readonly) NSInteger value;
 
 +(XeeSLPopUp *)popUpWithTitle:(NSString *)title defaultValue:(int)def contents:(NSString *)entry,... NS_REQUIRES_NIL_TERMINATION;
 
@@ -120,7 +118,7 @@
 -(void)layoutContent:(NSRect)contentrect title:(NSRect)titlerect;
 -(void)setHidden:(BOOL)hidden;
 
--(BOOL)value;
+@property (readonly) BOOL value;
 
 +(XeeSLSwitch *)switchWithTitle:(NSString *)title label:(NSString *)label defaultValue:(BOOL)def;
 

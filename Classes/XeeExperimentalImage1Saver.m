@@ -129,7 +129,7 @@ static int locations[4]={0,1,3,2};
 
 static void f(int n,int *xp,int *yp)
 {
-   static int transforms[4]={1,0,0,3};
+   static const int transforms[4]={1,0,0,3};
    int x=0,y=0;
    int trans=0;
    for(int i=30;i>=0;i-=2)
@@ -147,7 +147,7 @@ static void f(int n,int *xp,int *yp)
 
 static int fi(int x,int y)
 {
-   static int transforms[4]={1,0,3,0};
+   static const int transforms[4]={1,0,3,0};
    int n=0;
    int trans=0;
    for(int i=15;i>=0;i--)
