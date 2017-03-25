@@ -9,14 +9,13 @@
 #import <XADMaster/CSMemoryHandle.h>
 #import <XADMaster/CSMultiHandle.h>
 
-
-
 @implementation PDFStream
 @synthesize reference = ref;
 @synthesize dictionary = dict;
 
--(id)initWithDictionary:(NSDictionary *)dictionary fileHandle:(CSHandle *)filehandle
-			  reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
+- (id)initWithDictionary:(NSDictionary *)dictionary fileHandle:(CSHandle *)filehandle
+			   reference:(PDFObjectReference *)reference
+				  parser:(PDFParser *)owner
 {
 	if (self = [super init]) {
 		dict = [dictionary retain];
@@ -28,7 +27,7 @@
 	return self;
 }
 
--(void)dealloc
+- (void)dealloc
 {
 	[dict release];
 	[fh release];
@@ -36,66 +35,66 @@
 	[super dealloc];
 }
 
--(BOOL)isImage
+- (BOOL)isImage
 {
-	NSString *type=[dict objectForKey:@"Type"];
-	NSString *subtype=[dict objectForKey:@"Subtype"];
+	NSString *type = [dict objectForKey:@"Type"];
+	NSString *subtype = [dict objectForKey:@"Subtype"];
 	return (!type || [type isEqual:@"XObject"]) && subtype && [subtype isEqual:@"Image"]; // kludge for broken Ghostscript PDFs
 }
 
--(BOOL)isJPEG
+- (BOOL)isJPEG
 {
 	return [[self finalFilter] isEqual:@"DCTDecode"] && [self bitsPerComponent] == 8;
 }
 
--(BOOL)isJPEG2000
+- (BOOL)isJPEG2000
 {
 	return [[self finalFilter] isEqual:@"JPXDecode"];
 }
 
--(BOOL)isMask
+- (BOOL)isMask
 {
 	return [dict boolValueForKey:@"ImageMask" default:NO] && [self bitsPerComponent] == 1;
 }
 
--(BOOL)isBitmap
+- (BOOL)isBitmap
 {
-	return [self isGrey]&&[self bitsPerComponent] == 1;
+	return [self isGrey] && [self bitsPerComponent] == 1;
 }
 
--(BOOL)isIndexed
+- (BOOL)isIndexed
 {
 	NSString *colourspace = [self colourSpaceOrAlternate];
 	return [colourspace isEqual:@"Indexed"];
 }
 
--(BOOL)isGrey
+- (BOOL)isGrey
 {
 	NSString *colourspace = [self colourSpaceOrAlternate];
 	return [colourspace isEqual:@"DeviceGray"] || [colourspace isEqual:@"CalGray"];
 }
 
--(BOOL)isRGB
+- (BOOL)isRGB
 {
 	NSString *colourspace = [self colourSpaceOrAlternate];
 	return [colourspace isEqual:@"DeviceRGB"] || [colourspace isEqual:@"CalRGB"];
 }
 
--(BOOL)isCMYK
+- (BOOL)isCMYK
 {
 	NSString *colourspace = [self colourSpaceOrAlternate];
 	return [colourspace isEqual:@"DeviceCMYK"] || [colourspace isEqual:@"CalCMYK"];
 }
 
--(BOOL)isLab
+- (BOOL)isLab
 {
 	NSString *colourspace = [self colourSpaceOrAlternate];
 	return [colourspace isEqual:@"DeviceLab"] || [colourspace isEqual:@"CalLab"];
 }
 
--(NSString *)finalFilter
+- (NSString *)finalFilter
 {
-	id filter=[dict objectForKey:@"Filter"];
+	id filter = [dict objectForKey:@"Filter"];
 
 	if (!filter) {
 		return nil;
@@ -106,7 +105,7 @@
 	}
 }
 
--(int)bitsPerComponent
+- (int)bitsPerComponent
 {
 	NSNumber *val = [dict objectForKey:@"BitsPerComponent"];
 	if (val && [val isKindOfClass:[NSNumber class]]) {
@@ -115,7 +114,7 @@
 	return 0;
 }
 
--(NSString *)colourSpaceOrAlternate
+- (NSString *)colourSpaceOrAlternate
 {
 	id colourspace = [dict objectForKey:@"ColorSpace"];
 	if (!colourspace) {
@@ -125,14 +124,14 @@
 	return [self _parseColourSpace:colourspace];
 }
 
--(NSString *)subColourSpaceOrAlternate
+- (NSString *)subColourSpaceOrAlternate
 {
-	id colourspace=[dict objectForKey:@"ColorSpace"];
+	id colourspace = [dict objectForKey:@"ColorSpace"];
 	if (!colourspace) {
 		return nil;
 	}
 
-	if(![colourspace isKindOfClass:[NSArray class]]) {
+	if (![colourspace isKindOfClass:[NSArray class]]) {
 		return nil;
 	}
 	if ([colourspace count] != 4) {
@@ -145,19 +144,19 @@
 	return [self _parseColourSpace:[colourspace objectAtIndex:1]];
 }
 
--(NSString *)_parseColourSpace:(id)colourspace
+- (NSString *)_parseColourSpace:(id)colourspace
 {
 	if ([colourspace isKindOfClass:[NSString class]]) {
 		return colourspace;
 	} else if ([colourspace isKindOfClass:[NSArray class]]) {
-		NSInteger count=[colourspace count];
+		NSInteger count = [colourspace count];
 		if (count < 1) {
 			return nil;
 		}
 
-		NSString *name=[colourspace objectAtIndex:0];
+		NSString *name = [colourspace objectAtIndex:0];
 		if ([name isEqual:@"ICCBased"]) {
-			PDFStream *def=[colourspace objectAtIndex:1];
+			PDFStream *def = [colourspace objectAtIndex:1];
 			if (![def isKindOfClass:[PDFStream class]]) {
 				return nil;
 			}
@@ -169,14 +168,14 @@
 
 			int n = [[def dictionary] intValueForKey:@"N" default:0];
 			switch (n) {
-				case 1:
-					return @"DeviceGray";
-				case 3:
-					return @"DeviceRGB";
-				case 4:
-					return @"DeviceCMYK";
-				default:
-					return nil;
+			case 1:
+				return @"DeviceGray";
+			case 3:
+				return @"DeviceRGB";
+			case 4:
+				return @"DeviceCMYK";
+			default:
+				return nil;
 			}
 		} else {
 			return name;
@@ -186,9 +185,9 @@
 	}
 }
 
--(int)numberOfColours
+- (int)numberOfColours
 {
-	id colourspace=[dict objectForKey:@"ColorSpace"];
+	id colourspace = [dict objectForKey:@"ColorSpace"];
 	if (!colourspace) {
 		return 0;
 	}
@@ -203,10 +202,10 @@
 		return 0;
 	}
 
-	return [[colourspace objectAtIndex:2] intValue]+1;
+	return [[colourspace objectAtIndex:2] intValue] + 1;
 }
 
--(NSData *)paletteData
+- (NSData *)paletteData
 {
 	id colourspace = [dict objectForKey:@"ColorSpace"];
 	if (!colourspace) {
@@ -233,7 +232,7 @@
 	}
 }
 
--(NSArray *)decodeArray
+- (NSArray *)decodeArray
 {
 	id decode = [dict objectForKey:@"Decode"];
 	if (!decode) {
@@ -261,31 +260,31 @@
 	return decode;
 }
 
--(CSHandle *)rawHandle
+- (CSHandle *)rawHandle
 {
 	return [fh subHandleFrom:offs length:[dict intValueForKey:@"Length" default:0]];
 }
 
--(CSHandle *)handle
+- (CSHandle *)handle
 {
 	return [self handleExcludingLast:NO];
 }
 
--(CSHandle *)JPEGHandle
+- (CSHandle *)JPEGHandle
 {
 	//NSLog(@"%@",dict);
 	return [self handleExcludingLast:YES];
 }
 
--(CSHandle *)handleExcludingLast:(BOOL)excludelast
+- (CSHandle *)handleExcludingLast:(BOOL)excludelast
 {
 	CSHandle *handle;
-	PDFEncryptionHandler *encryption=[parser encryptionHandler];
+	PDFEncryptionHandler *encryption = [parser encryptionHandler];
 
 	if (encryption) {
-		handle=[encryption decryptStream:self];
+		handle = [encryption decryptStream:self];
 	} else {
-		handle=[self rawHandle];
+		handle = [self rawHandle];
 	}
 
 	NSArray *filter = [dict arrayForKey:@"Filter"];
@@ -298,8 +297,9 @@
 		}
 
 		for (NSInteger i = 0; i < count; i++) {
-			handle=[self handleForFilterName:[filter objectAtIndex:i]
-								 decodeParms:[decodeparms objectAtIndex:i] parentHandle:handle];
+			handle = [self handleForFilterName:[filter objectAtIndex:i]
+								   decodeParms:[decodeparms objectAtIndex:i]
+								  parentHandle:handle];
 			if (!handle) {
 				return nil;
 			}
@@ -309,29 +309,30 @@
 	return handle;
 }
 
--(CSHandle *)handleForFilterName:(NSString *)filtername decodeParms:(NSDictionary *)decodeparms parentHandle:(CSHandle *)parent
+- (CSHandle *)handleForFilterName:(NSString *)filtername decodeParms:(NSDictionary *)decodeparms parentHandle:(CSHandle *)parent
 {
-	if(!decodeparms) decodeparms=[NSDictionary dictionary];
+	if (!decodeparms)
+		decodeparms = [NSDictionary dictionary];
 
 	if ([filtername isEqual:@"FlateDecode"]) {
 		return [self predictorHandleForDecodeParms:decodeparms
-		parentHandle:[CSZlibHandle zlibHandleWithHandle:parent]];
+									  parentHandle:[CSZlibHandle zlibHandleWithHandle:parent]];
 	} else if ([filtername isEqual:@"CCITTFaxDecode"]) {
-		int k=[decodeparms intValueForKey:@"K" default:0];
-		int cols=[decodeparms intValueForKey:@"Columns" default:1728];
-		int white=[decodeparms intValueForKey:@"BlackIs1" default:NO]?0:1;
+		int k = [decodeparms intValueForKey:@"K" default:0];
+		int cols = [decodeparms intValueForKey:@"Columns" default:1728];
+		int white = [decodeparms intValueForKey:@"BlackIs1" default:NO] ? 0 : 1;
 
-		if(k==0) {
+		if (k == 0) {
 			return nil;
-		} else if(k>0) {
+		} else if (k > 0) {
 			return nil;
-//		if(k==0) return [[[CCITTFaxT41DHandle alloc] initWithHandle:parent columns:cols white:white] autorelease];
-//		else if(k>0) return [[[CCITTFaxT42DHandle alloc] initWithHandle:parent columns:cols white:white] autorelease];
+			//		if(k==0) return [[[CCITTFaxT41DHandle alloc] initWithHandle:parent columns:cols white:white] autorelease];
+			//		else if(k>0) return [[[CCITTFaxT42DHandle alloc] initWithHandle:parent columns:cols white:white] autorelease];
 		} else {
 			return [[[CCITTFaxT6Handle alloc] initWithHandle:parent columns:cols white:white] autorelease];
 		}
 	} else if ([filtername isEqual:@"LZWDecode"]) {
-		int early=[decodeparms intValueForKey:@"EarlyChange" default:1];
+		int early = [decodeparms intValueForKey:@"EarlyChange" default:1];
 		return [self predictorHandleForDecodeParms:decodeparms
 									  parentHandle:[[[LZWHandle alloc] initWithHandle:parent earlyChange:early] autorelease]];
 	} else if ([filtername isEqual:@"ASCII85Decode"]) {
@@ -343,10 +344,10 @@
 	return nil;
 }
 
--(CSHandle *)predictorHandleForDecodeParms:(NSDictionary *)decodeparms parentHandle:(CSHandle *)parent
+- (CSHandle *)predictorHandleForDecodeParms:(NSDictionary *)decodeparms parentHandle:(CSHandle *)parent
 {
-	NSNumber *predictor=[decodeparms objectForKey:@"Predictor"];
-	if(!predictor) {
+	NSNumber *predictor = [decodeparms objectForKey:@"Predictor"];
+	if (!predictor) {
 		return parent;
 	}
 
@@ -368,24 +369,21 @@
 	} else if (pred >= 10 && pred <= 15) {
 		return [[[PDFPNGPredictorHandle alloc] initWithHandle:parent columns:cols components:comps bitsPerComponent:bpc] autorelease];
 	} else {
-		[NSException raise:@"PDFStreamPredictorException" format:@"PDF Predictor %d not supported",pred];
+		[NSException raise:@"PDFStreamPredictorException" format:@"PDF Predictor %d not supported", pred];
 	}
 	return nil;
 }
 
--(NSString *)description
+- (NSString *)description
 {
 	return [NSString stringWithFormat:@"<Stream with dictionary: %@>", dict];
 }
 
 @end
 
-
-
-
 @implementation PDFASCII85Handle
 
--(void)resetByteStream
+- (void)resetByteStream
 {
 	finalbytes = 0;
 }
@@ -399,20 +397,20 @@ static uint8_t ASCII85NextByte(CSInputBuffer *input)
 	return b;
 }
 
--(uint8_t)produceByteAtOffset:(off_t)pos
+- (uint8_t)produceByteAtOffset:(off_t)pos
 {
-	int byte=pos&3;
+	int byte = pos & 3;
 	if (byte == 0) {
-		uint8_t c1=ASCII85NextByte(input);
+		uint8_t c1 = ASCII85NextByte(input);
 
 		if (c1 == 'z') {
-			val=0;
+			val = 0;
 		} else if (c1 == '~') {
 			CSByteStreamEOF(self);
 		} else {
-			uint8_t c2,c3 = 0,c4 = 0,c5 = 0;
+			uint8_t c2, c3 = 0, c4 = 0, c5 = 0;
 
-			c2=ASCII85NextByte(input);
+			c2 = ASCII85NextByte(input);
 			if (c2 != '~') {
 				c3 = ASCII85NextByte(input);
 				if (c3 != '~') {
@@ -420,16 +418,16 @@ static uint8_t ASCII85NextByte(CSInputBuffer *input)
 					if (c4 != '~') {
 						c5 = ASCII85NextByte(input);
 						if (c5 == '~') {
-							c5=33;
-							finalbytes=3;
+							c5 = 33;
+							finalbytes = 3;
 						}
 					} else {
 						c4 = c5 = 33;
-						finalbytes=2;
+						finalbytes = 2;
 					}
 				} else {
 					c3 = c4 = c5 = 33;
-					finalbytes=1;
+					finalbytes = 1;
 				}
 			} else {
 				CSByteStreamEOF(self);
@@ -439,7 +437,7 @@ static uint8_t ASCII85NextByte(CSInputBuffer *input)
 		}
 		return val >> 24;
 	} else {
-		if(finalbytes&&byte>=finalbytes) {
+		if (finalbytes && byte >= finalbytes) {
 			CSByteStreamEOF(self);
 		}
 		return val >> (24 - byte * 8);
@@ -448,32 +446,30 @@ static uint8_t ASCII85NextByte(CSInputBuffer *input)
 
 @end
 
-
-
-
 @implementation PDFTIFFPredictorHandle
 
--(id)initWithHandle:(CSHandle *)handle columns:(int)columns
-		 components:(int)components bitsPerComponent:(int)bitspercomp
+- (id)initWithHandle:(CSHandle *)handle columns:(int)columns
+		  components:(int)components
+	bitsPerComponent:(int)bitspercomp
 {
 	if (self = [super initWithHandle:handle]) {
 		cols = columns;
 		comps = components;
 		bpc = bitspercomp;
 		if (bpc != 8) {
-			[NSException raise:@"PDFTIFFPredictorException" format:@"Bit depth %d not supported for TIFF predictor",bpc];
+			[NSException raise:@"PDFTIFFPredictorException" format:@"Bit depth %d not supported for TIFF predictor", bpc];
 		}
 		if (comps > 4 || comps < 1) {
-			[NSException raise:@"PDFTIFFPredictorException" format:@"Color count %d not supported for TIFF predictor",bpc];
+			[NSException raise:@"PDFTIFFPredictorException" format:@"Color count %d not supported for TIFF predictor", bpc];
 		}
 	}
 	return self;
 }
 
--(uint8_t)produceByteAtOffset:(off_t)pos
+- (uint8_t)produceByteAtOffset:(off_t)pos
 {
 	if (bpc == 8) {
-		int comp=pos%comps;
+		int comp = pos % comps;
 		if ((pos / comps) % cols == 0) {
 			prev[comp] = CSInputNextByte(input);
 		} else {
@@ -486,8 +482,6 @@ static uint8_t ASCII85NextByte(CSInputBuffer *input)
 
 @end
 
-
-
 static inline int iabs(int a)
 {
 	return a >= 0 ? a : -a;
@@ -495,11 +489,11 @@ static inline int iabs(int a)
 
 @implementation PDFPNGPredictorHandle
 
--(id)initWithHandle:(CSHandle *)handle columns:(int)columns
-components:(int)components bitsPerComponent:(int)bitspercomp
+- (id)initWithHandle:(CSHandle *)handle columns:(int)columns
+		  components:(int)components
+	bitsPerComponent:(int)bitspercomp
 {
-	if(self=[super initWithHandle:handle])
-	{
+	if (self = [super initWithHandle:handle]) {
 		cols = columns;
 		comps = components;
 		bpc = bitspercomp;
@@ -507,7 +501,7 @@ components:(int)components bitsPerComponent:(int)bitspercomp
 			comps = 1;
 		}
 		if (bpc > 8) {
-			[NSException raise:@"PDFPNGPredictorException" format:@"Bit depth %d not supported for PNG predictor",bpc];
+			[NSException raise:@"PDFPNGPredictorException" format:@"Bit depth %d not supported for PNG predictor", bpc];
 		}
 
 		prevbuf = malloc(cols * comps + 2 * comps);
@@ -515,24 +509,24 @@ components:(int)components bitsPerComponent:(int)bitspercomp
 	return self;
 }
 
--(void)dealloc
+- (void)dealloc
 {
 	free(prevbuf);
 	[super dealloc];
 }
 
--(void)resetByteStream
+- (void)resetByteStream
 {
-	memset(prevbuf,0, cols * comps + 2 * comps);
+	memset(prevbuf, 0, cols * comps + 2 * comps);
 }
 
--(uint8_t)produceByteAtOffset:(off_t)pos
+- (uint8_t)produceByteAtOffset:(off_t)pos
 {
 	if (bpc <= 8) {
-		int row=(int)(pos/(cols*comps));
-		int col=pos%(cols*comps);
-		int buflen=cols*comps+2*comps;
-		int bufoffs=((col-comps*row)%buflen+buflen)%buflen;
+		int row = (int)(pos / (cols * comps));
+		int col = pos % (cols * comps);
+		int buflen = cols * comps + 2 * comps;
+		int bufoffs = ((col - comps * row) % buflen + buflen) % buflen;
 
 		if (col == 0) {
 			type = CSInputNextByte(input);
@@ -548,25 +542,32 @@ components:(int)components bitsPerComponent:(int)bitspercomp
 		int val;
 
 		switch (type) {
-			case 0: val=x; break;
-			case 1: val=x+a; break;
-			case 2: val=x+b; break;
-			case 3: val=x+(a+b)/2; break;
-			case 4: {
-				int p = a + b - c;
-				int pa = iabs(p - a);
-				int pb = iabs(p - b);
-				int pc = iabs(p - c);
-
-				if (pa <= b && pa <= pc) {
-					val = pa;
-				} else if (pb <= pc) {
-					val = pb;
-				} else {
-					val = pc;
-				}
-			}
+		case 0:
+			val = x;
 			break;
+		case 1:
+			val = x + a;
+			break;
+		case 2:
+			val = x + b;
+			break;
+		case 3:
+			val = x + (a + b) / 2;
+			break;
+		case 4: {
+			int p = a + b - c;
+			int pa = iabs(p - a);
+			int pb = iabs(p - b);
+			int pc = iabs(p - c);
+
+			if (pa <= b && pa <= pc) {
+				val = pa;
+			} else if (pb <= pc) {
+				val = pb;
+			} else {
+				val = pc;
+			}
+		} break;
 		}
 
 		prevbuf[bufoffs] = val;
@@ -576,5 +577,3 @@ components:(int)components bitsPerComponent:(int)bitspercomp
 }
 
 @end
-
-

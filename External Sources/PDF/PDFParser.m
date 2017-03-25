@@ -3,34 +3,29 @@
 #import <XADMaster/XADRegex.h>
 #import <XADMaster/CSFileHandle.h>
 
-
-
-NSString *PDFWrongMagicException=@"PDFWrongMagicException";
-NSString *PDFInvalidFormatException=@"PDFInvalidFormatException";
-NSString *PDFParserException=@"PDFParserException";
-
-
+NSString *PDFWrongMagicException = @"PDFWrongMagicException";
+NSString *PDFInvalidFormatException = @"PDFInvalidFormatException";
+NSString *PDFParserException = @"PDFParserException";
 
 static int HexDigit(uint8_t c);
 static BOOL IsHexDigit(uint8_t c);
 static BOOL IsWhiteSpace(uint8_t c);
 
-
 @implementation PDFParser
 @synthesize encryptionHandler = encryption;
 
-+(PDFParser *)parserWithHandle:(CSHandle *)handle
++ (PDFParser *)parserWithHandle:(CSHandle *)handle
 {
 	return [[[PDFParser alloc] initWithHandle:handle] autorelease];
 }
 
-+(PDFParser *)parserForPath:(NSString *)path
++ (PDFParser *)parserForPath:(NSString *)path
 {
 	CSFileHandle *handle = [CSFileHandle fileHandleForReadingAtPath:path];
 	return [[[PDFParser alloc] initWithHandle:handle] autorelease];
 }
 
--(id)initWithHandle:(CSHandle *)handle
+- (id)initWithHandle:(CSHandle *)handle
 {
 	if (self = [super init]) {
 		fh = [handle retain];
@@ -52,7 +47,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 	return self;
 }
 
--(void)dealloc
+- (void)dealloc
 {
 	[fh release];
 	[objdict release];
@@ -61,12 +56,12 @@ static BOOL IsWhiteSpace(uint8_t c);
 	[super dealloc];
 }
 
--(BOOL)isEncrypted
+- (BOOL)isEncrypted
 {
-	return encryption?YES:NO;
+	return encryption ? YES : NO;
 }
 
--(BOOL)needsPassword
+- (BOOL)needsPassword
 {
 	if (!encryption) {
 		return NO;
@@ -74,34 +69,32 @@ static BOOL IsWhiteSpace(uint8_t c);
 	return [encryption needsPassword];
 }
 
--(BOOL)setPassword:(NSString *)password
+- (BOOL)setPassword:(NSString *)password
 {
 	return [encryption setPassword:password];
 }
 
-
-
--(NSDictionary *)objectDictionary
+- (NSDictionary *)objectDictionary
 {
 	return objdict;
 }
 
--(NSDictionary *)trailerDictionary
+- (NSDictionary *)trailerDictionary
 {
 	return trailerdict;
 }
 
--(NSDictionary *)rootDictionary
+- (NSDictionary *)rootDictionary
 {
 	return [trailerdict objectForKey:@"Root"];
 }
 
--(NSDictionary *)infoDictionary
+- (NSDictionary *)infoDictionary
 {
 	return [trailerdict objectForKey:@"Info"];
 }
 
--(NSData *)permanentID
+- (NSData *)permanentID
 {
 	NSArray *ids = [trailerdict objectForKey:@"ID"];
 	if (!ids) {
@@ -110,7 +103,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 	return [[ids objectAtIndex:0] rawData];
 }
 
--(NSData *)currentID
+- (NSData *)currentID
 {
 	NSArray *ids = [trailerdict objectForKey:@"ID"];
 	if (!ids) {
@@ -119,13 +112,12 @@ static BOOL IsWhiteSpace(uint8_t c);
 	return [[ids objectAtIndex:1] rawData];
 }
 
--(NSDictionary *)pagesRoot
+- (NSDictionary *)pagesRoot
 {
 	return [[self rootDictionary] objectForKey:@"Pages"];
 }
 
-
--(void)parse
+- (void)parse
 {
 	[fh seekToEndOfFile];
 	[fh skipBytes:-48];
@@ -139,10 +131,10 @@ static BOOL IsWhiteSpace(uint8_t c);
 	[fh seekToFileOffset:[startxref intValue]];
 
 	// Read newest xrefs and trailer
-	trailerdict=[[self parsePDFXref] retain];
+	trailerdict = [[self parsePDFXref] retain];
 
 	// Read older xrefs, ignore their trailers
-	NSNumber *prev=[trailerdict objectForKey:@"Prev"];
+	NSNumber *prev = [trailerdict objectForKey:@"Prev"];
 	while (prev) {
 		[fh seekToFileOffset:[prev intValue]];
 		NSDictionary *oldtrailer = [self parsePDFXref];
@@ -157,7 +149,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 	}
 }
 
--(NSDictionary *)parsePDFXref
+- (NSDictionary *)parsePDFXref
 {
 	int c;
 
@@ -166,19 +158,19 @@ static BOOL IsWhiteSpace(uint8_t c);
 	}
 
 	do {
-		c=[fh readUInt8];
+		c = [fh readUInt8];
 	} while (IsWhiteSpace(c));
 	[fh skipBytes:-1];
 
 	for (;;) {
-		c=[fh readUInt8];
+		c = [fh readUInt8];
 		if (c == 't') {
 			if ([fh readUInt8] != 'r' || [fh readUInt8] != 'a' || [fh readUInt8] != 'i' ||
 				[fh readUInt8] != 'l' || [fh readUInt8] != 'e' || [fh readUInt8] != 'r') {
 				[self _raiseParserException:@"Error parsing xref trailer"];
 			}
 
-			id trailer=[self parsePDFTypeWithParent:nil];
+			id trailer = [self parsePDFTypeWithParent:nil];
 			if ([trailer isKindOfClass:[NSDictionary class]]) {
 				return trailer;
 			} else {
@@ -202,12 +194,12 @@ static BOOL IsWhiteSpace(uint8_t c);
 			char entry[21];
 			[fh readBytes:20 toBuffer:entry];
 
-			if (entry[17]!='n') {
+			if (entry[17] != 'n') {
 				continue;
 			}
 
 			off_t objoffs = atoll(entry);
-			int objgen = (int)atol(entry+11);
+			int objgen = (int)atol(entry + 11);
 
 			if (!objoffs) {
 				continue; // kludge to handle broken Apple PDF files
@@ -218,7 +210,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 			id obj = [self parsePDFObject];
 			[fh seekToFileOffset:curroffs];
 
-			PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:n generation:objgen];
+			PDFObjectReference *ref = [PDFObjectReference referenceWithNumber:n generation:objgen];
 			if (obj && ![objdict objectForKey:ref]) {
 				[objdict setObject:obj forKey:ref];
 			}
@@ -227,7 +219,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 	return nil;
 }
 
--(id)parsePDFObject
+- (id)parsePDFObject
 {
 	int c;
 
@@ -236,56 +228,57 @@ static BOOL IsWhiteSpace(uint8_t c);
 	PDFObjectReference *ref = [PDFObjectReference referenceWithNumber:objnum generation:objgen];
 
 	do {
-		c=[fh readUInt8];
+		c = [fh readUInt8];
 	} while (IsWhiteSpace(c));
 
-	if(c!='o'||[fh readUInt8]!='b'||[fh readUInt8]!='j') {
+	if (c != 'o' || [fh readUInt8] != 'b' || [fh readUInt8] != 'j') {
 		[self _raiseParserException:@"Error parsing object"];
 	}
 
 	id value = [self parsePDFTypeWithParent:ref];
 
 	do {
-		c=[fh readUInt8];
+		c = [fh readUInt8];
 	} while (IsWhiteSpace(c));
 
 	switch (c) {
-		case 's':
-			if ([fh readUInt8] != 't' || [fh readUInt8] != 'r' || [fh readUInt8] != 'e'
-				|| [fh readUInt8] != 'a' || [fh readUInt8] != 'm') {
-				[self _raiseParserException:@"Error parsing stream object"];
-			}
+	case 's':
+		if ([fh readUInt8] != 't' || [fh readUInt8] != 'r' || [fh readUInt8] != 'e' || [fh readUInt8] != 'a' || [fh readUInt8] != 'm') {
+			[self _raiseParserException:@"Error parsing stream object"];
+		}
 
+		c = [fh readUInt8];
+		if (c == '\r') {
 			c = [fh readUInt8];
-			if (c == '\r') {
-				c = [fh readUInt8];
-			}
-			if (c != '\n') {
-				[self _raiseParserException:@"Error parsing stream object"];
-			}
+		}
+		if (c != '\n') {
+			[self _raiseParserException:@"Error parsing stream object"];
+		}
 
-			return [[[PDFStream alloc] initWithDictionary:value fileHandle:fh
-												reference:ref parser:self] autorelease];
-			break;
+		return [[[PDFStream alloc] initWithDictionary:value
+										   fileHandle:fh
+											reference:ref
+											   parser:self] autorelease];
+		break;
 
-		case 'e':
-			if([fh readUInt8]!='n'||[fh readUInt8]!='d'||[fh readUInt8]!='o'
-			||[fh readUInt8]!='b'||[fh readUInt8]!='j') [self _raiseParserException:@"Error parsing object"];
-			return value;
-			break;
+	case 'e':
+		if ([fh readUInt8] != 'n' || [fh readUInt8] != 'd' || [fh readUInt8] != 'o' || [fh readUInt8] != 'b' || [fh readUInt8] != 'j')
+			[self _raiseParserException:@"Error parsing object"];
+		return value;
+		break;
 
-		default:
-			[self _raiseParserException:@"Error parsing obj"];
+	default:
+		[self _raiseParserException:@"Error parsing obj"];
 	}
 	return nil; // shut up, gcc
 }
 
--(int)parseSimpleInteger
+- (int)parseSimpleInteger
 {
-	int c,val=0;
+	int c, val = 0;
 
 	do {
-		c=[fh readUInt8];
+		c = [fh readUInt8];
 	} while (IsWhiteSpace(c));
 
 	for (;;) {
@@ -296,9 +289,9 @@ static BOOL IsWhiteSpace(uint8_t c);
 		val = val * 10 + (c - '0');
 		c = [fh readUInt8];
 	}
- }
+}
 
--(id)parsePDFTypeWithParent:(PDFObjectReference *)parent
+- (id)parsePDFTypeWithParent:(PDFObjectReference *)parent
 {
 	int c;
 	do {
@@ -306,47 +299,76 @@ static BOOL IsWhiteSpace(uint8_t c);
 	} while (IsWhiteSpace(c));
 
 	switch (c) {
-		case 'n':
-			return [self parsePDFNull];
+	case 'n':
+		return [self parsePDFNull];
 
-		case 't': case 'f':
-			return [self parsePDFBoolStartingWith:c];
+	case 't':
+	case 'f':
+		return [self parsePDFBoolStartingWith:c];
 
-		case '0': case '1': case '2': case '3': case '4': case '5':
-		case '6': case '7': case '8': case '9': case '-': case '.':
-			return [self parsePDFNumberStartingWith:c];
+	case '0':
+	case '1':
+	case '2':
+	case '3':
+	case '4':
+	case '5':
+	case '6':
+	case '7':
+	case '8':
+	case '9':
+	case '-':
+	case '.':
+		return [self parsePDFNumberStartingWith:c];
 
-		case '/':
-			return [self parsePDFWord];
+	case '/':
+		return [self parsePDFWord];
 
-		case '(':
-			return [self parsePDFStringWithParent:parent];
+	case '(':
+		return [self parsePDFStringWithParent:parent];
 
-		case '[':
-			return [self parsePDFArrayWithParent:parent];
+	case '[':
+		return [self parsePDFArrayWithParent:parent];
+
+	case '<':
+		c = [fh readUInt8];
+		switch (c) {
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+		case 'a':
+		case 'b':
+		case 'c':
+		case 'd':
+		case 'e':
+		case 'f':
+		case 'A':
+		case 'B':
+		case 'C':
+		case 'D':
+		case 'E':
+		case 'F':
+			return [self parsePDFHexStringStartingWith:c parent:parent];
 
 		case '<':
-			c = [fh readUInt8];
-			switch (c) {
-				case '0': case '1': case '2': case '3': case '4':
-				case '5': case '6': case '7': case '8': case '9':
-				case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
-				case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':
-					return [self parsePDFHexStringStartingWith:c parent:parent];
-
-				case '<':
-					return [self parsePDFDictionaryWithParent:parent];
-				default:
-					return nil;
-			}
-
+			return [self parsePDFDictionaryWithParent:parent];
 		default:
-			[fh skipBytes:-1];
 			return nil;
+		}
+
+	default:
+		[fh skipBytes:-1];
+		return nil;
 	}
 }
 
--(NSNull *)parsePDFNull
+- (NSNull *)parsePDFNull
 {
 	char rest[3];
 	[fh readBytes:3 toBuffer:rest];
@@ -358,7 +380,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 	return nil; // shut up, gcc
 }
 
--(NSNumber *)parsePDFBoolStartingWith:(int)c
+- (NSNumber *)parsePDFBoolStartingWith:(int)c
 {
 	if (c == 't') {
 		char rest[3];
@@ -380,14 +402,14 @@ static BOOL IsWhiteSpace(uint8_t c);
 	return nil; // shut up, gcc
 }
 
--(NSNumber *)parsePDFNumberStartingWith:(int)c
+- (NSNumber *)parsePDFNumberStartingWith:(int)c
 {
-	char str[32]={c};
+	char str[32] = {c};
 	int i;
 
 	for (i = 1; i < sizeof(str); i++) {
-		int c=[fh readUInt8];
-		if (!isdigit(c) && c != '.'){
+		int c = [fh readUInt8];
+		if (!isdigit(c) && c != '.') {
 			[fh skipBytes:-1];
 			break;
 		}
@@ -399,16 +421,16 @@ static BOOL IsWhiteSpace(uint8_t c);
 	}
 	str[i] = 0;
 
-	if (strchr(str,'.')) {
+	if (strchr(str, '.')) {
 		return @(atof(str));
 	} else {
 		return @(atoll(str));
 	}
 }
 
--(NSString *)parsePDFWord
+- (NSString *)parsePDFWord
 {
-	NSMutableString *str=[NSMutableString string];
+	NSMutableString *str = [NSMutableString string];
 
 	for (;;) {
 		int c = [fh readUInt8];
@@ -419,98 +441,104 @@ static BOOL IsWhiteSpace(uint8_t c);
 				[self _raiseParserException:@"Error parsing hex escape in name"];
 			}
 
-			[str appendFormat:@"%c",HexDigit(c1)*16+HexDigit(c2)];
+			[str appendFormat:@"%c", HexDigit(c1) * 16 + HexDigit(c2)];
 		} else if (c < 0x21 || c > 0x7e || c == '%' || c == '(' || c == ')' || c == '<' || c == '>' || c == '[' || c == ']' || c == '{' || c == '}' || c == '/') {
 			[fh skipBytes:-1];
 			return str;
 		} else {
-			[str appendFormat:@"%c",c];
+			[str appendFormat:@"%c", c];
 		}
 	}
 }
 
--(NSString *)parsePDFStringWithParent:(PDFObjectReference *)parent
+- (NSString *)parsePDFStringWithParent:(PDFObjectReference *)parent
 {
 	NSMutableData *data = [NSMutableData data];
-	int nesting=1;
+	int nesting = 1;
 
 	for (;;) {
 		int c = [fh readUInt8];
 		uint8_t b = 0;
 
 		switch (c) {
+		default:
+			b = c;
+			break;
+		case '(':
+			nesting++;
+			b = '(';
+			break;
+
+		case ')':
+			if (--nesting == 0) {
+				return (NSString *)[[[PDFString alloc] initWithData:data parent:parent parser:self] autorelease];
+			} else {
+				b = ')';
+			}
+			break;
+		case '\\':
+			c = [fh readUInt8];
+			switch (c) {
 			default:
 				b = c;
 				break;
-			case '(':
-				nesting++;
-				b = '(';
-				break;
-				
-			case ')':
-				if (--nesting == 0) {
-					return (NSString *)[[[PDFString alloc] initWithData:data parent:parent parser:self] autorelease];
-				} else {
-					b = ')';
-				}
-				break;
-			case '\\':
+			case '\n':
+				continue; // ignore newlines
+			case '\r':	// ignore carriage return
 				c = [fh readUInt8];
-				switch (c) {
-					default:
-						b = c;
-						break;
-					case '\n':
-						continue; // ignore newlines
-					case '\r': // ignore carriage return
-						c = [fh readUInt8];
-						if (c == '\n') {
-							continue; // ignore CRLF
-						} else {
-							b = c;
-						}
-					break;
-					case 'n':
-						b = '\n';
-						break;
-					case 'r':
-						b = '\r';
-						break;
-					case 't':
-						b = '\t';
-						break;
-					case 'b':
-						b = '\b';
-						break;
-					case 'f':
-						b = '\f';
-						break;
-					case '0': case '1': case '2': case '3':
-					case '4': case '5': case '6': case '7':
-						b = c-'0';
-						c = [fh readUInt8];
-						if (c >= '0' && c <= '7') {
-							b = b * 8 + c - '0';
-							c = [fh readUInt8];
-							if (c >= '0' && c <= '7') {
-								b = b * 8 + c - '0';
-							} else {
-								[fh skipBytes:-1];
-							}
-						} else {
-							[fh skipBytes:-1];
-						}
-					break;
+				if (c == '\n') {
+					continue; // ignore CRLF
+				} else {
+					b = c;
 				}
+				break;
+			case 'n':
+				b = '\n';
+				break;
+			case 'r':
+				b = '\r';
+				break;
+			case 't':
+				b = '\t';
+				break;
+			case 'b':
+				b = '\b';
+				break;
+			case 'f':
+				b = '\f';
+				break;
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+				b = c - '0';
+				c = [fh readUInt8];
+				if (c >= '0' && c <= '7') {
+					b = b * 8 + c - '0';
+					c = [fh readUInt8];
+					if (c >= '0' && c <= '7') {
+						b = b * 8 + c - '0';
+					} else {
+						[fh skipBytes:-1];
+					}
+				} else {
+					[fh skipBytes:-1];
+				}
+				break;
+			}
 			break;
 		}
 		[data appendBytes:&b length:1];
 	}
 }
 
--(NSData *)parsePDFHexStringStartingWith:(int)c parent:(PDFObjectReference *)parent
+- (NSData *)parsePDFHexStringStartingWith:(int)c parent:(PDFObjectReference *)parent
 {
-	NSMutableData *data=[NSMutableData data];
+	NSMutableData *data = [NSMutableData data];
 
 	[fh skipBytes:-1];
 
@@ -534,16 +562,16 @@ static BOOL IsWhiteSpace(uint8_t c);
 			[self _raiseParserException:@"Error parsing hex data value"];
 		}
 
-		uint8_t byte=HexDigit(c1)*16+HexDigit(c2);
+		uint8_t byte = HexDigit(c1) * 16 + HexDigit(c2);
 		[data appendBytes:&byte length:1];
 
-		if (c2=='>') {
+		if (c2 == '>') {
 			return (NSData *)[[[PDFString alloc] initWithData:data parent:parent parser:self] autorelease];
 		}
 	}
 }
 
--(NSArray *)parsePDFArrayWithParent:(PDFObjectReference *)parent
+- (NSArray *)parsePDFArrayWithParent:(PDFObjectReference *)parent
 {
 	NSMutableArray *array = [NSMutableArray array];
 
@@ -555,10 +583,10 @@ static BOOL IsWhiteSpace(uint8_t c);
 				[unresolved addObject:array];
 				return array;
 			} else if (c == 'R') {
-				id num = [array objectAtIndex:[array count]-2];
-				id gen = [array objectAtIndex:[array count]-1];
+				id num = [array objectAtIndex:[array count] - 2];
+				id gen = [array objectAtIndex:[array count] - 1];
 				if ([num isKindOfClass:[NSNumber class]] && [gen isKindOfClass:[NSNumber class]]) {
-					PDFObjectReference *obj=[PDFObjectReference referenceWithNumberObject:num generationObject:gen];
+					PDFObjectReference *obj = [PDFObjectReference referenceWithNumberObject:num generationObject:gen];
 					[array removeLastObject];
 					[array removeLastObject];
 					[array addObject:obj];
@@ -574,10 +602,10 @@ static BOOL IsWhiteSpace(uint8_t c);
 	}
 }
 
--(NSDictionary *)parsePDFDictionaryWithParent:(PDFObjectReference *)parent
+- (NSDictionary *)parsePDFDictionaryWithParent:(PDFObjectReference *)parent
 {
-	NSMutableDictionary *dict=[NSMutableDictionary dictionary];
-	id prev_key=nil,prev_value=nil;
+	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+	id prev_key = nil, prev_value = nil;
 
 	for (;;) {
 		id key = [self parsePDFTypeWithParent:nil];
@@ -596,7 +624,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 			[dict setObject:value forKey:key];
 			prev_key = key;
 			prev_value = value;
-		} else if([key isKindOfClass:[NSNumber class]]) {
+		} else if ([key isKindOfClass:[NSNumber class]]) {
 			int c;
 			do {
 				c = [fh readUInt8];
@@ -614,24 +642,24 @@ static BOOL IsWhiteSpace(uint8_t c);
 	}
 }
 
--(void)resolveIndirectObjects
+- (void)resolveIndirectObjects
 {
 	for (id obj in unresolved) {
 		if ([obj isKindOfClass:[NSDictionary class]]) {
 			NSMutableDictionary *dict = obj;
 			NSEnumerator *keyenum = [[dict allKeys] objectEnumerator];
 			NSString *key;
-			while(key=[keyenum nextObject]) {
-				id value=[dict objectForKey:key];
-				if([value isKindOfClass:[PDFObjectReference class]]) {
-					id realobj=[objdict objectForKey:value];
+			while (key = [keyenum nextObject]) {
+				id value = [dict objectForKey:key];
+				if ([value isKindOfClass:[PDFObjectReference class]]) {
+					id realobj = [objdict objectForKey:value];
 					if (realobj)
 						[dict setObject:realobj forKey:key];
 				}
 			}
 		} else if ([obj isKindOfClass:[NSArray class]]) {
-			NSMutableArray *array=obj;
-			NSInteger count=[array count];
+			NSMutableArray *array = obj;
+			NSInteger count = [array count];
 			for (NSInteger i = 0; i < count; i++) {
 				id value = [array objectAtIndex:i];
 				if ([value isKindOfClass:[PDFObjectReference class]]) {
@@ -645,7 +673,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 	}
 }
 
--(void)_raiseParserException:(NSString *)error
+- (void)_raiseParserException:(NSString *)error
 {
 	NSData *start;
 
@@ -661,9 +689,9 @@ static BOOL IsWhiteSpace(uint8_t c);
 	NSInteger length = [start length];
 	const uint8_t *bytes = [start bytes];
 	NSInteger skip = 0;
-	for (NSInteger i=0;i<length;i++) {
+	for (NSInteger i = 0; i < length; i++) {
 		if (bytes[i] == '\n' || bytes[i] == '\r') {
-			skip=i+1;
+			skip = i + 1;
 		}
 	}
 	NSString *startstr = [[[NSString alloc] initWithBytes:bytes + skip length:length - skip encoding:NSISOLatin1StringEncoding] autorelease];
@@ -684,13 +712,11 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 @end
 
-
-
 @implementation PDFString
 @synthesize rawData = data;
 @synthesize reference = ref;
 
--(id)initWithData:(NSData *)bytes parent:(PDFObjectReference *)parent parser:(PDFParser *)owner
+- (id)initWithData:(NSData *)bytes parent:(PDFObjectReference *)parent parser:(PDFParser *)owner
 {
 	if (self = [super init]) {
 		data = [bytes retain];
@@ -700,14 +726,14 @@ static BOOL IsWhiteSpace(uint8_t c);
 	return self;
 }
 
--(void)dealloc
+- (void)dealloc
 {
 	[data release];
 	[ref release];
 	[super dealloc];
 }
 
--(NSData *)data
+- (NSData *)data
 {
 	PDFEncryptionHandler *encryption = [parser encryptionHandler];
 	if (encryption) {
@@ -717,88 +743,86 @@ static BOOL IsWhiteSpace(uint8_t c);
 	}
 }
 
--(NSString *)string
+- (NSString *)string
 {
 	NSData *characters = [self data];
 	NSUInteger length = [characters length];
 	const unsigned char *bytes = [characters bytes];
 	if (length >= 2 && bytes[0] == 0xfe && bytes[1] == 0xff) {
-		return [[[NSString alloc] initWithBytes:bytes+2 length:length-2
+		return [[[NSString alloc] initWithBytes:bytes + 2
+										 length:length - 2
 									   encoding:NSUTF16BigEndianStringEncoding] autorelease];
 	} else {
 		return [[[NSString alloc] initWithData:characters encoding:NSISOLatin1StringEncoding] autorelease];
 	}
 }
 
--(BOOL)isEqual:(id)other
+- (BOOL)isEqual:(id)other
 {
-	return [other isKindOfClass:[PDFString class]]&&[data isEqual:((PDFString *)other)->data];
+	return [other isKindOfClass:[PDFString class]] && [data isEqual:((PDFString *)other)->data];
 }
 
--(NSUInteger)hash
+- (NSUInteger)hash
 {
 	return [data hash];
 }
 
--(id)copyWithZone:(NSZone *)zone
+- (id)copyWithZone:(NSZone *)zone
 {
 	return [[[self class] allocWithZone:zone] initWithData:data];
 }
 
--(NSString *)description
+- (NSString *)description
 {
 	return [self string];
 }
 
 @end
 
-
 @implementation PDFObjectReference
 @synthesize number = num;
 @synthesize generation = gen;
 
-+(PDFObjectReference *)referenceWithNumber:(int)objnum generation:(int)objgen
++ (PDFObjectReference *)referenceWithNumber:(int)objnum generation:(int)objgen
 {
 	return [[[[self class] alloc] initWithNumber:objnum generation:objgen] autorelease];
 }
 
-+(PDFObjectReference *)referenceWithNumberObject:(NSNumber *)objnum generationObject:(NSNumber *)objgen
++ (PDFObjectReference *)referenceWithNumberObject:(NSNumber *)objnum generationObject:(NSNumber *)objgen
 {
 	return [[[[self class] alloc] initWithNumber:[objnum intValue] generation:[objgen intValue]] autorelease];
 }
 
--(id)initWithNumber:(int)objnum generation:(int)objgen
+- (id)initWithNumber:(int)objnum generation:(int)objgen
 {
-	if (self=[super init]) {
+	if (self = [super init]) {
 		num = objnum;
 		gen = objgen;
 	}
 	return self;
 }
 
--(BOOL)isEqual:(id)other
+- (BOOL)isEqual:(id)other
 {
 	return [other isKindOfClass:[PDFObjectReference class]] && ((PDFObjectReference *)other)->num == num && ((PDFObjectReference *)other)->gen == gen;
 }
 
--(NSUInteger)hash
+- (NSUInteger)hash
 {
-	return num^(gen*69069);
+	return num ^ (gen * 69069);
 }
 
--(id)copyWithZone:(NSZone *)zone
+- (id)copyWithZone:(NSZone *)zone
 {
 	return [[[self class] allocWithZone:zone] initWithNumber:num generation:gen];
 }
 
--(NSString *)description
+- (NSString *)description
 {
-	return [NSString stringWithFormat:@"<Reference to object %d, generation %d>",num,gen];
+	return [NSString stringWithFormat:@"<Reference to object %d, generation %d>", num, gen];
 }
 
 @end
-
-
 
 static BOOL IsHexDigit(uint8_t c)
 {

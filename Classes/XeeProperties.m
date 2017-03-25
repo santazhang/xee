@@ -7,23 +7,22 @@
 @synthesize heading;
 @synthesize position = pos;
 
-
-+(XeePropertyItem *)itemWithLabel:(NSString *)itemlabel value:(id)itemvalue
++ (XeePropertyItem *)itemWithLabel:(NSString *)itemlabel value:(id)itemvalue
 {
 	return [[[self alloc] initWithLabel:itemlabel value:itemvalue identifier:nil heading:nil position:0] autorelease];
 }
 
-+(XeePropertyItem *)itemWithLabel:(NSString *)itemlabel value:(id)itemvalue identifier:(NSString *)identifier
++ (XeePropertyItem *)itemWithLabel:(NSString *)itemlabel value:(id)itemvalue identifier:(NSString *)identifier
 {
 	return [[[self alloc] initWithLabel:itemlabel value:itemvalue identifier:identifier heading:nil position:0] autorelease];
 }
 
-+(XeePropertyItem *)itemWithLabel:(NSString *)itemlabel value:(id)itemvalue heading:(XeePropertyItem *)headingitem position:(int)position
++ (XeePropertyItem *)itemWithLabel:(NSString *)itemlabel value:(id)itemvalue heading:(XeePropertyItem *)headingitem position:(int)position
 {
 	return [[[self alloc] initWithLabel:itemlabel value:itemvalue identifier:nil heading:headingitem position:position] autorelease];
 }
 
-+(XeePropertyItem *)subSectionItemWithLabel:(NSString *)itemlabel identifier:(NSString *)identifier labelsAndValues:(id)first,...
++ (XeePropertyItem *)subSectionItemWithLabel:(NSString *)itemlabel identifier:(NSString *)identifier labelsAndValues:(id)first, ...
 {
 	NSMutableArray *array = [NSMutableArray array];
 	XeePropertyItem *item = [[[self alloc] initWithLabel:itemlabel value:array identifier:identifier heading:nil position:0] autorelease];
@@ -47,15 +46,15 @@
 	return item;
 }
 
-+(NSArray *)itemsWithLabel:(NSString *)itemlabel valueArray:(NSArray *)values
++ (NSArray *)itemsWithLabel:(NSString *)itemlabel valueArray:(NSArray *)values
 {
-	NSInteger count=[values count];
+	NSInteger count = [values count];
 	if (!values || count == 0) {
 		return nil;
 	}
 
-	XeePropertyItem *heading=[self itemWithLabel:itemlabel value:[values objectAtIndex:0]];
-	NSMutableArray *items=[NSMutableArray arrayWithObject:heading];
+	XeePropertyItem *heading = [self itemWithLabel:itemlabel value:[values objectAtIndex:0]];
+	NSMutableArray *items = [NSMutableArray arrayWithObject:heading];
 
 	for (NSInteger i = 1; i < count; i++) {
 		[items addObject:[self itemWithLabel:@"" value:[values objectAtIndex:i] heading:heading position:i]];
@@ -64,7 +63,7 @@
 	return items;
 }
 
-+(NSArray *)itemsWithLabel:(NSString *)itemlabel values:(id)first,...
++ (NSArray *)itemsWithLabel:(NSString *)itemlabel values:(id)first, ...
 {
 	if (!first) {
 		return nil;
@@ -78,7 +77,7 @@
 
 	id value;
 	int pos = 1;
-	while ((value=va_arg(va,id))) {
+	while ((value = va_arg(va, id))) {
 		[items addObject:[self itemWithLabel:@"" value:value heading:heading position:pos++]];
 	}
 
@@ -87,7 +86,7 @@
 	return items;
 }
 
-+(NSArray *)itemsWithLabel:(NSString *)itemlabel textValue:(NSString *)text
++ (NSArray *)itemsWithLabel:(NSString *)itemlabel textValue:(NSString *)text
 {
 	NSMutableArray *array = [NSMutableArray arrayWithArray:[text componentsSeparatedByString:@"\n"]];
 	while ([array lastObject] && [[array lastObject] length] == 0) {
@@ -96,19 +95,17 @@
 	return [self itemsWithLabel:itemlabel valueArray:array];
 }
 
-
-
--(id)initWithLabel:(NSString *)itemlabel value:(id)itemvalue identifier:(NSString *)identifier heading:(XeePropertyItem *)headingitem position:(int)position
+- (id)initWithLabel:(NSString *)itemlabel value:(id)itemvalue identifier:(NSString *)identifier heading:(XeePropertyItem *)headingitem position:(int)position
 {
 	if (self = [super init]) {
 		if (itemlabel && [itemlabel length]) {
 			if ([itemvalue isKindOfClass:[NSArray class]]) {
-				label=[itemlabel copy];
+				label = [itemlabel copy];
 			} else {
-				label=[[itemlabel stringByAppendingString:@":"] retain];
+				label = [[itemlabel stringByAppendingString:@":"] retain];
 			}
 		} else {
-			label=@"";
+			label = @"";
 		}
 		value = [itemvalue retain];
 		ident = [identifier copy];
@@ -119,7 +116,7 @@
 	return self;
 }
 
--(void)dealloc
+- (void)dealloc
 {
 	[label release];
 	[value release];
@@ -128,17 +125,17 @@
 	[super dealloc];
 }
 
--(BOOL)isSubSection
+- (BOOL)isSubSection
 {
 	return [value isKindOfClass:[NSArray class]];
 }
 
--(BOOL)isEqual:(XeePropertyItem *)other
+- (BOOL)isEqual:(XeePropertyItem *)other
 {
-	return [label caseInsensitiveCompare:[other label]]==NSOrderedSame&&[value isEqual:[other value]];
+	return [label caseInsensitiveCompare:[other label]] == NSOrderedSame && [value isEqual:[other value]];
 }
 
--(NSComparisonResult)compare:(XeePropertyItem *)other
+- (NSComparisonResult)compare:(XeePropertyItem *)other
 {
 	XeePropertyItem *otherheading = [other heading];
 	if (heading) {
@@ -148,21 +145,21 @@
 			} else {
 				return NSOrderedAscending;
 			}
-		} else if(otherheading) {
+		} else if (otherheading) {
 			return [heading compare:otherheading];
 		} else {
 			return [heading compare:other];
 		}
-	} else if(otherheading) {
+	} else if (otherheading) {
 		return [self compare:otherheading];
 	}
 
 	return [label caseInsensitiveCompare:[other label]];
 }
 
--(NSString *)description
+- (NSString *)description
 {
-	return [NSString stringWithFormat:@"%@ %@",label,value];
+	return [NSString stringWithFormat:@"%@ %@", label, value];
 }
 
 @end

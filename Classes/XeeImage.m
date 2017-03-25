@@ -6,7 +6,6 @@
 #include <pthread.h>
 #include <unistd.h>
 
-
 @implementation XeeImage
 @synthesize delegate;
 @synthesize icon;
@@ -22,78 +21,77 @@
 @synthesize orientation;
 @synthesize correctOrientation = correctorientation;
 
--(id)init
+- (id)init
 {
-	if(self=[super init])
-	{
-		handle=nil;
-		ref=nil;
-		attrs=nil;
+	if (self = [super init]) {
+		handle = nil;
+		ref = nil;
+		attrs = nil;
 
-		nextselector=NULL;
-		finished=loaded=YES;
-		thumbonly=stop=NO;
+		nextselector = NULL;
+		finished = loaded = YES;
+		thumbonly = stop = NO;
 
-		coro=nil;
+		coro = nil;
 
-		format=nil;
-		width=height=0;
-		depth=nil;
-		icon=depthicon=nil;
-		transparent=NO;
-		back=nil;
+		format = nil;
+		width = height = 0;
+		depth = nil;
+		icon = depthicon = nil;
+		transparent = NO;
+		back = nil;
 
-		orientation=XeeNoTransformation;
-		correctorientation=XeeUnknownTransformation;
-		crop_x=crop_y=0;
-		crop_width=crop_height=0;
+		orientation = XeeNoTransformation;
+		correctorientation = XeeUnknownTransformation;
+		crop_x = crop_y = 0;
+		crop_width = crop_height = 0;
 
-		delegate=nil;
+		delegate = nil;
 
-		properties=[[NSMutableArray alloc] init];
-
+		properties = [[NSMutableArray alloc] init];
 	}
 
 	return self;
 }
 
--(id)initWithHandle:(CSHandle *)fh
+- (id)initWithHandle:(CSHandle *)fh
 {
 	return [self initWithHandle:fh ref:nil attributes:nil];
 }
 
--(id)initWithHandle:(CSHandle *)fh ref:(XeeFSRef *)fsref attributes:(NSDictionary *)attributes
+- (id)initWithHandle:(CSHandle *)fh ref:(XeeFSRef *)fsref attributes:(NSDictionary *)attributes
 {
-	if(self=[self init])
-	{
-		handle=[fh retain];
-		ref=[fsref retain];
-		attrs=[attributes retain];
+	if (self = [self init]) {
+		handle = [fh retain];
+		ref = [fsref retain];
+		attrs = [attributes retain];
 
-		if(ref)
-		{
-			icon=[[[NSWorkspace sharedWorkspace] iconForFile:[ref path]] retain];
-			[icon setSize:NSMakeSize(16,16)];
+		if (ref) {
+			icon = [[[NSWorkspace sharedWorkspace] iconForFile:[ref path]] retain];
+			[icon setSize:NSMakeSize(16, 16)];
+		} else
+			icon = nil;
+
+		finished = loaded = NO;
+
+		coro = [self newCoroutine];
+
+		CSCoroutine *currcoro = [CSCoroutine currentCoroutine];
+		@try {
+			[(XeeImage *)coro load];
 		}
-		else icon=nil;
-
-		finished=loaded=NO;
-
-		coro=[self newCoroutine];
-
-		CSCoroutine *currcoro=[CSCoroutine currentCoroutine];
-		@try { [(XeeImage *)coro load]; }
-		@catch(id e)
-		{
+		@catch (id e) {
 			[CSCoroutine setCurrentCoroutine:currcoro];
-			NSLog(@"Exception during initial loading of \"%@\" (%@): %@",[self descriptiveFilename],[self class],e);
-			finished=YES;
+			NSLog(@"Exception during initial loading of \"%@\" (%@): %@", [self descriptiveFilename], [self class], e);
+			finished = YES;
 		}
 
-		if(finished) { [coro release]; coro=nil; }
+		if (finished) {
+			[coro release];
+			coro = nil;
+		}
 
-		if(!finished||loaded)
-		{
+		if (!finished || loaded) {
 			return self;
 		}
 
@@ -102,36 +100,32 @@
 	return nil;
 }
 
--(id)initWithHandle2:(CSHandle *)fh ref:(XeeFSRef *)fsref attributes:(NSDictionary *)attributes
+- (id)initWithHandle2:(CSHandle *)fh ref:(XeeFSRef *)fsref attributes:(NSDictionary *)attributes
 {
-	if(self=[self init])
-	{
-		handle=[fh retain];
-		ref=[fsref retain];
-		attrs=[attributes retain];
-		icon=[[[NSWorkspace sharedWorkspace] iconForFile:[ref path]] retain]; // needs fixing!
-		[icon setSize:NSMakeSize(16,16)];
+	if (self = [self init]) {
+		handle = [fh retain];
+		ref = [fsref retain];
+		attrs = [attributes retain];
+		icon = [[[NSWorkspace sharedWorkspace] iconForFile:[ref path]] retain]; // needs fixing!
+		[icon setSize:NSMakeSize(16, 16)];
 
-		nextselector=@selector(initLoader);
-		stop=NO;
-		loaded=NO;
+		nextselector = @selector(initLoader);
+		stop = NO;
+		loaded = NO;
 
-		@try
-		{
+		@try {
 			do {
-				NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
-				nextselector=(SEL)[self performSelector:nextselector];
+				NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+				nextselector = (SEL)[self performSelector:nextselector];
 				[pool release];
-			} while(nextselector&&!width&&!height);
+			} while (nextselector && !width && !height);
 		}
-		@catch(id e)
-		{
-			NSLog(@"Exception during initial loading of \"%@\" (%@): %@",[self descriptiveFilename],[self class],e);
-			nextselector=NULL;
+		@catch (id e) {
+			NSLog(@"Exception during initial loading of \"%@\" (%@): %@", [self descriptiveFilename], [self class], e);
+			nextselector = NULL;
 		}
 
-		if(nextselector||loaded)
-		{
+		if (nextselector || loaded) {
 			return self;
 		}
 
@@ -140,11 +134,10 @@
 	return nil;
 }
 
-
-
--(void)dealloc
+- (void)dealloc
 {
-	if(nextselector) [self deallocLoader];
+	if (nextselector)
+		[self deallocLoader];
 
 	[handle release];
 	[ref release];
@@ -163,79 +156,81 @@
 	[super dealloc];
 }
 
-
--(void)runLoader
+- (void)runLoader
 {
-	if(finished) return;
+	if (finished)
+		return;
 
-	CSCoroutine *currcoro=[CSCoroutine currentCoroutine];
-	@try { [coro switchTo]; }
-	@catch(id e)
-	{
+	CSCoroutine *currcoro = [CSCoroutine currentCoroutine];
+	@try {
+		[coro switchTo];
+	}
+	@catch (id e) {
 		[CSCoroutine setCurrentCoroutine:currcoro];
-		NSLog(@"Exception during loading of \"%@\" (%@): %@",[self descriptiveFilename],[self class],e);
-		finished=YES;
+		NSLog(@"Exception during loading of \"%@\" (%@): %@", [self descriptiveFilename], [self class], e);
+		finished = YES;
 	}
 
-	if(finished)
-	{
+	if (finished) {
 		[coro release];
-		coro=nil;
+		coro = nil;
 		[self triggerChangeAction];
 	}
 }
 
--(void)runLoaderForThumbnail
+- (void)runLoaderForThumbnail
 {
-	thumbonly=YES;
+	thumbonly = YES;
 	[self runLoader];
 }
 
--(void)load
+- (void)load
 {
-	nextselector=@selector(initLoader);
-	do
-	{
-		BOOL hashead=(width&&height);
+	nextselector = @selector(initLoader);
+	do {
+		BOOL hashead = (width && height);
 
-		nextselector=(SEL)[self performSelector:nextselector];
+		nextselector = (SEL)[self performSelector:nextselector];
 
-		if(!hashead&&(width&&height)) { XeeImageLoaderHeaderDone(); }
-		else { XeeImageLoaderYield(); }
-	} while(nextselector);
+		if (!hashead && (width && height)) {
+			XeeImageLoaderHeaderDone();
+		} else {
+			XeeImageLoaderYield();
+		}
+	} while (nextselector);
 
 	[self deallocLoader];
 	XeeImageLoaderDone(loaded);
 }
 
-
-
-
--(SEL)initLoader { return NULL; }
-
--(void)deallocLoader { }
-
--(void)runLoader2
+- (SEL)initLoader
 {
-	if(!nextselector) return;
+	return NULL;
+}
 
-	stop=NO;
-	@try
-	{
+- (void)deallocLoader
+{
+}
+
+- (void)runLoader2
+{
+	if (!nextselector)
+		return;
+
+	stop = NO;
+	@try {
 		do {
 			@autoreleasepool {
-				nextselector=(SEL)[self performSelector:nextselector];
+				nextselector = (SEL)[self performSelector:nextselector];
 			}
-		} while(nextselector&&!stop);
+		} while (nextselector && !stop);
 	}
-	@catch(id e)
-	{
-		NSLog(@"Exception during loading of \"%@\": %@",[self descriptiveFilename],e);
-		nextselector=NULL;
+	@catch (id e) {
+		NSLog(@"Exception during loading of \"%@\": %@", [self descriptiveFilename], e);
+		nextselector = NULL;
 	}
 
-	if(!nextselector)
-	{
+	if (!nextselector) {
 		[self deallocLoader];
 		[self triggerChangeAction];
 	}
@@ -245,378 +240,476 @@
 
 //-(BOOL)needsLoading { return nextselector!=NULL; }
 
--(BOOL)failed { return finished&&!loaded; }
-
--(BOOL)needsLoading { return !finished; }
-
--(void)stopLoading { stop=YES; }
-
--(CSFileHandle *)fileHandle
+- (BOOL)failed
 {
-	if([handle isKindOfClass:[CSFileHandle class]]) return (CSFileHandle *)handle;
-	else [NSException raise:@"XeeHandleNotAFileHandleException" format:@"The image class %@ can only load image from files.",[self class]];
+	return finished && !loaded;
+}
+
+- (BOOL)needsLoading
+{
+	return !finished;
+}
+
+- (void)stopLoading
+{
+	stop = YES;
+}
+
+- (CSFileHandle *)fileHandle
+{
+	if ([handle isKindOfClass:[CSFileHandle class]])
+		return (CSFileHandle *)handle;
+	else
+		[NSException raise:@"XeeHandleNotAFileHandleException" format:@"The image class %@ can only load image from files.", [self class]];
 	return nil;
 }
 
-
-
--(NSInteger)frames { return 1; }
-
--(void)setFrame:(NSInteger)frame { }
-
--(NSInteger)frame { return 0; }
-
-
-
--(void)triggerLoadingAction
+- (NSInteger)frames
 {
-	if(pthread_main_np()) [delegate xeeImageLoadingProgress:self];
-	else [(NSObject*)delegate performSelectorOnMainThread:@selector(xeeImageLoadingProgress:) withObject:self waitUntilDone:NO];
-//	usleep(20000);
+	return 1;
 }
 
--(void)triggerChangeAction
+- (void)setFrame:(NSInteger)frame
 {
-	if(pthread_main_np()) [delegate xeeImageDidChange:self];
-	else [(NSObject*)delegate performSelectorOnMainThread:@selector(xeeImageDidChange:) withObject:self waitUntilDone:NO];
 }
 
--(void)triggerSizeChangeAction
+- (NSInteger)frame
 {
-	if(pthread_main_np()) [delegate xeeImageSizeDidChange:self];
-	else [(NSObject*)delegate performSelectorOnMainThread:@selector(xeeImageSizeDidChange:) withObject:self waitUntilDone:NO];
+	return 0;
 }
 
--(void)triggerPropertyChangeAction
+- (void)triggerLoadingAction
 {
-	if(pthread_main_np()) [delegate xeeImagePropertiesDidChange:self];
-	else [(NSObject*)delegate performSelectorOnMainThread:@selector(xeeImagePropertiesDidChange:) withObject:self waitUntilDone:NO];
+	if (pthread_main_np())
+		[delegate xeeImageLoadingProgress:self];
+	else
+		[(NSObject *)delegate performSelectorOnMainThread:@selector(xeeImageLoadingProgress:) withObject:self waitUntilDone:NO];
+	//	usleep(20000);
 }
 
-
-
--(BOOL)animated { return NO; }
-
--(void)setAnimating:(BOOL)animating { }
-
--(void)setAnimatingDefault { }
-
--(BOOL)animating { return NO; }
-
-
-
--(NSRect)updatedAreaInRect:(NSRect)rect { return NSMakeRect(0,0,0,0); }
-
-
-
--(void)drawInRect:(NSRect)rect bounds:(NSRect)bounds { [self drawInRect:rect bounds:bounds lowQuality:NO]; }
-
--(void)drawInRect:(NSRect)rect bounds:(NSRect)bounds lowQuality:(BOOL)lowquality {}
-
-
-
--(CGImageRef)createCGImage { return NULL; }
-
--(XeeSaveFormatFlags)losslessSaveFlags { return 0; }
-
--(NSString *)losslessFormat { return nil; }
-
--(NSString *)losslessExtension { return nil; }
-
--(BOOL)losslessSaveTo:(NSString *)path flags:(XeeSaveFormatFlags)flags { return NO; }
-
--(NSString *)filename { return [ref path]; }
-
--(NSInteger)width
+- (void)triggerChangeAction
 {
-	if(XeeTransformationIsFlipped(orientation)) return crop_height?crop_height:height;
-	else return crop_width?crop_width:width;
+	if (pthread_main_np())
+		[delegate xeeImageDidChange:self];
+	else
+		[(NSObject *)delegate performSelectorOnMainThread:@selector(xeeImageDidChange:) withObject:self waitUntilDone:NO];
 }
 
--(NSInteger)height
+- (void)triggerSizeChangeAction
 {
-	if(XeeTransformationIsFlipped(orientation)) return crop_width?crop_width:width;
-	else return crop_height?crop_height:height;
+	if (pthread_main_np())
+		[delegate xeeImageSizeDidChange:self];
+	else
+		[(NSObject *)delegate performSelectorOnMainThread:@selector(xeeImageSizeDidChange:) withObject:self waitUntilDone:NO];
 }
 
--(NSInteger)fullWidth
+- (void)triggerPropertyChangeAction
 {
-	if(XeeTransformationIsFlipped(orientation)) return height;
-	else return width;
+	if (pthread_main_np())
+		[delegate xeeImagePropertiesDidChange:self];
+	else
+		[(NSObject *)delegate performSelectorOnMainThread:@selector(xeeImagePropertiesDidChange:) withObject:self waitUntilDone:NO];
 }
 
--(NSInteger)fullHeight
+- (BOOL)animated
 {
-	if(XeeTransformationIsFlipped(orientation)) return width;
-	else return height;
+	return NO;
 }
 
--(NSColor *)backgroundColor
+- (void)setAnimating:(BOOL)animating
 {
-	if(!back) back=[[NSUnarchiver unarchiveObjectWithData:[[NSUserDefaults standardUserDefaults] dataForKey:XeeDefaultImageBackgroundKey]] retain];
+}
+
+- (void)setAnimatingDefault
+{
+}
+
+- (BOOL)animating
+{
+	return NO;
+}
+
+- (NSRect)updatedAreaInRect:(NSRect)rect
+{
+	return NSMakeRect(0, 0, 0, 0);
+}
+
+- (void)drawInRect:(NSRect)rect bounds:(NSRect)bounds
+{
+	[self drawInRect:rect bounds:bounds lowQuality:NO];
+}
+
+- (void)drawInRect:(NSRect)rect bounds:(NSRect)bounds lowQuality:(BOOL)lowquality
+{
+}
+
+- (CGImageRef)createCGImage
+{
+	return NULL;
+}
+
+- (XeeSaveFormatFlags)losslessSaveFlags
+{
+	return 0;
+}
+
+- (NSString *)losslessFormat
+{
+	return nil;
+}
+
+- (NSString *)losslessExtension
+{
+	return nil;
+}
+
+- (BOOL)losslessSaveTo:(NSString *)path flags:(XeeSaveFormatFlags)flags
+{
+	return NO;
+}
+
+- (NSString *)filename
+{
+	return [ref path];
+}
+
+- (NSInteger)width
+{
+	if (XeeTransformationIsFlipped(orientation))
+		return crop_height ? crop_height : height;
+	else
+		return crop_width ? crop_width : width;
+}
+
+- (NSInteger)height
+{
+	if (XeeTransformationIsFlipped(orientation))
+		return crop_width ? crop_width : width;
+	else
+		return crop_height ? crop_height : height;
+}
+
+- (NSInteger)fullWidth
+{
+	if (XeeTransformationIsFlipped(orientation))
+		return height;
+	else
+		return width;
+}
+
+- (NSInteger)fullHeight
+{
+	if (XeeTransformationIsFlipped(orientation))
+		return width;
+	else
+		return height;
+}
+
+- (NSColor *)backgroundColor
+{
+	if (!back)
+		back = [[NSUnarchiver unarchiveObjectWithData:[[NSUserDefaults standardUserDefaults] dataForKey:XeeDefaultImageBackgroundKey]] retain];
 
 	return back;
 }
 
--(NSRect)croppingRect
+- (NSRect)croppingRect
 {
-	return XeeTransformRect(XeeMatrixForTransformation(orientation,width,height),[self rawCroppingRect]);
+	return XeeTransformRect(XeeMatrixForTransformation(orientation, width, height), [self rawCroppingRect]);
 }
 
--(NSRect)rawCroppingRect
+- (NSRect)rawCroppingRect
 {
-	if(crop_width||crop_height) return NSMakeRect(crop_x,crop_y,crop_width,crop_height);
-	else return NSMakeRect(0,0,width,height);
+	if (crop_width || crop_height)
+		return NSMakeRect(crop_x, crop_y, crop_width, crop_height);
+	else
+		return NSMakeRect(0, 0, width, height);
 }
 
--(BOOL)isTransformed
+- (BOOL)isTransformed
 {
-	if([self isCropped]) return YES;
-	if([[NSUserDefaults standardUserDefaults] boolForKey:XeeUseOrientationKey])
-	{
-		XeeTransformation corr=[self correctOrientation];
-		if(corr) return corr==[self orientation];
+	if ([self isCropped])
+		return YES;
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:XeeUseOrientationKey]) {
+		XeeTransformation corr = [self correctOrientation];
+		if (corr)
+			return corr == [self orientation];
 	}
 	return XeeTransformationIsNonTrivial([self orientation]);
 }
 
--(BOOL)isCropped
+- (BOOL)isCropped
 {
-	return [self width]!=[self fullWidth]||[self height]!=[self fullHeight];
+	return [self width] != [self fullWidth] || [self height] != [self fullHeight];
 }
 
--(XeeMatrix)transformationMatrix
+- (XeeMatrix)transformationMatrix
 {
 	return XeeMultiplyMatrices(
-		XeeMatrixForTransformation(orientation,crop_width?crop_width:width,crop_height?crop_height:height),
-		XeeTranslationMatrix(-crop_x,-crop_y));
+		XeeMatrixForTransformation(orientation, crop_width ? crop_width : width, crop_height ? crop_height : height),
+		XeeTranslationMatrix(-crop_x, -crop_y));
 }
 
--(XeeMatrix)transformationMatrixInRect:(NSRect)rect
+- (XeeMatrix)transformationMatrixInRect:(NSRect)rect
 {
 	return XeeMultiplyMatrices(
-		XeeTransformRectToRectMatrix(NSMakeRect(0,0,[self width],[self height]),rect),
+		XeeTransformRectToRectMatrix(NSMakeRect(0, 0, [self width], [self height]), rect),
 		[self transformationMatrix]);
 }
 
--(NSArray *)properties { return properties; }
-
-
-
--(NSDictionary *)attributes { return attrs; }
-
--(uint64_t)fileSize { return [attrs fileSize]; }
-
--(NSDate *)date { return [attrs fileModificationDate]; }
-
--(NSString *)descriptiveFilename
+- (NSArray *)properties
 {
-	NSString *name=[self filename];
-	if(name) return name;
-	if(delegate&&[delegate isKindOfClass:[XeeImage class]]) return [(XeeImage*)delegate filename];
+	return properties;
+}
+
+- (NSDictionary *)attributes
+{
+	return attrs;
+}
+
+- (uint64_t)fileSize
+{
+	return [attrs fileSize];
+}
+
+- (NSDate *)date
+{
+	return [attrs fileModificationDate];
+}
+
+- (NSString *)descriptiveFilename
+{
+	NSString *name = [self filename];
+	if (name)
+		return name;
+	if (delegate && [delegate isKindOfClass:[XeeImage class]])
+		return [(XeeImage *)delegate filename];
 	return nil;
 }
 
--(void)setProperties:(NSArray *)newproperties { [properties removeAllObjects]; [properties addObjectsFromArray:newproperties]; }
-
--(void)setOrientation:(XeeTransformation)transformation
+- (void)setProperties:(NSArray *)newproperties
 {
-	if(transformation==orientation) return;
-
-	BOOL sizechanged=XeeTransformationIsFlipped(orientation)!=XeeTransformationIsFlipped(transformation);
-
-	orientation=transformation;
-
-	if(sizechanged) [self triggerSizeChangeAction];
-	else [self triggerChangeAction];
-	[self triggerPropertyChangeAction];
+	[properties removeAllObjects];
+	[properties addObjectsFromArray:newproperties];
 }
 
--(void)setCorrectOrientation:(XeeTransformation)transformation
+- (void)setOrientation:(XeeTransformation)transformation
 {
-	correctorientation=transformation;
+	if (transformation == orientation)
+		return;
 
-	if(correctorientation)
-	if([[NSUserDefaults standardUserDefaults] boolForKey:XeeUseOrientationKey])
-	orientation=correctorientation;
-}
+	BOOL sizechanged = XeeTransformationIsFlipped(orientation) != XeeTransformationIsFlipped(transformation);
 
--(void)setCroppingRect:(NSRect)rect
-{
-//	XeeMatrix inv=XeeInverseMatrix([self transformationMatrix]);
-	XeeMatrix inv=XeeInverseMatrix(XeeMatrixForTransformation(orientation,width,height));
+	orientation = transformation;
 
-	NSRect newcrop=XeeTransformRect(inv,rect);
-	if(newcrop.size.width==width&&newcrop.size.height==height)
-	{
-		crop_x=crop_y=0;
-		crop_width=crop_height=0;
-	}
+	if (sizechanged)
+		[self triggerSizeChangeAction];
 	else
-	{
-		crop_x=newcrop.origin.x;
-		crop_y=newcrop.origin.y;
-		crop_width=newcrop.size.width;
-		crop_height=newcrop.size.height;
+		[self triggerChangeAction];
+	[self triggerPropertyChangeAction];
+}
+
+- (void)setCorrectOrientation:(XeeTransformation)transformation
+{
+	correctorientation = transformation;
+
+	if (correctorientation)
+		if ([[NSUserDefaults standardUserDefaults] boolForKey:XeeUseOrientationKey])
+			orientation = correctorientation;
+}
+
+- (void)setCroppingRect:(NSRect)rect
+{
+	//	XeeMatrix inv=XeeInverseMatrix([self transformationMatrix]);
+	XeeMatrix inv = XeeInverseMatrix(XeeMatrixForTransformation(orientation, width, height));
+
+	NSRect newcrop = XeeTransformRect(inv, rect);
+	if (newcrop.size.width == width && newcrop.size.height == height) {
+		crop_x = crop_y = 0;
+		crop_width = crop_height = 0;
+	} else {
+		crop_x = newcrop.origin.x;
+		crop_y = newcrop.origin.y;
+		crop_width = newcrop.size.width;
+		crop_height = newcrop.size.height;
 	}
 	[self triggerSizeChangeAction];
 	[self triggerPropertyChangeAction];
 }
 
--(void)resetTransformations
+- (void)resetTransformations
 {
-	if([[NSUserDefaults standardUserDefaults] boolForKey:XeeUseOrientationKey]) orientation=correctorientation;
-	else orientation=XeeNoTransformation;
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:XeeUseOrientationKey])
+		orientation = correctorientation;
+	else
+		orientation = XeeNoTransformation;
 
-	crop_x=crop_y=0;
-	crop_width=crop_height=0;
+	crop_x = crop_y = 0;
+	crop_width = crop_height = 0;
 
 	[self triggerSizeChangeAction];
 	[self triggerPropertyChangeAction];
 }
 
--(void)setDepthIconName:(NSString *)iconname
+- (void)setDepthIconName:(NSString *)iconname
 {
 	[self setDepthIcon:[NSImage imageNamed:iconname]];
 }
 
--(void)setDepth:(NSString *)d iconName:(NSString *)iconname
+- (void)setDepth:(NSString *)d iconName:(NSString *)iconname
 {
 	[self setDepth:d];
 	[self setDepthIconName:iconname];
 }
 
--(void)setDepthBitmap
+- (void)setDepthBitmap
 {
-	[self setDepth:NSLocalizedString(@"Bitmap",@"Description for 1-bit bitmapped images")
-	iconName:@"depth_bitmap"];
+	[self setDepth:NSLocalizedString(@"Bitmap", @"Description for 1-bit bitmapped images")
+		  iconName:@"depth_bitmap"];
 }
 
--(void)setDepthIndexed:(int)colors
+- (void)setDepthIndexed:(int)colors
 {
 	[self setDepth:
-	[NSString stringWithFormat:NSLocalizedString(@"%d colours",@"Description for indexed-colour images"),colors]
-	iconName:@"depth_indexed"]; // needs alpha!
+			  [NSString stringWithFormat:NSLocalizedString(@"%d colours", @"Description for indexed-colour images"), colors]
+		  iconName:@"depth_indexed"]; // needs alpha!
 }
 
--(void)setDepthGrey:(int)bits alpha:(BOOL)alpha floating:(BOOL)floating
+- (void)setDepthGrey:(int)bits alpha:(BOOL)alpha floating:(BOOL)floating
 {
-	if(bits==1&&!alpha) [self setDepthBitmap];
-	else if(floating&&alpha) [self setDepth:
-		[NSString stringWithFormat:NSLocalizedString(@"%d bits FP grey+alpha",@"Description for floating-point grey+alpha images"),bits]
-		iconName:@"depth_greyalpha"];
-	else if(floating) [self setDepth:
-		[NSString stringWithFormat:NSLocalizedString(@"%d bits FP grey",@"Description for floating-point greyscale images"),bits]
-		iconName:@"depth_grey"];
-	else if(alpha) [self setDepth:
-		[NSString stringWithFormat:NSLocalizedString(@"%d bits grey+alpha",@"Description for grey+alpha images"),bits]
-		iconName:@"depth_greyalpha"];
-	else [self setDepth:
-		[NSString stringWithFormat:NSLocalizedString(@"%d bits grey",@"Description for greyscale images"),bits]
-		iconName:@"depth_grey"];
+	if (bits == 1 && !alpha)
+		[self setDepthBitmap];
+	else if (floating && alpha)
+		[self setDepth:
+				  [NSString stringWithFormat:NSLocalizedString(@"%d bits FP grey+alpha", @"Description for floating-point grey+alpha images"), bits]
+			  iconName:@"depth_greyalpha"];
+	else if (floating)
+		[self setDepth:
+				  [NSString stringWithFormat:NSLocalizedString(@"%d bits FP grey", @"Description for floating-point greyscale images"), bits]
+			  iconName:@"depth_grey"];
+	else if (alpha)
+		[self setDepth:
+				  [NSString stringWithFormat:NSLocalizedString(@"%d bits grey+alpha", @"Description for grey+alpha images"), bits]
+			  iconName:@"depth_greyalpha"];
+	else
+		[self setDepth:
+				  [NSString stringWithFormat:NSLocalizedString(@"%d bits grey", @"Description for greyscale images"), bits]
+			  iconName:@"depth_grey"];
 }
 
--(void)setDepthRGB:(int)bits alpha:(BOOL)alpha floating:(BOOL)floating
+- (void)setDepthRGB:(int)bits alpha:(BOOL)alpha floating:(BOOL)floating
 {
-	if(floating&&alpha) [self setDepth:
-		[NSString stringWithFormat:NSLocalizedString(@"%d bits FP RGBA",@"Description for floating-point RGBA images"),bits]
-		iconName:@"depth_rgba"];
-	else if(floating) [self setDepth:
-		[NSString stringWithFormat:NSLocalizedString(@"%d bits FP RGB",@"Description for floating-point RGB images"),bits]
-		iconName:@"depth_rgb"];
-	else if(alpha) [self setDepth:
-		[NSString stringWithFormat:NSLocalizedString(@"%d bits RGBA",@"Description for RGBA images"),bits]
-		iconName:@"depth_rgba"];
-	else [self setDepth:
-		[NSString stringWithFormat:NSLocalizedString(@"%d bits RGB",@"Description for RGBA images"),bits]
-		iconName:@"depth_rgb"];
+	if (floating && alpha)
+		[self setDepth:
+				  [NSString stringWithFormat:NSLocalizedString(@"%d bits FP RGBA", @"Description for floating-point RGBA images"), bits]
+			  iconName:@"depth_rgba"];
+	else if (floating)
+		[self setDepth:
+				  [NSString stringWithFormat:NSLocalizedString(@"%d bits FP RGB", @"Description for floating-point RGB images"), bits]
+			  iconName:@"depth_rgb"];
+	else if (alpha)
+		[self setDepth:
+				  [NSString stringWithFormat:NSLocalizedString(@"%d bits RGBA", @"Description for RGBA images"), bits]
+			  iconName:@"depth_rgba"];
+	else
+		[self setDepth:
+				  [NSString stringWithFormat:NSLocalizedString(@"%d bits RGB", @"Description for RGBA images"), bits]
+			  iconName:@"depth_rgb"];
 }
 
--(void)setDepthCMYK:(int)bits alpha:(BOOL)alpha
+- (void)setDepthCMYK:(int)bits alpha:(BOOL)alpha
 {
-	if(alpha) [self setDepth:
-		[NSString stringWithFormat:NSLocalizedString(@"%d bits CMYK+alpha",@"Description for CMYK+alpha images"),bits]
-		iconName:@"depth_cmyk"];
-	else [self setDepth:
-		[NSString stringWithFormat:NSLocalizedString(@"%d bits CMYK",@"Description for CMYK images"),bits]
-		iconName:@"depth_cmyk"];
+	if (alpha)
+		[self setDepth:
+				  [NSString stringWithFormat:NSLocalizedString(@"%d bits CMYK+alpha", @"Description for CMYK+alpha images"), bits]
+			  iconName:@"depth_cmyk"];
+	else
+		[self setDepth:
+				  [NSString stringWithFormat:NSLocalizedString(@"%d bits CMYK", @"Description for CMYK images"), bits]
+			  iconName:@"depth_cmyk"];
 }
 
--(void)setDepthLab:(int)bits alpha:(BOOL)alpha
+- (void)setDepthLab:(int)bits alpha:(BOOL)alpha
 {
-	if(alpha) [self setDepth:
-		[NSString stringWithFormat:NSLocalizedString(@"%d bits Lab+alpha",@"Description for Lab+alpha images"),bits]
-		iconName:@"depth_rgb"];
-	else [self setDepth:
-		[NSString stringWithFormat:NSLocalizedString(@"%d bits Lab",@"Description for Lab images"),bits]
-		iconName:@"depth_rgb"];
+	if (alpha)
+		[self setDepth:
+				  [NSString stringWithFormat:NSLocalizedString(@"%d bits Lab+alpha", @"Description for Lab+alpha images"), bits]
+			  iconName:@"depth_rgb"];
+	else
+		[self setDepth:
+				  [NSString stringWithFormat:NSLocalizedString(@"%d bits Lab", @"Description for Lab images"), bits]
+			  iconName:@"depth_rgb"];
 }
 
--(void)setDepthGrey:(int)bits { [self setDepthGrey:bits alpha:NO floating:NO]; }
+- (void)setDepthGrey:(int)bits
+{
+	[self setDepthGrey:bits alpha:NO floating:NO];
+}
 
--(void)setDepthRGB:(int)bits { [self setDepthRGB:bits alpha:NO floating:NO]; }
+- (void)setDepthRGB:(int)bits
+{
+	[self setDepthRGB:bits alpha:NO floating:NO];
+}
 
--(void)setDepthRGBA:(int)bits { [self setDepthRGB:bits alpha:YES floating:NO]; }
+- (void)setDepthRGBA:(int)bits
+{
+	[self setDepthRGB:bits alpha:YES floating:NO];
+}
 
-
-
-
--(id)description
+- (id)description
 {
 	return [NSString stringWithFormat:@"<%@> %@ (%ldx%ld %@ %@, %@, created on %@)",
-			[[self class] description],[[self descriptiveFilename] lastPathComponent],(long)[self width],(long)[self height],
-	[self depth],[self format],XeeDescribeSize([self fileSize]),XeeDescribeDate([self date])];
+									  [[self class] description], [[self descriptiveFilename] lastPathComponent], (long)[self width], (long)[self height],
+									  [self depth], [self format], XeeDescribeSize([self fileSize]), XeeDescribeDate([self date])];
 }
 
+NSMutableArray *imageclasses = nil;
 
-
-
-NSMutableArray *imageclasses=nil;
-
-
-+(XeeImage *)imageForFilename:(NSString *)filename
++ (XeeImage *)imageForFilename:(NSString *)filename
 {
-	XeeFSRef *ref=[XeeFSRef refForPath:filename];
-	if(ref) return [self imageForRef:ref];
+	XeeFSRef *ref = [XeeFSRef refForPath:filename];
+	if (ref)
+		return [self imageForRef:ref];
 	return nil;
 }
 
-+(XeeImage *)imageForRef:(XeeFSRef *)ref
++ (XeeImage *)imageForRef:(XeeFSRef *)ref
 {
-	NSString *filename=[ref path];
+	NSString *filename = [ref path];
 
-	NSDictionary *attrs=[[NSFileManager defaultManager] attributesOfItemAtPath:filename error:NULL];
-	if(!attrs) return nil;
+	NSDictionary *attrs = [[NSFileManager defaultManager] attributesOfItemAtPath:filename error:NULL];
+	if (!attrs)
+		return nil;
 
-	CSFileHandle *fh=[CSFileHandle fileHandleForReadingAtPath:filename];
-	if(!fh) return nil;
+	CSFileHandle *fh = [CSFileHandle fileHandleForReadingAtPath:filename];
+	if (!fh)
+		return nil;
 
 	return [self imageForHandle:fh ref:ref attributes:attrs];
 }
 
-+(XeeImage *)imageForHandle:(CSHandle *)fh 
++ (XeeImage *)imageForHandle:(CSHandle *)fh
 {
 	return [self imageForHandle:fh ref:nil attributes:nil];
 }
 
-+(XeeImage *)imageForHandle:(CSHandle *)fh ref:(XeeFSRef *)ref attributes:(NSDictionary *)attrs
++ (XeeImage *)imageForHandle:(CSHandle *)fh ref:(XeeFSRef *)ref attributes:(NSDictionary *)attrs
 {
-	if(!imageclasses) return nil;
+	if (!imageclasses)
+		return nil;
 
-	NSString *filename=[ref path];
+	NSString *filename = [ref path];
 
-	NSData *block=[fh readDataOfLengthAtMost:4096];
-	if(!block) return nil;
+	NSData *block = [fh readDataOfLengthAtMost:4096];
+	if (!block)
+		return nil;
 
 	[fh seekToFileOffset:0];
 
-	for (Class class in imageclasses)
-	{
-		if([class canOpenFile:filename firstBlock:block attributes:attrs])
-		{
-			XeeImage *image=[[class alloc] initWithHandle:fh ref:ref attributes:attrs];
-			if(image)
-			{
+	for (Class class in imageclasses) {
+		if ([class canOpenFile:filename firstBlock:block attributes:attrs]) {
+			XeeImage *image = [[class alloc] initWithHandle:fh ref:ref attributes:attrs];
+			if (image) {
 				return [image autorelease];
 			}
 			[fh seekToFileOffset:0];
@@ -626,64 +719,71 @@ NSMutableArray *imageclasses=nil;
 	return nil;
 }
 
-
-+(NSArray *)allFileTypes
++ (NSArray *)allFileTypes
 {
-	static NSMutableArray *types=nil;
-	if(!types)
-	{
-		types=[[NSMutableArray alloc] init];
+	static NSMutableArray *types = nil;
+	if (!types) {
+		types = [[NSMutableArray alloc] init];
 
-		NSEnumerator *enumerator=[imageclasses objectEnumerator];
+		NSEnumerator *enumerator = [imageclasses objectEnumerator];
 		Class class;
-		while(class=[enumerator nextObject])
-		{
-			NSEnumerator *typeenum=[[class fileTypes] objectEnumerator];
+		while (class = [enumerator nextObject]) {
+			NSEnumerator *typeenum = [[class fileTypes] objectEnumerator];
 			NSString *type;
-			while(type=[typeenum nextObject]) if(![types containsObject:type]) [types addObject:type];
+			while (type = [typeenum nextObject])
+				if (![types containsObject:type])
+					[types addObject:type];
 		}
 	}
 	return types;
 }
 
-+(NSDictionary *)fileTypeDictionary
++ (NSDictionary *)fileTypeDictionary
 {
-	static NSMutableDictionary *typehash=nil;
-	if(!typehash)
-	{
-		typehash=[[NSMutableDictionary alloc] init];
-		NSEnumerator *enumerator=[[self allFileTypes] objectEnumerator];
+	static NSMutableDictionary *typehash = nil;
+	if (!typehash) {
+		typehash = [[NSMutableDictionary alloc] init];
+		NSEnumerator *enumerator = [[self allFileTypes] objectEnumerator];
 		NSString *type;
-		while(type=[enumerator nextObject]) [typehash setObject:@"" forKey:type];
+		while (type = [enumerator nextObject])
+			[typehash setObject:@"" forKey:type];
 	}
 	return typehash;
 }
 
-+(void)registerImageClass:(Class)class
++ (void)registerImageClass:(Class) class
 {
-	if(!imageclasses) imageclasses=[[NSMutableArray alloc] init];
+	if (!imageclasses)
+		imageclasses = [[NSMutableArray alloc] init];
 
 	[imageclasses addObject:class];
 }
 
-
-
-+(BOOL)canOpenFile:(NSString *)name firstBlock:(NSData *)block attributes:(NSDictionary *)attributes
+	+ (BOOL)canOpenFile : (NSString *)name firstBlock : (NSData *)block attributes : (NSDictionary *)attributes
 {
 	return NO;
 }
 
-+(NSArray *)fileTypes { return nil; }
++ (NSArray *)fileTypes
+{
+	return nil;
+}
 
 @end
 
-
-
 @implementation NSObject (XeeImageDelegate)
 
--(void)xeeImageLoadingProgress:(XeeImage *)image {}
--(void)xeeImageDidChange:(XeeImage *)image {}
--(void)xeeImageSizeDidChange:(XeeImage *)image {}
--(void)xeeImagePropertiesDidChange:(XeeImage *)image {}
+- (void)xeeImageLoadingProgress:(XeeImage *)image
+{
+}
+- (void)xeeImageDidChange:(XeeImage *)image
+{
+}
+- (void)xeeImageSizeDidChange:(XeeImage *)image
+{
+}
+- (void)xeeImagePropertiesDidChange:(XeeImage *)image
+{
+}
 
 @end

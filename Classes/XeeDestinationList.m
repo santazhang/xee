@@ -7,21 +7,18 @@
 
 #include <Carbon/Carbon.h>
 
-
-NSString * const XeeDestinationUpdateNotification = @"XeeDestinationUpdate";
+NSString *const XeeDestinationUpdateNotification = @"XeeDestinationUpdate";
 
 void XeePlayPoof(NSWindow *somewindow);
 
-
-
 @implementation XeeDestinationView
 
--(void)dealloc
+- (void)dealloc
 {
 	[super dealloc];
 }
 
--(void)awakeFromNib
+- (void)awakeFromNib
 {
 	destinations = [XeeDestinationView defaultArray];
 	droprow = dropnum = 0;
@@ -30,7 +27,7 @@ void XeePlayPoof(NSWindow *somewindow);
 
 	[self setDataSource:self];
 	[self setDelegate:self];
-    [self registerForDraggedTypes:[NSArray arrayWithObjects:@"XeeDestinationPath",NSFilenamesPboardType,nil]];
+	[self registerForDraggedTypes:[NSArray arrayWithObjects:@"XeeDestinationPath", NSFilenamesPboardType, nil]];
 
 	[self setDoubleAction:@selector(destinationListClick:)];
 
@@ -40,9 +37,9 @@ void XeePlayPoof(NSWindow *somewindow);
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateData:) name:XeeDestinationUpdateNotification object:nil];
 }
 
--(id)tableView:(NSTableView *)table objectValueForTableColumn:(NSTableColumn *)column row:(NSInteger)row
+- (id)tableView:(NSTableView *)table objectValueForTableColumn:(NSTableColumn *)column row:(NSInteger)row
 {
-	NSString *ident=[column identifier];
+	NSString *ident = [column identifier];
 
 	if (row == 0) {
 		if ([ident isEqual:@"filename"]) {
@@ -51,30 +48,30 @@ void XeePlayPoof(NSWindow *somewindow);
 			return nil;
 		}
 	} else {
-		if([ident isEqual:@"shortcut"]){
+		if ([ident isEqual:@"shortcut"]) {
 			return [self shortcutForRow:row];
 		} else {
 			NSInteger index = [self indexForRow:row];
 			if (index < 0) {
 				return nil;
 			}
-			NSMutableDictionary *dict=[destinations objectAtIndex:index];
+			NSMutableDictionary *dict = [destinations objectAtIndex:index];
 			return [dict objectForKey:ident];
 		}
 	}
 }
 
--(NSInteger)numberOfRowsInTableView:(NSTableView *)table
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)table
 {
-	return [destinations count]+1+dropnum;
+	return [destinations count] + 1 + dropnum;
 }
 
--(void)drawRow:(NSInteger)row clipRect:(NSRect)clipRect
+- (void)drawRow:(NSInteger)row clipRect:(NSRect)clipRect
 {
-	NSInteger index=[self indexForRow:row];
+	NSInteger index = [self indexForRow:row];
 
 	if (index >= 0 && ![self isRowSelected:row]) {
-		NSColor *col=[[destinations objectAtIndex:index] objectForKey:@"color"];
+		NSColor *col = [[destinations objectAtIndex:index] objectForKey:@"color"];
 
 		if (col) {
 			[col set];
@@ -91,26 +88,26 @@ void XeePlayPoof(NSWindow *somewindow);
 	[super drawRow:row clipRect:clipRect];
 }
 
--(NSRect)frameOfCellAtColumn:(NSInteger)column row:(NSInteger)row
+- (NSRect)frameOfCellAtColumn:(NSInteger)column row:(NSInteger)row
 {
-	NSRect rect=[self rectOfRow:row];
-	rect.size.height-=1;
+	NSRect rect = [self rectOfRow:row];
+	rect.size.height -= 1;
 
 	if (column == 0) {
-		rect.origin.x+=2;
-		rect.origin.y+=1;
-		rect.size.width=rect.size.height=16;
+		rect.origin.x += 2;
+		rect.origin.y += 1;
+		rect.size.width = rect.size.height = 16;
 		return rect;
 	} else if (column == 1) {
-		rect.size.width-=20;
-		rect.origin.x+=20;
+		rect.size.width -= 20;
+		rect.origin.x += 20;
 
-		NSString *shortcut=[self shortcutForRow:row];
+		NSString *shortcut = [self shortcutForRow:row];
 		if (shortcut && !surpressshortcut) {
-			NSFont *font=[[[self tableColumnWithIdentifier:@"shortcut"] dataCell] font];
-			NSDictionary *attrs=[NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
-			NSSize size=[shortcut sizeWithAttributes:attrs];
-			rect.size.width-=size.width+2;
+			NSFont *font = [[[self tableColumnWithIdentifier:@"shortcut"] dataCell] font];
+			NSDictionary *attrs = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
+			NSSize size = [shortcut sizeWithAttributes:attrs];
+			rect.size.width -= size.width + 2;
 		}
 
 		if (rect.size.width < 0) {
@@ -119,16 +116,16 @@ void XeePlayPoof(NSWindow *somewindow);
 			return rect;
 		}
 	} else if (column == 2) {
-		NSString *shortcut=[self shortcutForRow:row];
+		NSString *shortcut = [self shortcutForRow:row];
 		if (shortcut && !surpressshortcut) {
-			NSFont *font=[[[self tableColumnWithIdentifier:@"shortcut"] dataCell] font];
-			NSDictionary *attrs=[NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
-			NSSize size=[shortcut sizeWithAttributes:attrs];
+			NSFont *font = [[[self tableColumnWithIdentifier:@"shortcut"] dataCell] font];
+			NSDictionary *attrs = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
+			NSSize size = [shortcut sizeWithAttributes:attrs];
 
-			rect.origin.x+=rect.size.width-size.width-4;
-			rect.origin.y+=2;
-			rect.size.width=size.width+4;
-			rect.size.height-=2;
+			rect.origin.x += rect.size.width - size.width - 4;
+			rect.origin.y += 2;
+			rect.size.width = size.width + 4;
+			rect.size.height -= 2;
 			return rect;
 		} else {
 			return NSZeroRect;
@@ -137,7 +134,7 @@ void XeePlayPoof(NSWindow *somewindow);
 	return NSZeroRect;
 }
 
--(void)keyDown:(NSEvent *)event
+- (void)keyDown:(NSEvent *)event
 {
 	unichar c = [[event characters] characterAtIndex:0];
 
@@ -148,61 +145,68 @@ void XeePlayPoof(NSWindow *somewindow);
 	}
 }
 
--(NSMenu*)menuForEvent:(NSEvent *)event
+- (NSMenu *)menuForEvent:(NSEvent *)event
 {
-	NSPoint clickpoint=[self convertPoint:[event locationInWindow] fromView:nil];
+	NSPoint clickpoint = [self convertPoint:[event locationInWindow] fromView:nil];
 	[self selectRowIndexes:[NSIndexSet indexSetWithIndex:[self rowAtPoint:clickpoint]] byExtendingSelection:NO];
 
 	return [super menuForEvent:event];
 }
 
--(void)mouseDown:(NSEvent *)event
+- (void)mouseDown:(NSEvent *)event
 {
-	NSPoint clickpoint=[self convertPoint:[event locationInWindow] fromView:nil];
-	NSInteger row=[self rowAtPoint:clickpoint];
-	NSInteger index=[self indexForRow:row];
+	NSPoint clickpoint = [self convertPoint:[event locationInWindow] fromView:nil];
+	NSInteger row = [self rowAtPoint:clickpoint];
+	NSInteger index = [self indexForRow:row];
 
-//	if(row>=0) [self selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
+	//	if(row>=0) [self selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
 
 	if (index >= 0) {
-		NSEvent *newevent=[[self window] nextEventMatchingMask:(NSLeftMouseDraggedMask|NSLeftMouseUpMask)
-		untilDate:[NSDate distantFuture] inMode:NSEventTrackingRunLoopMode dequeue:NO];
+		NSEvent *newevent = [[self window] nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)
+													   untilDate:[NSDate distantFuture]
+														  inMode:NSEventTrackingRunLoopMode
+														 dequeue:NO];
 
 		if (newevent && [newevent type] == NSLeftMouseDragged) {
-			NSMutableDictionary *dict=[[destinations objectAtIndex:index] retain];
-			NSPasteboard *pboard=[NSPasteboard pasteboardWithName:NSDragPboard];
+			NSMutableDictionary *dict = [[destinations objectAtIndex:index] retain];
+			NSPasteboard *pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
 			[pboard declareTypes:[NSArray arrayWithObject:@"XeeDestinationPath"] owner:self];
 			[pboard setString:[dict objectForKey:@"path"] forType:@"XeeDestinationPath"];
 
-			NSPoint newpoint=[self convertPoint:[newevent locationInWindow] fromView:nil];
-			NSRect rowrect=[self rectOfRow:row];
+			NSPoint newpoint = [self convertPoint:[newevent locationInWindow] fromView:nil];
+			NSRect rowrect = [self rectOfRow:row];
 
-			if([self selectedRow]==row) [self deselectAll:self];
+			if ([self selectedRow] == row)
+				[self deselectAll:self];
 
-			NSImage *dragimage=[[[NSImage alloc] initWithSize:rowrect.size] autorelease];
+			NSImage *dragimage = [[[NSImage alloc] initWithSize:rowrect.size] autorelease];
 
 			[dragimage lockFocus];
 			[[dict objectForKey:@"icon"] setFlipped:YES];
-			NSAffineTransform *trans=[NSAffineTransform transform];
+			NSAffineTransform *trans = [NSAffineTransform transform];
 			[trans translateXBy:-rowrect.origin.x yBy:-rowrect.origin.y];
 			[trans set];
-			surpressshortcut=YES;
+			surpressshortcut = YES;
 			[self drawRow:row clipRect:rowrect];
-			surpressshortcut=NO;
+			surpressshortcut = NO;
 			[dragimage unlockFocus];
 
-			NSPoint imgpoint=rowrect.origin;
-			imgpoint.y+=rowrect.size.height;
+			NSPoint imgpoint = rowrect.origin;
+			imgpoint.y += rowrect.size.height;
 
 			[destinations removeObjectAtIndex:index];
-			droprow=row;
-			dropnum=1;
+			droprow = row;
+			dropnum = 1;
 
 			[[NSCursor arrowCursor] push];
 
-			[self dragImage:dragimage at:imgpoint
-			offset:NSMakeSize(newpoint.x-clickpoint.x,newpoint.y-clickpoint.y)
-			event:event pasteboard:pboard source:self slideBack:NO];
+			[self dragImage:dragimage
+						 at:imgpoint
+					 offset:NSMakeSize(newpoint.x - clickpoint.x, newpoint.y - clickpoint.y)
+					  event:event
+				 pasteboard:pboard
+					 source:self
+				  slideBack:NO];
 
 			[NSCursor pop];
 			[dict release];
@@ -213,26 +217,26 @@ void XeePlayPoof(NSWindow *somewindow);
 	[super mouseDown:event];
 }
 
-
--(NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)local
+- (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)local
 {
-	return NSDragOperationMove|NSDragOperationDelete;
+	return NSDragOperationMove | NSDragOperationDelete;
 }
 
--(void)draggedImage:(NSImage *)image endedAt:(NSPoint)point operation:(NSDragOperation)operation
+- (void)draggedImage:(NSImage *)image endedAt:(NSPoint)point operation:(NSDragOperation)operation
 {
-	if(operation!=NSDragOperationMove) XeePlayPoof([self window]);
+	if (operation != NSDragOperationMove)
+		XeePlayPoof([self window]);
 
 	[XeeDestinationView saveArray];
 }
 
--(NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
+- (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender
 {
-	NSPasteboard *pboard=[sender draggingPasteboard];
-	NSInteger row=[self rowForDropPoint:[self convertPoint:[sender draggingLocation] fromView:nil]];
+	NSPasteboard *pboard = [sender draggingPasteboard];
+	NSInteger row = [self rowForDropPoint:[self convertPoint:[sender draggingLocation] fromView:nil]];
 
 	if ([[pboard types] containsObject:NSFilenamesPboardType]) {
-		NSArray *files=[pboard propertyListForType:NSFilenamesPboardType];
+		NSArray *files = [pboard propertyListForType:NSFilenamesPboardType];
 
 #ifdef __LP64__
 		for (NSString *file in files) {
@@ -241,9 +245,9 @@ void XeePlayPoof(NSWindow *somewindow);
 			if (resolvedURL) {
 				fileURL = resolvedURL;
 			}
-			
+
 			NSNumber *isFolder = nil;
-			
+
 			if ([fileURL getResourceValue:&isFolder forKey:NSURLIsDirectoryKey error:NULL]) {
 				if (!isFolder.boolValue) {
 					return NSDragOperationNone;
@@ -253,28 +257,28 @@ void XeePlayPoof(NSWindow *somewindow);
 #else
 		for (NSString *file in files) {
 			FSRef ref;
-			if(CFURLGetFSRef((CFURLRef)[NSURL fileURLWithPath:file],&ref))
-			{
-				Boolean folder,aliased;
-				if(!FSResolveAliasFileWithMountFlags(&ref,TRUE,&folder,&aliased,kResolveAliasFileNoUI))
-				{
-					if(!folder) return NSDragOperationNone;
+			if (CFURLGetFSRef((CFURLRef)[NSURL fileURLWithPath:file], &ref)) {
+				Boolean folder, aliased;
+				if (!FSResolveAliasFileWithMountFlags(&ref, TRUE, &folder, &aliased, kResolveAliasFileNoUI)) {
+					if (!folder)
+						return NSDragOperationNone;
 				}
 			}
 		}
 #endif
-		[self setDropRow:row num:[files count]];
+		[self setDropRow:row
+					 num:[files count]];
 	} else {
 		[self setDropRow:row num:1];
 	}
 
-	if([[pboard types] containsObject:@"XeeDestinationPath"])
+	if ([[pboard types] containsObject:@"XeeDestinationPath"])
 		[[NSCursor arrowCursor] set];
 
 	return NSDragOperationMove;
 }
 
--(NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender
+- (NSDragOperation)draggingUpdated:(id<NSDraggingInfo>)sender
 {
 	if (!dropnum) {
 		return NSDragOperationNone;
@@ -285,29 +289,30 @@ void XeePlayPoof(NSWindow *somewindow);
 	return NSDragOperationMove;
 }
 
--(void)draggingExited:(id <NSDraggingInfo>)sender
+- (void)draggingExited:(id<NSDraggingInfo>)sender
 {
-	NSPasteboard *pboard=[sender draggingPasteboard];
+	NSPasteboard *pboard = [sender draggingPasteboard];
 
 	[self setDropRow:0 num:0];
 
-	if([[pboard types] containsObject:@"XeeDestinationPath"]) [[NSCursor disappearingItemCursor] set];
+	if ([[pboard types] containsObject:@"XeeDestinationPath"])
+		[[NSCursor disappearingItemCursor] set];
 
 	[self reloadData];
 }
 
--(BOOL)performDragOperation:(id <NSDraggingInfo>)sender
+- (BOOL)performDragOperation:(id<NSDraggingInfo>)sender
 {
 	if (!dropnum) {
 		return NO;
 	}
 
-	NSInteger row=droprow;
-	droprow=0;
-	dropnum=0;
+	NSInteger row = droprow;
+	droprow = 0;
+	dropnum = 0;
 
-	NSPasteboard *pboard=[sender draggingPasteboard];
-	NSInteger insindex=row-1;
+	NSPasteboard *pboard = [sender draggingPasteboard];
+	NSInteger insindex = row - 1;
 
 	NSArray *files;
 	if ([[pboard types] containsObject:NSFilenamesPboardType]) {
@@ -317,7 +322,7 @@ void XeePlayPoof(NSWindow *somewindow);
 	}
 
 	for (NSString *file in files) {
-		NSInteger remindex=[XeeDestinationView findDestination:file];
+		NSInteger remindex = [XeeDestinationView findDestination:file];
 		if (remindex != NSNotFound) {
 			[destinations removeObjectAtIndex:remindex];
 			if (remindex < insindex) {
@@ -330,10 +335,10 @@ void XeePlayPoof(NSWindow *somewindow);
 	[XeeDestinationView saveArray];
 	[XeeDestinationView updateTables];
 
-    return YES;
+	return YES;
 }
 
--(NSInteger)rowForDropPoint:(NSPoint)point
+- (NSInteger)rowForDropPoint:(NSPoint)point
 {
 	NSInteger row = [self rowAtPoint:point];
 
@@ -346,7 +351,7 @@ void XeePlayPoof(NSWindow *somewindow);
 	}
 }
 
--(void)setDropRow:(NSInteger)row num:(NSInteger)num
+- (void)setDropRow:(NSInteger)row num:(NSInteger)num
 {
 	NSInteger sel = [self selectedRow];
 
@@ -367,17 +372,17 @@ void XeePlayPoof(NSWindow *somewindow);
 	}
 }
 
--(void)setDropRow:(NSInteger)row
+- (void)setDropRow:(NSInteger)row
 {
 	[self setDropRow:row num:dropnum];
 }
 
--(void)updateData:(id)notification
+- (void)updateData:(id)notification
 {
 	[self reloadData];
 }
 
--(IBAction)switchMode:(id)sender
+- (IBAction)switchMode:(id)sender
 {
 	if ([sender selectedSegment] == 1) {
 		movemode = YES;
@@ -387,29 +392,29 @@ void XeePlayPoof(NSWindow *somewindow);
 	[self reloadData];
 }
 
--(IBAction)openInXee:(id)sender
+- (IBAction)openInXee:(id)sender
 {
 	NSInteger index = [self indexForRow:[self selectedRow]];
 	if (index < 0) {
 		return;
 	}
 
-	NSString *filename=[[destinations objectAtIndex:index] objectForKey:@"path"];
+	NSString *filename = [[destinations objectAtIndex:index] objectForKey:@"path"];
 	[[NSApp delegate] application:NSApp openFile:filename];
 }
 
--(IBAction)openInFinder:(id)sender
+- (IBAction)openInFinder:(id)sender
 {
 	NSInteger index = [self indexForRow:[self selectedRow]];
 	if (index < 0) {
 		return;
 	}
 
-	NSString *filename=[[destinations objectAtIndex:index] objectForKey:@"path"];
+	NSString *filename = [[destinations objectAtIndex:index] objectForKey:@"path"];
 	[[NSWorkspace sharedWorkspace] openFile:filename];
 }
 
--(IBAction)removeFromList:(id)sender
+- (IBAction)removeFromList:(id)sender
 {
 	NSInteger index = [self indexForRow:[self selectedRow]];
 	if (index < 0) {
@@ -421,7 +426,7 @@ void XeePlayPoof(NSWindow *somewindow);
 	[XeeDestinationView saveArray];
 }
 
--(void)menuNeedsUpdate:(NSMenu *)menu
+- (void)menuNeedsUpdate:(NSMenu *)menu
 {
 	BOOL enabled = [self selectedRow] != 0;
 	NSInteger count = [menu numberOfItems];
@@ -431,9 +436,7 @@ void XeePlayPoof(NSWindow *somewindow);
 	}
 }
 
-
-
--(NSInteger)indexForRow:(NSInteger)row
+- (NSInteger)indexForRow:(NSInteger)row
 {
 	if (row < 1) {
 		return -1;
@@ -454,16 +457,16 @@ void XeePlayPoof(NSWindow *somewindow);
 	return index;
 }
 
--(NSString *)pathForRow:(NSInteger)row
+- (NSString *)pathForRow:(NSInteger)row
 {
-	NSInteger index=[self indexForRow:row];
+	NSInteger index = [self indexForRow:row];
 	if (index < 0) {
 		return nil;
 	}
 	return [[destinations objectAtIndex:index] objectForKey:@"path"];
 }
 
--(NSString *)shortcutForRow:(NSInteger)row
+- (NSString *)shortcutForRow:(NSInteger)row
 {
 	if (row == 0 || row > 10) {
 		return nil;
@@ -485,26 +488,24 @@ void XeePlayPoof(NSWindow *somewindow);
 	}
 }
 
-
-
-+(void)updateTables
++ (void)updateTables
 {
 	[[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:XeeDestinationUpdateNotification object:nil]];
 }
 
-+(void)suggestInsertion:(NSString *)directory
++ (void)suggestInsertion:(NSString *)directory
 {
-	if([self findDestination:directory] == NSNotFound) {
-		[self addDestinations:@[directory] index:[[self defaultArray] count]];
+	if ([self findDestination:directory] == NSNotFound) {
+		[self addDestinations:@[ directory ] index:[[self defaultArray] count]];
 	}
 
 	[self updateTables];
 	[self saveArray];
 }
 
-+(void)addDestinations:(NSArray<NSString*> *)directories index:(NSInteger)index
++ (void)addDestinations:(NSArray<NSString *> *)directories index:(NSInteger)index
 {
-	NSMutableArray *destinations=[self defaultArray];
+	NSMutableArray *destinations = [self defaultArray];
 	for (NSString *directory in directories) {
 		NSString *dirname = [directory lastPathComponent];
 		NSImage *icon = [[NSWorkspace sharedWorkspace] iconForFile:directory];
@@ -521,7 +522,7 @@ void XeePlayPoof(NSWindow *somewindow);
 #else
 		FSRef fsref;
 		FSSpec fsspec;
-		CFURLGetFSRef((CFURLRef)url,&fsref);
+		CFURLGetFSRef((CFURLRef)url, &fsref);
 		FSGetCatalogInfo(&fsref, kFSCatInfoNone, NULL, NULL, &fsspec, NULL);
 
 		IconRef dummyicon;
@@ -532,15 +533,15 @@ void XeePlayPoof(NSWindow *somewindow);
 			ReleaseIconRef(dummyicon);
 
 			if (label) {
-				if (GetLabel(label,&rgbcol,labelstr) == noErr) {
-					color=[NSColor colorWithCalibratedRed:rgbcol.red/65280.0 green:rgbcol.green/65280.0 blue:rgbcol.blue/65280.0 alpha:0.2];
+				if (GetLabel(label, &rgbcol, labelstr) == noErr) {
+					color = [NSColor colorWithCalibratedRed:rgbcol.red / 65280.0 green:rgbcol.green / 65280.0 blue:rgbcol.blue / 65280.0 alpha:0.2];
 				}
 			}
 		}
 #endif
 
 		NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-		directory,@"path",dirname,@"filename",icon,@"icon",color,@"color",nil];
+											   directory, @"path", dirname, @"filename", icon, @"icon", color, @"color", nil];
 
 		if (index < [destinations count]) {
 			[destinations insertObject:dict atIndex:index];
@@ -550,9 +551,9 @@ void XeePlayPoof(NSWindow *somewindow);
 	}
 }
 
-+(NSInteger)findDestination:(NSString *)directory
++ (NSInteger)findDestination:(NSString *)directory
 {
-	NSMutableArray *destinations=[self defaultArray];
+	NSMutableArray *destinations = [self defaultArray];
 
 	NSInteger count = [destinations count];
 	for (NSInteger i = 0; i < count; i++) {
@@ -564,13 +565,13 @@ void XeePlayPoof(NSWindow *somewindow);
 	return NSNotFound;
 }
 
-+(void)loadArray
++ (void)loadArray
 {
 	NSArray *destarray = [[NSUserDefaults standardUserDefaults] objectForKey:@"destinations"];
 	[self addDestinations:destarray index:0];
 }
 
-+(void)saveArray
++ (void)saveArray
 {
 	NSMutableArray *destinations = [self defaultArray];
 	NSMutableArray *array = [NSMutableArray arrayWithCapacity:[destinations count]];
@@ -582,9 +583,9 @@ void XeePlayPoof(NSWindow *somewindow);
 	[[NSUserDefaults standardUserDefaults] setObject:array forKey:@"destinations"];
 }
 
-+(NSMutableArray *)defaultArray
++ (NSMutableArray *)defaultArray
 {
-	static NSMutableArray *def=nil;
+	static NSMutableArray *def = nil;
 	if (!def) {
 		def = [[NSMutableArray alloc] init];
 		[self loadArray];
@@ -595,14 +596,12 @@ void XeePlayPoof(NSWindow *somewindow);
 
 @end
 
-
-
 void XeePlayPoof(NSWindow *somewindow)
 {
-/*	[[[[NSSound alloc] initWithContentsOfFile:@"/System/Library/Components/CoreAudio.component/Contents/Resources/SystemSounds/dock/poof item off dock.aif"
+	/*	[[[[NSSound alloc] initWithContentsOfFile:@"/System/Library/Components/CoreAudio.component/Contents/Resources/SystemSounds/dock/poof item off dock.aif"
 	byReference:NO] autorelease] play];*/
 
 	NSShowAnimationEffect(NSAnimationEffectDisappearingItemDefault,
-	[somewindow convertBaseToScreen:[somewindow mouseLocationOutsideOfEventStream]],
-	NSZeroSize,nil,nil,nil);
+						  [somewindow convertBaseToScreen:[somewindow mouseLocationOutsideOfEventStream]],
+						  NSZeroSize, nil, nil, nil);
 }

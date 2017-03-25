@@ -3,10 +3,10 @@
 
 @implementation XeeListSource
 
--(id)init
+- (id)init
 {
 	if (self = [super init]) {
-		currentry=nextentry=preventry = nil;
+		currentry = nextentry = preventry = nil;
 		loadingimage = nil;
 
 		entries = [[NSMutableArray alloc] init];
@@ -18,7 +18,7 @@
 	return self;
 }
 
--(void)dealloc
+- (void)dealloc
 {
 	[entries release];
 	[listlock release];
@@ -31,18 +31,18 @@
 	[super dealloc];
 }
 
--(void)stop
+- (void)stop
 {
 	exiting = YES;
 	[loadingimage stopLoading];
 }
 
--(NSInteger)numberOfImages
+- (NSInteger)numberOfImages
 {
 	return [entries count];
 }
 
--(NSInteger)indexOfCurrentImage
+- (NSInteger)indexOfCurrentImage
 {
 	if (!currentry) {
 		return NSNotFound;
@@ -50,22 +50,21 @@
 	return [entries indexOfObject:currentry];
 }
 
--(NSString *)descriptiveNameOfCurrentImage
+- (NSString *)descriptiveNameOfCurrentImage
 {
 	return [currentry descriptiveName];
 }
 
-
--(void)pickImageAtIndex:(NSInteger)index next:(NSInteger)next
+- (void)pickImageAtIndex:(NSInteger)index next:(NSInteger)next
 {
 	[listlock lock];
 
-	XeeListEntry *newcurrentry=nil,*newnextentry=nil,*chosencurrentry=nil;
-	if (index >=0 && index < [entries count]) {
-		newcurrentry=[entries objectAtIndex:index];
+	XeeListEntry *newcurrentry = nil, *newnextentry = nil, *chosencurrentry = nil;
+	if (index >= 0 && index < [entries count]) {
+		newcurrentry = [entries objectAtIndex:index];
 	}
 	if (next >= 0 && next < [entries count]) {
-		newnextentry=[entries objectAtIndex:next];
+		newnextentry = [entries objectAtIndex:next];
 	}
 
 	[loadlock lock];
@@ -73,7 +72,7 @@
 	[newcurrentry retainImage];
 	[newnextentry retainImage];
 
-    chosencurrentry = [newcurrentry image]?newcurrentry:newnextentry;
+	chosencurrentry = [newcurrentry image] ? newcurrentry : newnextentry;
 	if (chosencurrentry != currentry) {
 		[self setPreviousEntry:currentry];
 	}
@@ -98,7 +97,7 @@
 	[self triggerImageChangeAction:currimage];
 }
 
--(void)pickImageAtIndex:(NSInteger)index
+- (void)pickImageAtIndex:(NSInteger)index
 {
 	// this is pretty dumb; FIX
 	if (index < [entries count] && [entries objectAtIndex:index] == currentry && nextentry) {
@@ -108,10 +107,9 @@
 	}
 }
 
-
 //double starttime;
 
--(void)startListUpdates
+- (void)startListUpdates
 {
 	//starttime=XeeGetTime();
 	[listlock lock];
@@ -119,10 +117,9 @@
 	oldindex = [entries indexOfObjectIdenticalTo:currentry];
 }
 
--(void)endListUpdates
+- (void)endListUpdates
 {
-	if(changes&XeeDeletionChange)
-	{
+	if (changes & XeeDeletionChange) {
 		[loadlock lock];
 		if (preventry && ![entries containsObject:preventry]) {
 			[self setPreviousEntry:nil];
@@ -145,8 +142,8 @@
 			}
 			else [self triggerImageChangeAction:nil];*/
 			// this is pretty dumb, but it'll do for now
-			if(oldindex>=count) {
-				[self pickImageAtIndex:count-1];
+			if (oldindex >= count) {
+				[self pickImageAtIndex:count - 1];
 			} else {
 				[self pickImageAtIndex:oldindex];
 			}
@@ -162,16 +159,16 @@
 	//double endtime=XeeGetTime();
 	//NSLog(@"endListUpdates: total time %g s",endtime-starttime);
 
-//	if(!currentry&&delegate) [self pickImageAtIndex:0 next:-1];
+	//	if(!currentry&&delegate) [self pickImageAtIndex:0 next:-1];
 }
 
--(void)addEntry:(XeeListEntry *)entry
+- (void)addEntry:(XeeListEntry *)entry
 {
 	[entries addObject:entry];
 	changes |= XeeAdditionChange;
 }
 
--(void)addEntryUnlessExists:(XeeListEntry *)entry
+- (void)addEntryUnlessExists:(XeeListEntry *)entry
 {
 	if ([entries containsObject:entry]) {
 		return;
@@ -180,13 +177,13 @@
 	changes |= XeeAdditionChange;
 }
 
--(void)removeEntry:(XeeListEntry *)entry
+- (void)removeEntry:(XeeListEntry *)entry
 {
 	[entries removeObject:entry];
 	changes |= XeeDeletionChange;
 }
 
--(void)removeEntryMatchingObject:(id)obj
+- (void)removeEntryMatchingObject:(id)obj
 {
 	XeeListEntry *entry;
 	for (entry in entries) {
@@ -201,15 +198,13 @@
 	[self removeEntry:entry];
 }
 
--(void)removeAllEntries
+- (void)removeAllEntries
 {
 	[entries removeAllObjects];
 	changes |= XeeDeletionChange;
 }
 
-
-
--(void)setCurrentEntry:(XeeListEntry *)entry
+- (void)setCurrentEntry:(XeeListEntry *)entry
 {
 	[currentry releaseImage];
 	[currentry autorelease];
@@ -217,7 +212,7 @@
 	[currentry retainImage];
 }
 
--(void)setPreviousEntry:(XeeListEntry *)entry
+- (void)setPreviousEntry:(XeeListEntry *)entry
 {
 	[preventry releaseImage];
 	[preventry autorelease];
@@ -225,7 +220,7 @@
 	[preventry retainImage];
 }
 
--(void)setNextEntry:(XeeListEntry *)entry
+- (void)setNextEntry:(XeeListEntry *)entry
 {
 	[nextentry releaseImage];
 	[nextentry autorelease];
@@ -233,29 +228,27 @@
 	[nextentry retainImage];
 }
 
-
-
--(void)launchLoader
+- (void)launchLoader
 {
 	if (!loader_running) {
 		[self retain];
 		[NSThread detachNewThreadSelector:@selector(loader) toTarget:self withObject:nil];
-		loader_running=YES;
+		loader_running = YES;
 	}
 }
 
--(void)loader
+- (void)loader
 {
 	@autoreleasepool {
-		
+
 		[NSThread setThreadPriority:0.1];
-		
+
 		[loadlock lock];
-		
+
 		for (;;) {
 			if (exiting)
 				break;
-			
+
 			@autoreleasepool {
 				XeeImage *currimage = [currentry image];
 				if (currimage && [currimage needsLoading]) {
@@ -268,38 +261,35 @@
 						break;
 					}
 				}
-				
+
 				[loadingimage retain];
 				[loadlock unlock];
-				
+
 				//double starttime=XeeGetTime();
 				[loadingimage runLoader];
 				//double endtime=XeeGetTime();
-				
+
 				//NSLog(@"%@: %g s",[[loadingimage filename] lastPathComponent],endtime-starttime);
-				
+
 				[loadlock lock];
 				[loadingimage release];
-				
 			}
 		}
-		
+
 		loader_running = NO;
 		loadingimage = nil;
-		
+
 		[loadlock unlock];
-		
+
 		[self release];
 	}
 }
 
 @end
 
-
-
 @implementation XeeListEntry
 
--(id)init
+- (id)init
 {
 	if (self = [super init]) {
 		savedimage = nil;
@@ -308,47 +298,47 @@
 	return self;
 }
 
--(id)initAsCopyOf:(XeeListEntry *)other
+- (id)initAsCopyOf:(XeeListEntry *)other
 {
 	return [self init]; // FIX - what the hell?
 }
 
--(void)dealloc
+- (void)dealloc
 {
 	[savedimage release];
 	[super dealloc];
 }
 
--(NSString *)descriptiveName
+- (NSString *)descriptiveName
 {
 	return nil;
 }
 
--(BOOL)matchesObject:(id)obj
+- (BOOL)matchesObject:(id)obj
 {
 	return NO;
 }
 
--(void)retainImage
+- (void)retainImage
 {
 	imageretain++;
 }
 
--(void)releaseImage
+- (void)releaseImage
 {
 	imageretain--;
-	if (imageretain==0) {
+	if (imageretain == 0) {
 		[savedimage stopLoading];
 		[savedimage release];
-		savedimage=nil;
-	} else if(imageretain < 0)
-		[NSException raise:@"XeeListEntryException" format:@"Too many releaseImage calls for file %@",self];
+		savedimage = nil;
+	} else if (imageretain < 0)
+		[NSException raise:@"XeeListEntryException" format:@"Too many releaseImage calls for file %@", self];
 }
 
--(XeeImage *)image
+- (XeeImage *)image
 {
 	if (!imageretain) {
-		[NSException raise:@"XeeListEntryException" format:@"Attempted to access image without using retainImage for file %@",self];
+		[NSException raise:@"XeeListEntryException" format:@"Attempted to access image without using retainImage for file %@", self];
 	}
 	if (!savedimage) {
 		savedimage = [[self produceImage] retain];
@@ -356,22 +346,22 @@
 	return savedimage;
 }
 
--(XeeImage *)produceImage
+- (XeeImage *)produceImage
 {
 	return nil;
 }
 
--(BOOL)isEqual:(id)other
+- (BOOL)isEqual:(id)other
 {
 	return NO;
 }
 
--(NSUInteger)hash
+- (NSUInteger)hash
 {
 	return 0;
 }
 
--(NSString *)description
+- (NSString *)description
 {
 	NSString *desc = [self descriptiveName];
 	if (!desc) {
@@ -381,7 +371,7 @@
 	}
 }
 
--(id)copyWithZone:(NSZone *)zone
+- (id)copyWithZone:(NSZone *)zone
 {
 	return [[[self class] allocWithZone:zone] initAsCopyOf:self];
 }
