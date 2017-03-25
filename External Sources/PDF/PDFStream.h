@@ -14,14 +14,14 @@
 	CSHandle *fh;
 	off_t offs;
 	PDFObjectReference *ref;
-	PDFParser *parser;
+	__unsafe_unretained PDFParser *parser;
 }
 
 -(instancetype)initWithDictionary:(NSDictionary *)dictionary fileHandle:(CSHandle *)filehandle
 						reference:(PDFObjectReference *)reference parser:(PDFParser *)owner;
 
--(NSDictionary *)dictionary;
--(PDFObjectReference *)reference;
+@property (readonly, retain) NSDictionary *dictionary;
+@property (readonly, retain) PDFObjectReference *reference;
 
 @property (readonly, getter=isImage) BOOL image;
 @property (readonly, getter=isJPEG) BOOL JPEG;
@@ -36,11 +36,11 @@
 -(NSString *)finalFilter;
 @property (readonly) int bitsPerComponent;
 
--(NSString *)colourSpaceOrAlternate;
--(NSString *)subColourSpaceOrAlternate;
+@property (readonly) NSString *colourSpaceOrAlternate;
+@property (readonly) NSString *subColourSpaceOrAlternate;
 -(NSString *)_parseColourSpace:(id)colourspace;
 @property (readonly) int numberOfColours;
--(NSData *)paletteData;
+@property (readonly) NSData *paletteData;
 -(NSArray *)decodeArray;
 
 -(CSHandle *)rawHandle;

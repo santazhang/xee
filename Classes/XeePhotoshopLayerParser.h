@@ -23,7 +23,7 @@
 -(void)dealloc;
 
 -(void)setDataOffset:(off_t)offset;
--(off_t)totalSize;
+@property (readonly) off_t totalSize;
 
 -(XeeImage *)image;
 -(CSHandle *)handleForNumberOfChannels:(int)requiredchannels;

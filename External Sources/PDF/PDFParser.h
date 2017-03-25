@@ -28,17 +28,17 @@ extern NSString *PDFParserException;
 @property (readonly) BOOL needsPassword;
 -(BOOL)setPassword:(NSString *)password;
 
--(NSDictionary *)objectDictionary;
--(NSDictionary *)trailerDictionary;
--(NSDictionary *)rootDictionary;
--(NSDictionary *)infoDictionary;
+@property (readonly, retain) NSDictionary *objectDictionary;
+@property (readonly, retain) NSDictionary *trailerDictionary;
+@property (readonly, retain) NSDictionary *rootDictionary;
+@property (readonly, retain) NSDictionary *infoDictionary;
 
--(NSData *)permanentID;
--(NSData *)currentID;
+@property (readonly, retain) NSData *permanentID;
+@property (readonly, retain) NSData *currentID;
 
--(NSDictionary *)pagesRoot;
+@property (readonly, retain) NSDictionary *pagesRoot;
 
--(PDFEncryptionHandler *)encryptionHandler;
+@property (readonly) PDFEncryptionHandler *encryptionHandler;
 
 -(void)parse;
 

@@ -8,6 +8,7 @@
 #include <Carbon/Carbon.h>
 
 
+NSString * const XeeDestinationUpdateNotification = @"XeeDestinationUpdate";
 
 void XeePlayPoof(NSWindow *somewindow);
 
@@ -36,7 +37,7 @@ void XeePlayPoof(NSWindow *somewindow);
 	[self setMatchAlgorithm:KFSubstringMatchAlgorithm];
 	[self setSearchColumnIdentifiers:[NSSet setWithObject:@"filename"]];
 
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateData:) name:@"XeeDestinationUpdate" object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateData:) name:XeeDestinationUpdateNotification object:nil];
 }
 
 -(id)tableView:(NSTableView *)table objectValueForTableColumn:(NSTableColumn *)column row:(NSInteger)row
@@ -376,7 +377,6 @@ void XeePlayPoof(NSWindow *somewindow);
 	[self reloadData];
 }
 
-
 -(IBAction)switchMode:(id)sender
 {
 	if ([sender selectedSegment] == 1) {
@@ -489,7 +489,7 @@ void XeePlayPoof(NSWindow *somewindow);
 
 +(void)updateTables
 {
-	[[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"XeeDestinationUpdate" object:nil]];
+	[[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:XeeDestinationUpdateNotification object:nil]];
 }
 
 +(void)suggestInsertion:(NSString *)directory
