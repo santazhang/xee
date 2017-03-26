@@ -266,7 +266,8 @@ void XeePlayPoof(NSWindow *somewindow);
 			}
 		}
 #endif
-		[self setDropRow:row num:[files count]];
+		[self setDropRow:row
+					 num:[files count]];
 	} else {
 		[self setDropRow:row num:1];
 	}
