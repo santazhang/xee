@@ -1,7 +1,7 @@
 #import "XeeSampleSet.h"
 
-#import <math.h>
-#import <tgmath.h>
+#include <math.h>
+#include <tgmath.h>
 
 @interface XeeBestCandidateSamples : XeeSampleSet {
 }

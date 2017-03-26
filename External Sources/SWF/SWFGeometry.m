@@ -1,5 +1,5 @@
 #import "SWFGeometry.h"
-#import <math.h>
+#include <math.h>
 
 SWFPoint SWFPointOnLine(SWFPoint a, SWFPoint b, float t)
 {

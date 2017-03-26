@@ -207,13 +207,13 @@
 		case 'BODY':
 			if (ham) {
 				[self setDepth:@"Amiga HAM"];
-				[self setDepthIconName:@"depth_amiga"];
+				[self setDepthIconName:@"depth/amiga"];
 			} else if (ham8) {
 				[self setDepth:@"Amiga HAM8"];
-				[self setDepthIconName:@"depth_amiga"];
+				[self setDepthIconName:@"depth/amiga"];
 			} else if (ehb) {
 				[self setDepth:@"Amiga EHB"];
-				[self setDepthIconName:@"depth_amiga"];
+				[self setDepthIconName:@"depth/amiga"];
 			} else if (planes == 24) {
 				[self setDepthRGB:24];
 			} else {

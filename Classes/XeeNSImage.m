@@ -15,11 +15,12 @@
 	if (self = [super init]) {
 		rep = nil;
 
-		if ([self setNSBitmapImageRep:imagerep])
-			return self;
-		[self release];
+		if (![self setNSBitmapImageRep:imagerep]) {
+			[self release];
+			return nil;
+		}
 	}
-	return nil;
+	return self;
 }
 
 - (void)dealloc

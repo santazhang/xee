@@ -369,9 +369,9 @@ static void XeeSetQTDepth(XeeImage *image, int qtdepth)
 	else if (qtdepth > 32)
 		[image setDepthGrey:qtdepth - 32];
 	else if (qtdepth == 15)
-		[image setDepth:@"5:5:5 bit RGB" iconName:@"depth_rgb"];
+		[image setDepth:@"5:5:5 bit RGB" iconName:@"depth/rgb"];
 	else if (qtdepth == 16)
-		[image setDepth:@"1:5:5:5 bit ARGB" iconName:@"depth_rgba"];
+		[image setDepth:@"1:5:5:5 bit ARGB" iconName:@"depth/rgba"];
 	else if (qtdepth == 24)
 		[image setDepthRGB:8];
 	else if (qtdepth == 32)

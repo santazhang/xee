@@ -278,8 +278,8 @@ static NSMutableArray *controllers = nil;
 
 - (void)magnifyWithEvent:(NSEvent *)event
 {
-	float delta = [event magnification];
-	float newzoom = zoom * (delta + 1.0);
+	CGFloat delta = [event magnification];
+	CGFloat newzoom = zoom * (delta + 1.0);
 	[self setZoom:newzoom];
 }
 
@@ -927,10 +927,10 @@ static NSMutableArray *controllers = nil;
 																label:NSLocalizedString(@"Navigation", @"Navigation toolbar segment title")
 														 paletteLabel:NSLocalizedString(@"Navigation", @"Navigation toolbar segment title")
 															 segments:4];
-	[navitool setSegment:0 imageName:@"tool_first" longLabel:NSLocalizedString(@"First Image", @"First Image toolbar button label") action:@selector(skipFirst:)];
-	[navitool setSegment:1 imageName:@"tool_prev" longLabel:NSLocalizedString(@"Previous Image", @"Previous Image toolbar button label") action:@selector(skipPrev:)];
-	[navitool setSegment:2 imageName:@"tool_next" longLabel:NSLocalizedString(@"Next Image", @"Next Image toolbar button label") action:@selector(skipNext:)];
-	[navitool setSegment:3 imageName:@"tool_last" longLabel:NSLocalizedString(@"Last Image", @"Last Image toolbar button label") action:@selector(skipLast:)];
+	[navitool setSegment:0 imageName:@"tool/first" longLabel:NSLocalizedString(@"First Image", @"First Image toolbar button label") action:@selector(skipFirst:)];
+	[navitool setSegment:1 imageName:@"tool/prev" longLabel:NSLocalizedString(@"Previous Image", @"Previous Image toolbar button label") action:@selector(skipPrev:)];
+	[navitool setSegment:2 imageName:@"tool/next" longLabel:NSLocalizedString(@"Next Image", @"Next Image toolbar button label") action:@selector(skipNext:)];
+	[navitool setSegment:3 imageName:@"tool/last" longLabel:NSLocalizedString(@"Last Image", @"Last Image toolbar button label") action:@selector(skipLast:)];
 	[navitool setupView];
 	[array addObject:navitool];
 
@@ -938,8 +938,8 @@ static NSMutableArray *controllers = nil;
 																label:NSLocalizedString(@"Prev Next", @"Prev/Next toolbar segment label")
 														 paletteLabel:NSLocalizedString(@"Prev/Next", @"Prev/Next toolbar segment title")
 															 segments:2];
-	[skiptool setSegment:0 imageName:@"tool_prev" longLabel:NSLocalizedString(@"Previous Image", @"Previous Image toolbar button label") action:@selector(skipPrev:)];
-	[skiptool setSegment:1 imageName:@"tool_next" longLabel:NSLocalizedString(@"Next Image", @"Next Image toolbar button label") action:@selector(skipNext:)];
+	[skiptool setSegment:0 imageName:@"tool/prev" longLabel:NSLocalizedString(@"Previous Image", @"Previous Image toolbar button label") action:@selector(skipPrev:)];
+	[skiptool setSegment:1 imageName:@"tool/next" longLabel:NSLocalizedString(@"Next Image", @"Next Image toolbar button label") action:@selector(skipNext:)];
 	[skiptool setupView];
 	[array addObject:skiptool];
 
@@ -947,8 +947,8 @@ static NSMutableArray *controllers = nil;
 															   label:NSLocalizedString(@"First Last", @"First/Last toolbar segment label")
 														paletteLabel:NSLocalizedString(@"First/Last", @"First/Last toolbar segment title")
 															segments:2];
-	[endtool setSegment:0 imageName:@"tool_first" longLabel:NSLocalizedString(@"First Image", @"First Image toolbar button label") action:@selector(skipFirst:)];
-	[endtool setSegment:1 imageName:@"tool_last" longLabel:NSLocalizedString(@"Last Image", @"Last Image toolbar button label") action:@selector(skipLast:)];
+	[endtool setSegment:0 imageName:@"tool/first" longLabel:NSLocalizedString(@"First Image", @"First Image toolbar button label") action:@selector(skipFirst:)];
+	[endtool setSegment:1 imageName:@"tool/last" longLabel:NSLocalizedString(@"Last Image", @"Last Image toolbar button label") action:@selector(skipLast:)];
 	[endtool setupView];
 	[array addObject:endtool];
 
@@ -956,10 +956,10 @@ static NSMutableArray *controllers = nil;
 																label:NSLocalizedString(@"Zoom", @"Zoom toolbar segment title")
 														 paletteLabel:NSLocalizedString(@"Zoom", @"Zoom toolbar segment title")
 															 segments:4];
-	[zoomtool setSegment:0 imageName:@"tool_zoomin" longLabel:NSLocalizedString(@"Zoom In", @"Zoom In toolbar button label") action:@selector(zoomIn:)];
-	[zoomtool setSegment:1 imageName:@"tool_zoomout" longLabel:NSLocalizedString(@"Zoom Out", @"Zoom Out toolbar button label") action:@selector(zoomOut:)];
-	[zoomtool setSegment:2 imageName:@"tool_zoomactual" longLabel:NSLocalizedString(@"Actual Size", @"Actual Size toolbar button label") action:@selector(zoomActual:)];
-	[zoomtool setSegment:3 imageName:@"tool_zoomfit" longLabel:NSLocalizedString(@"Fit On Screen", @"Fit On Screen toolbar button label") action:@selector(zoomFit:)];
+	[zoomtool setSegment:0 imageName:@"tool/zoomin" longLabel:NSLocalizedString(@"Zoom In", @"Zoom In toolbar button label") action:@selector(zoomIn:)];
+	[zoomtool setSegment:1 imageName:@"tool/zoomout" longLabel:NSLocalizedString(@"Zoom Out", @"Zoom Out toolbar button label") action:@selector(zoomOut:)];
+	[zoomtool setSegment:2 imageName:@"tool/zoomactual" longLabel:NSLocalizedString(@"Actual Size", @"Actual Size toolbar button label") action:@selector(zoomActual:)];
+	[zoomtool setSegment:3 imageName:@"tool/zoomfit" longLabel:NSLocalizedString(@"Fit On Screen", @"Fit On Screen toolbar button label") action:@selector(zoomFit:)];
 	[zoomtool setupView];
 	[array addObject:zoomtool];
 
@@ -967,9 +967,9 @@ static NSMutableArray *controllers = nil;
 																label:NSLocalizedString(@"Animation", @"Animation toolbar segment label")
 														 paletteLabel:NSLocalizedString(@"Animation And Frames", @"Animation toolbar segment title")
 															 segments:3];
-	[animtool setSegment:0 imageName:@"tool_anim" longLabel:NSLocalizedString(@"Toggle Animation", @"Toggle Animation toolbar button label") action:@selector(toggleAnimation:)];
-	[animtool setSegment:1 imageName:@"tool_nextframe" longLabel:NSLocalizedString(@"Next Frame", @"Next Frame toolbar button label") action:@selector(frameSkipNext:)];
-	[animtool setSegment:2 imageName:@"tool_prevframe" longLabel:NSLocalizedString(@"Previous Frame", @"Previous toolbar button label") action:@selector(frameSkipPrev:)];
+	[animtool setSegment:0 imageName:@"tool/anim" longLabel:NSLocalizedString(@"Toggle Animation", @"Toggle Animation toolbar button label") action:@selector(toggleAnimation:)];
+	[animtool setSegment:1 imageName:@"tool/nextframe" longLabel:NSLocalizedString(@"Next Frame", @"Next Frame toolbar button label") action:@selector(frameSkipNext:)];
+	[animtool setSegment:2 imageName:@"tool/prevframe" longLabel:NSLocalizedString(@"Previous Frame", @"Previous toolbar button label") action:@selector(frameSkipPrev:)];
 	[animtool setupView];
 	[array addObject:animtool];
 
@@ -977,7 +977,7 @@ static NSMutableArray *controllers = nil;
 																label:NSLocalizedString(@"Auto Orientation", @"Auto orientation toolbar segment label")
 														 paletteLabel:NSLocalizedString(@"Automatic Orientation", @"Auto orientation toolbar segment title")
 															 segments:1];
-	[autotool setSegment:0 imageName:@"tool_autorot" longLabel:NSLocalizedString(@"Automatic Orientation", @"Automatic Orientation toolbar button label") action:@selector(autoRotate:)];
+	[autotool setSegment:0 imageName:@"tool/autorot" longLabel:NSLocalizedString(@"Automatic Orientation", @"Automatic Orientation toolbar button label") action:@selector(autoRotate:)];
 	[autotool setupView];
 	[array addObject:autotool];
 
@@ -985,16 +985,16 @@ static NSMutableArray *controllers = nil;
 																  label:NSLocalizedString(@"Rotation", @"Rotation segment label")
 														   paletteLabel:NSLocalizedString(@"Rotation", @"Rotation toolbar segment title")
 															   segments:3];
-	[rotatetool setSegment:0 imageName:@"tool_cw" longLabel:NSLocalizedString(@"Rotate Clockwise", @"Rotate Clockwise toolbar button label") action:@selector(rotateCW:)];
-	[rotatetool setSegment:1 imageName:@"tool_ccw" longLabel:NSLocalizedString(@"Rotate Counter-clockwise", @"Rotate Counter-clockwise toolbar button label") action:@selector(rotateCCW:)];
-	[rotatetool setSegment:2 imageName:@"tool_flip" longLabel:NSLocalizedString(@"Rotate 180", @"Rotate 180 toolbar button label") action:@selector(rotate180:)];
+	[rotatetool setSegment:0 imageName:@"tool/cw" longLabel:NSLocalizedString(@"Rotate Clockwise", @"Rotate Clockwise toolbar button label") action:@selector(rotateCW:)];
+	[rotatetool setSegment:1 imageName:@"tool/ccw" longLabel:NSLocalizedString(@"Rotate Counter-clockwise", @"Rotate Counter-clockwise toolbar button label") action:@selector(rotateCCW:)];
+	[rotatetool setSegment:2 imageName:@"tool/flip" longLabel:NSLocalizedString(@"Rotate 180", @"Rotate 180 toolbar button label") action:@selector(rotate180:)];
 	[rotatetool setupView];
 	[array addObject:rotatetool];
 
 	XeeSegmentedItem *croppingtool = [XeeToolItem itemWithIdentifier:@"crop"
 															   label:NSLocalizedString(@"Crop", @"Cropping segment label")
 														paletteLabel:NSLocalizedString(@"Crop Tool", @"Cropping toolbar segment title")
-														   imageName:@"tool_crop"
+														   imageName:@"tool/crop"
 														   longLabel:NSLocalizedString(@"Crop Tool", @"Crop Tool toolbar button label")
 															  action:@selector(crop:)
 													  activeSelector:@selector(isCropping)
