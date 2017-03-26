@@ -18,13 +18,12 @@
 	[type] (string)
 */
 
-@interface CSFileTypeListSource
-	: NSObject <NSTableViewDataSource, NSTableViewDelegate> {
+@interface CSFileTypeListSource : NSObject <NSTableViewDataSource, NSTableViewDelegate> {
 	NSArray *filetypes;
 }
 
-- (id)init;
-- (NSArray *)readFileTypes;
+- (instancetype)init;
+@property (readonly, copy) NSArray<NSDictionary<NSString*,id>*> *readFileTypes;
 
 - (void)claimAllTypes;
 - (void)surrenderAllTypes;

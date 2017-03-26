@@ -122,7 +122,7 @@
 }
 - (int)tagBytesLeft
 {
-	return nexttag - [fh offsetInFile];
+	return (int)(nexttag - [fh offsetInFile]);
 }
 - (int)frame
 {

@@ -51,20 +51,20 @@
 
 - (void)parseHeader;
 
-- (int)version;
-- (SWFRect)rect;
-- (int)frames;
-- (int)framesPerSecond;
+@property (readonly) int version;
+@property (readonly) SWFRect rect;
+@property (readonly) int frames;
+@property (readonly) int framesPerSecond;
 
 - (int)nextTag;
 
-- (int)tag;
-- (int)tagLength;
-- (int)tagBytesLeft;
-- (int)frame;
-- (double)time;
+@property (readonly) int tag;
+@property (readonly) int tagLength;
+@property (readonly) int tagBytesLeft;
+@property (readonly) int frame;
+@property (readonly) double time;
 
-- (CSHandle *)handle;
+@property (readonly, strong) CSHandle *handle;
 - (CSHandle *)tagHandle;
 - (NSData *)tagContents;
 
