@@ -539,7 +539,7 @@ static inline int iabs(int a)
 		int a = prevbuf[(cols * comps + comps + bufoffs) % buflen];
 		int b = prevbuf[(comps + bufoffs) % buflen];
 		int c = prevbuf[bufoffs];
-		int val;
+		int val = 0;
 
 		switch (type) {
 			case 0:

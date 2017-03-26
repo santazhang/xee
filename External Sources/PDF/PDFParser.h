@@ -81,8 +81,8 @@ extern NSString *PDFParserException;
 	int num, gen;
 }
 
-+ (PDFObjectReference *)referenceWithNumber:(int)objnum generation:(int)objgen;
-+ (PDFObjectReference *)referenceWithNumberObject:(NSNumber *)objnum generationObject:(NSNumber *)objgen;
++ (instancetype)referenceWithNumber:(int)objnum generation:(int)objgen;
++ (instancetype)referenceWithNumberObject:(NSNumber *)objnum generationObject:(NSNumber *)objgen;
 
 - (instancetype)initWithNumber:(int)objnum generation:(int)objgen NS_DESIGNATED_INITIALIZER;
 - (instancetype)init UNAVAILABLE_ATTRIBUTE;

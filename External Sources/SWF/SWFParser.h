@@ -43,11 +43,10 @@
 	int currframe;
 }
 
-+ (SWFParser *)parserWithHandle:(CSHandle *)handle;
-+ (SWFParser *)parserForPath:(NSString *)path;
++ (instancetype)parserWithHandle:(CSHandle *)handle;
++ (instancetype)parserForPath:(NSString *)path;
 
-- (id)initWithHandle:(CSHandle *)handle;
-- (void)dealloc;
+- (instancetype)initWithHandle:(CSHandle *)handle;
 
 - (void)parseHeader;
 

@@ -20,6 +20,7 @@
 @synthesize ref;
 @synthesize orientation;
 @synthesize correctOrientation = correctorientation;
+@synthesize attributes = attrs;
 
 - (id)init
 {
@@ -64,7 +65,7 @@
 	if (self = [self init]) {
 		handle = [fh retain];
 		ref = [fsref retain];
-		attrs = [attributes retain];
+		attrs = [attributes copy];
 
 		if (ref) {
 			icon = [[[NSWorkspace sharedWorkspace] iconForFile:[ref path]] retain];
@@ -91,13 +92,12 @@
 			coro = nil;
 		}
 
-		if (!finished || loaded) {
-			return self;
+		if (finished && !loaded) {
+			[self release];
+			return nil;
 		}
-
-		[self release];
 	}
-	return nil;
+	return self;
 }
 
 - (id)initWithHandle2:(CSHandle *)fh ref:(XeeFSRef *)fsref attributes:(NSDictionary *)attributes
@@ -125,13 +125,12 @@
 			nextselector = NULL;
 		}
 
-		if (nextselector || loaded) {
-			return self;
+		if (!(nextselector || loaded)) {
+			[self release];
+			return nil;
 		}
-
-		[self release];
 	}
-	return nil;
+	return self;
 }
 
 - (void)dealloc
@@ -776,7 +775,7 @@ NSMutableArray *imageclasses = nil;
 	[imageclasses addObject:class];
 }
 
-	+ (BOOL)canOpenFile : (NSString *)name firstBlock : (NSData *)block attributes : (NSDictionary *)attributes
++ (BOOL)canOpenFile : (NSString *)name firstBlock : (NSData *)block attributes : (NSDictionary *)attributes
 {
 	return NO;
 }

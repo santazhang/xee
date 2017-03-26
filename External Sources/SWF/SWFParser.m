@@ -7,16 +7,24 @@
 //NSString *SWFNoMoreTagsException=@"SWFNoMoreTagsException";
 
 @implementation SWFParser
+@synthesize tag = currtag;
+@synthesize tagLength = currlen;
+@synthesize handle = fh;
+@synthesize frame = currframe;
+@synthesize version;
+@synthesize rect;
+@synthesize frames;
+@synthesize framesPerSecond = fps;
 
 + (SWFParser *)parserWithHandle:(CSHandle *)handle
 {
-	return [[[SWFParser alloc] initWithHandle:handle] autorelease];
+	return [[[self alloc] initWithHandle:handle] autorelease];
 }
 
 + (SWFParser *)parserForPath:(NSString *)path
 {
 	CSFileHandle *handle = [CSFileHandle fileHandleForReadingAtPath:path];
-	return [[[SWFParser alloc] initWithHandle:handle] autorelease];
+	return [[[self alloc] initWithHandle:handle] autorelease];
 }
 
 - (id)initWithHandle:(CSHandle *)handle
@@ -27,7 +35,7 @@
 		@try {
 			[self parseHeader];
 		}
-		@catch (id e) {
+		@catch (NSException *e) {
 			[self release];
 			@throw;
 		}
@@ -69,23 +77,6 @@
 	currframe = 0;
 }
 
-- (int)version
-{
-	return version;
-}
-- (SWFRect)rect
-{
-	return rect;
-}
-- (int)frames
-{
-	return frames;
-}
-- (int)framesPerSecond
-{
-	return fps;
-}
-
 - (int)nextTag
 {
 	if (!nexttag)
@@ -112,30 +103,13 @@
 	return currtag;
 }
 
-- (int)tag
-{
-	return currtag;
-}
-- (int)tagLength
-{
-	return currlen;
-}
 - (int)tagBytesLeft
 {
 	return (int)(nexttag - [fh offsetInFile]);
 }
-- (int)frame
-{
-	return currframe;
-}
 - (double)time
 {
 	return (double)currframe / ((double)fps / 256.0);
-}
-
-- (CSHandle *)handle
-{
-	return fh;
 }
 
 - (CSHandle *)tagHandle

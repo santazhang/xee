@@ -19,6 +19,7 @@
 
 - (void)dealloc
 {
+	[delegate release];
 	[super dealloc];
 }
 
@@ -74,6 +75,7 @@
 - (void)dealloc
 {
 	[titlefield release];
+	[delegate release];
 	[super dealloc];
 }
 

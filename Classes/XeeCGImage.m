@@ -24,11 +24,12 @@ void CGAccessSessionRelease(CGAccessSessionRef session);
 		imageref = NULL;
 		session = NULL;
 
-		if ([self setCGImage:cgimage])
-			return self;
-		[self release];
+		if (![self setCGImage:cgimage]) {
+			[self release];
+			return nil;
+		}
 	}
-	return nil;
+	return self;
 }
 
 - (void)dealloc

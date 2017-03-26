@@ -275,7 +275,7 @@ static CSKeyboardShortcuts *defaultshortcuts = nil;
 		shortcuts = nil;
 		[[NSUserDefaults standardUserDefaults] removeObjectForKey:key];
 	} else {
-		shortcuts = (NSMutableArray *)[shortcutarray retain];
+		shortcuts = [shortcutarray mutableCopy];
 		NSArray *dictionaries = [CSKeyStroke dictionariesFromKeys:shortcuts];
 		[[NSUserDefaults standardUserDefaults] setObject:dictionaries forKey:key];
 	}

@@ -77,6 +77,7 @@
 - (void)deallocLoader
 {
 	[iff release];
+	iff = nil;
 }
 
 - (SEL)loadChunk

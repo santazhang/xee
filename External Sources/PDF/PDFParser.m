@@ -648,8 +648,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 		if ([obj isKindOfClass:[NSDictionary class]]) {
 			NSMutableDictionary *dict = obj;
 			NSEnumerator *keyenum = [[dict allKeys] objectEnumerator];
-			NSString *key;
-			while (key = [keyenum nextObject]) {
+			for (NSString *key in keyenum) {
 				id value = [dict objectForKey:key];
 				if ([value isKindOfClass:[PDFObjectReference class]]) {
 					id realobj = [objdict objectForKey:value];
@@ -719,7 +718,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 - (id)initWithData:(NSData *)bytes parent:(PDFObjectReference *)parent parser:(PDFParser *)owner
 {
 	if (self = [super init]) {
-		data = [bytes retain];
+		data = [bytes copy];
 		ref = [parent retain];
 		parser = owner;
 	}

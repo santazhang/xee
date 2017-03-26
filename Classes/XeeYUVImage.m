@@ -8,12 +8,13 @@ static void XeeBuildYUVConversionTables();
 - (id)initWithWidth:(int)pixelwidth height:(int)pixelheight
 {
 	if (self = [super init]) {
-		if ([self allocWithWidth:pixelwidth height:pixelheight])
-			return self;
-		[self release];
+		if (![self allocWithWidth:pixelwidth height:pixelheight]) {
+			[self release];
+			return nil;
+		}
 	}
 
-	return nil;
+	return self;
 }
 
 - (void)setData:(uint8_t *)pixeldata freeData:(BOOL)willfree width:(NSInteger)pixelwidth height:(NSInteger)pixelheight bytesPerRow:(NSInteger)bprow

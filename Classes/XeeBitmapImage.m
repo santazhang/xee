@@ -21,12 +21,13 @@ static void XeeBitmapImageReadPixel(uint8_t *row, NSInteger x, NSInteger pixelsi
 		bitsperpixel = bitspercomponent = 0;
 		colourmode = alphatype = modeflags = 0;
 
-		if ([self allocWithType:pixelgltype width:framewidth height:frameheight])
-			return self;
-		[self release];
+		if (![self allocWithType:pixelgltype width:framewidth height:frameheight]) {
+			[self release];
+			return nil;
+		}
 	}
 
-	return nil;
+	return self;
 }
 
 - (void)dealloc

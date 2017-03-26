@@ -16,7 +16,7 @@ NSString *PDFMD5FinishedException = @"PDFMD5FinishedException";
 
 + (NSData *)digestForBytes:(const void *)bytes length:(NSUInteger)length
 {
-	PDFMD5Engine *md5 = [[self class] new];
+	PDFMD5Engine *md5 = [[self alloc] init];
 	[md5 updateWithBytes:bytes length:length];
 	NSData *res = [md5 digest];
 	[md5 release];

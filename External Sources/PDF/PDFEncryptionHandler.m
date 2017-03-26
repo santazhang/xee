@@ -13,6 +13,7 @@ static const char PDFPasswordPadding[32] =
 		0x2E, 0x2E, 0x00, 0xB6, 0xD0, 0x68, 0x3E, 0x80, 0x2F, 0x0C, 0xA9, 0xFE, 0x64, 0x53, 0x69, 0x7A};
 
 @implementation PDFEncryptionHandler
+@synthesize needsPassword = needspassword;
 
 - (id)initWithParser:(PDFParser *)parser
 {
@@ -30,6 +31,7 @@ static const char PDFPasswordPadding[32] =
 		if (![filter isEqual:@"Standard"] || (version != 1 && version != 2 && version != 4) || (revision != 2 && revision != 3 && revision != 4)) {
 			[self release];
 			[NSException raise:PDFUnsupportedEncryptionException format:@"PDF encryption filter \"%@\" version %d, revision %d is not supported.", filter, version, revision];
+			return nil;
 		}
 
 		if (version == 1 || version == 2) {
@@ -79,19 +81,14 @@ static const char PDFPasswordPadding[32] =
 	[super dealloc];
 }
 
-- (BOOL)needsPassword
-{
-	return needspassword;
-}
-
 - (BOOL)setPassword:(NSString *)newpassword
 {
 	[password autorelease];
-	password = [newpassword retain];
+	password = [newpassword copy];
 
 	[keys removeAllObjects];
 
-	NSData *key;
+	NSData *key = nil;
 	if (version == 1)
 		key = [self documentKeyOfLength:5];
 	else if (version == 2)
@@ -141,7 +138,7 @@ static const char PDFPasswordPadding[32] =
 	PDFMD5Engine *md5 = [PDFMD5Engine engine];
 
 	NSData *passdata = [password dataUsingEncoding:NSISOLatin1StringEncoding];
-	int passlength = [passdata length];
+	NSInteger passlength = [passdata length];
 	const unsigned char *passbytes = [passdata bytes];
 	if (passlength < 32) {
 		[md5 updateWithBytes:passbytes length:passlength];
