@@ -17,7 +17,8 @@ typedef NS_ENUM(int16_t, XeeEXIFTag) {
 
 };
 
-typedef enum { XeeStandardTagSet } XeeEXIFTagSet;
+typedef enum { XeeStandardTagSet }
+XeeEXIFTagSet;
 
 // Rationals
 
@@ -30,8 +31,14 @@ static inline XeeRational XeeMakeRational(int num, int denom)
 	XeeRational res = {num, denom};
 	return res;
 }
-static inline int XeeRationalNumerator(XeeRational r) { return r.num; }
-static inline int XeeRationalDenominator(XeeRational r) { return r.denom; }
+static inline int XeeRationalNumerator(XeeRational r)
+{
+	return r.num;
+}
+static inline int XeeRationalDenominator(XeeRational r)
+{
+	return r.denom;
+}
 
 #define XeeZeroRational XeeMakeRational(0, 1);
 

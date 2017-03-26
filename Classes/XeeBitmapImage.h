@@ -55,8 +55,14 @@ static inline int XeeGetRFromARGB8(uint32_t argb)
 {
 	return (argb >> 16) & 0xff;
 }
-static inline int XeeGetGFromARGB8(uint32_t argb) { return (argb >> 8) & 0xff; }
-static inline int XeeGetBFromARGB8(uint32_t argb) { return argb & 0xff; }
+static inline int XeeGetGFromARGB8(uint32_t argb)
+{
+	return (argb >> 8) & 0xff;
+}
+static inline int XeeGetBFromARGB8(uint32_t argb)
+{
+	return argb & 0xff;
+}
 #else
 static inline uint32_t XeeMakeARGB8(uint8_t a, uint8_t r, uint8_t g, uint8_t b)
 {
@@ -66,8 +72,14 @@ static inline uint32_t XeeMakeNRGB8(uint8_t r, uint8_t g, uint8_t b)
 {
 	return 0xff | (r << 8) | (g << 16) | (b << 24);
 }
-static inline int XeeGetAFromARGB8(uint32_t argb) { return argb & 0xff; }
-static inline int XeeGetRFromARGB8(uint32_t argb) { return (argb >> 8) & 0xff; }
+static inline int XeeGetAFromARGB8(uint32_t argb)
+{
+	return argb & 0xff;
+}
+static inline int XeeGetRFromARGB8(uint32_t argb)
+{
+	return (argb >> 8) & 0xff;
+}
 static inline int XeeGetGFromARGB8(uint32_t argb)
 {
 	return (argb >> 16) & 0xff;

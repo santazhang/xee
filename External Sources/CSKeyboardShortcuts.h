@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addActions:(NSArray<CSAction *> *)actions;
 - (void)addActionsFromMenu:(NSMenu *)mainmenu;
 - (void)addShortcuts:
-		(NSDictionary<NSString *, NSArray<CSAction *> *> *)shortcuts;
+	(NSDictionary<NSString *, NSArray<CSAction *> *> *)shortcuts;
 
 - (void)resetToDefaults;
 
@@ -125,9 +125,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (CSKeyStroke *)keyFromDictionary:(NSDictionary *)dict;
 
 + (NSArray<CSKeyStroke *> *)keysFromDictionaries:
-		(NSArray<NSDictionary<NSString *, id> *> *)dicts;
+	(NSArray<NSDictionary<NSString *, id> *> *)dicts;
 + (NSArray<NSDictionary<NSString *, id> *> *)dictionariesFromKeys:
-		(NSArray<CSKeyStroke *> *)keys;
+	(NSArray<CSKeyStroke *> *)keys;
 
 - (instancetype)initWithCharacter:(NSString *)character
 						modifiers:(NSEventModifierFlags)modifiers;
