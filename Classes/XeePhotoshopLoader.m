@@ -199,7 +199,7 @@
 							if (len > 2 && annobytes[0] == 0xfe && annobytes[1] == 0xff)
 								str = [[[NSString alloc] initWithBytes:annobytes + 2
 																length:len - 2
-															  encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingUTF16BE)] autorelease];
+															  encoding:NSUTF16BigEndianStringEncoding] autorelease];
 							else
 								str = [[[NSString alloc] initWithData:annodata encoding:NSISOLatin1StringEncoding] autorelease];
 

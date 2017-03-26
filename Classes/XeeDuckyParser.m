@@ -40,7 +40,7 @@
 																		NSLocalizedString(@"Description", @"Description property title")
 																		 textValue:[[[NSString alloc] initWithBytes:duckydata + pos + 4
 																											 length:chunklen - 4
-																										   encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingUTF16BE)] autorelease]]];
+																										   encoding:NSUTF16BigEndianStringEncoding] autorelease]]];
 					break;
 				case 3: // copyright
 					if (len >= 4)
@@ -48,7 +48,7 @@
 																		NSLocalizedString(@"Copyright", @"Copyright property title")
 																		 textValue:[[[NSString alloc] initWithBytes:duckydata + pos + 4
 																											 length:chunklen - 4
-																										   encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingUTF16BE)] autorelease]]];
+																										   encoding:NSUTF16BigEndianStringEncoding] autorelease]]];
 					break;
 			}
 			pos = next;

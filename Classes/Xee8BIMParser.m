@@ -165,7 +165,7 @@
 						[props addObject:[XeePropertyItem itemWithLabel:
 															  NSLocalizedString(@"Workflow URL", @"Workflow URL property title")
 																  value:[NSURL URLWithString:[[[NSString alloc] initWithData:[handle readDataOfLength:len * 2]
-																													encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingUTF16BE)] autorelease]]]];
+																													encoding:NSUTF16BigEndianStringEncoding] autorelease]]]];
 					} break;
 
 					case 0x0415: // URL List
@@ -178,11 +178,11 @@
 
 						int writerlen = [handle readUInt32BE];
 						NSString *writer = [[[NSString alloc] initWithData:[handle readDataOfLength:writerlen * 2]
-																  encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingUTF16BE)] autorelease];
+																  encoding:NSUTF16BigEndianStringEncoding] autorelease];
 
 						int readerlen = [handle readUInt32BE];
 						NSString *reader = [[[NSString alloc] initWithData:[handle readDataOfLength:readerlen * 2]
-																  encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingUTF16BE)] autorelease];
+																  encoding:NSUTF16BigEndianStringEncoding] autorelease];
 
 						/*fileversion=*/[handle readUInt32BE];
 
