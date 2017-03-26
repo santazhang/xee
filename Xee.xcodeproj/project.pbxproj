@@ -261,8 +261,6 @@
 		1B0707840C9F3BC500FA8EBD /* XeeSWFSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeSWFSource.m; sourceTree = "<group>"; };
 		1B07078A0C9F3DA700FA8EBD /* SWFParser.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SWFParser.m; sourceTree = "<group>"; };
 		1B07078B0C9F3DA700FA8EBD /* SWFParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SWFParser.h; sourceTree = "<group>"; };
-		1B07078F0C9F3E5A00FA8EBD /* SWFGeometry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SWFGeometry.h; sourceTree = "<group>"; };
-		1B0707900C9F3E5A00FA8EBD /* SWFGeometry.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SWFGeometry.m; sourceTree = "<group>"; };
 		1B071A420CB159D600FA8EBD /* XeeExperimentalImage1Saver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeeExperimentalImage1Saver.h; sourceTree = "<group>"; };
 		1B071A430CB159D600FA8EBD /* XeeExperimentalImage1Saver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XeeExperimentalImage1Saver.m; sourceTree = "<group>"; };
 		1B0F15350CB17CBF000CED68 /* XeePhotoshopPICTLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XeePhotoshopPICTLoader.h; sourceTree = "<group>"; };
@@ -761,8 +759,6 @@
 			children = (
 				1B07078B0C9F3DA700FA8EBD /* SWFParser.h */,
 				1B07078A0C9F3DA700FA8EBD /* SWFParser.m */,
-				1B07078F0C9F3E5A00FA8EBD /* SWFGeometry.h */,
-				1B0707900C9F3E5A00FA8EBD /* SWFGeometry.m */,
 			);
 			path = SWF;
 			sourceTree = "<group>";
