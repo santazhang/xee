@@ -27,15 +27,15 @@ typedef void (*XeeReadPixelFunction)(uint8_t *row, NSInteger x,
 - (instancetype)init;
 
 - (void)setData:(uint8_t *)pixeldata
-			freeData:(BOOL)willfree
-			   width:(NSInteger)pixelwidth
-			  height:(NSInteger)pixelheight
-	   bytesPerPixel:(NSInteger)bppixel
-		 bytesPerRow:(NSInteger)bprow
-	   premultiplied:(BOOL)premult
-	glInternalFormat:(int)intformat
-			glFormat:(int)format
-			  glType:(int)type;
+	   freeData:(BOOL)willfree
+		  width:(NSInteger)pixelwidth
+		 height:(NSInteger)pixelheight
+  bytesPerPixel:(NSInteger)bppixel
+	bytesPerRow:(NSInteger)bprow
+  premultiplied:(BOOL)premult
+glInternalFormat:(int)intformat
+	   glFormat:(int)format
+		 glType:(int)type;
 
 - (void)setCompleted;
 - (void)setCompletedRowCount:(NSInteger)count;

@@ -37,7 +37,7 @@
 
 @interface XeeFileEntry : XeeListEntry {
 	UniChar *pathbuf;
-	int pathlen;
+	NSInteger pathlen;
 }
 
 - (instancetype)init;
