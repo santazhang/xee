@@ -667,7 +667,7 @@ GLuint XeeMakeGridTexture(float r, float g, float b)
 	uint32_t data[] = {col1, col2, col2, col1};
 
 	GLuint tex;
-	glGenTextures(1, &tex),
+	glGenTextures(1, &tex);
 		glBindTexture(GL_TEXTURE_2D, tex);
 
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 2);

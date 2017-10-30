@@ -1,7 +1,7 @@
 #import "XeeYUVImage.h"
 
 static void XeeYUVImageReadPixel(uint8_t *row, NSInteger x, NSInteger pixelsize, uint8_t *dest);
-static void XeeBuildYUVConversionTables();
+static void XeeBuildYUVConversionTables(void);
 
 @implementation XeeYUVImage
 
