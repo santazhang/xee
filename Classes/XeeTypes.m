@@ -184,18 +184,18 @@ double XeeGetTime()
 // Hex data
 //
 
-NSString *XeeHexDump(const uint8_t *data, int length, int maxlen)
+NSString *XeeHexDump(const uint8_t *data, NSInteger length, NSInteger maxlen)
 {
 	NSMutableString *str = [NSMutableString string];
 
 	NSInteger len = MIN(length, maxlen);
-	for (int i = 0; i < len; i++)
+	for (NSInteger i = 0; i < len; i++)
 		[str appendFormat:@"%s%02x", i == 0 ? "" : " ", data[i]];
 
 	if (length > maxlen)
 		[str appendFormat:@"..."];
 
-	return str;
+	return [NSString stringWithString:str];
 }
 
 //
