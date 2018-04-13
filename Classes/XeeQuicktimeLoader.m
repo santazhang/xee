@@ -8,7 +8,7 @@
 static void XeeSetQTDepth(XeeImage *image, int qtdepth);
 static OSErr XeeQTProgressFunc(short message, Fixed completeness, long refcon);
 
-// BEGIN old QuickTime definitions
+#pragma mark BEGIN old QuickTime definitions
 typedef OSType CodecType;
 typedef UInt16 CodecFlags;
 typedef UInt32 CodecQ;
@@ -85,7 +85,7 @@ extern OSErr EnterMovies(void) AVAILABLE_MAC_OS_X_VERSION_10_0_AND_LATER_BUT_DEP
 extern OSErr EnterMoviesOnThread(UInt32 inFlags) AVAILABLE_MAC_OS_X_VERSION_10_3_AND_LATER_BUT_DEPRECATED_IN_MAC_OS_X_VERSION_10_9;
 extern OSErr ExitMoviesOnThread(void) AVAILABLE_MAC_OS_X_VERSION_10_3_AND_LATER_BUT_DEPRECATED_IN_MAC_OS_X_VERSION_10_9;
 
-// END old QuickTime definitions
+#pragma mark END old QuickTime definitions
 
 @implementation XeeQuicktimeImage
 @synthesize currentHeight = current_height;

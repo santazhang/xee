@@ -30,9 +30,11 @@
 
 - (id)initWithData:(NSData *)dataobject
 {
+	dataobject = [dataobject copy];
 	if (self = [self initWithBuffer:(void *)[dataobject bytes] length:(int)[dataobject length] mutable:NO]) {
-		dataobj = [dataobject copy];
+		dataobj = [dataobject retain];
 	}
+	[dataobject release];
 	return self;
 }
 

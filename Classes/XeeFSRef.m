@@ -2,9 +2,9 @@
 
 @implementation XeeFSRef
 
-+ (XeeFSRef *)refForPath:(NSString *)path
++ (id)refForPath:(NSString *)path
 {
-	return [[[XeeFSRef alloc] initWithPath:path] autorelease];
+	return [[[self alloc] initWithPath:path] autorelease];
 }
 
 - (id)initWithPath:(NSString *)path
