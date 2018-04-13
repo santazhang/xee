@@ -8,7 +8,7 @@
 
 @implementation XeeJPEGImage (LosslessSaving)
 
-- (int)losslessSaveFlags
+- (XeeSaveFormatFlags)losslessSaveFlags
 {
 	if (currindex != 0)
 		return [super losslessSaveFlags];
