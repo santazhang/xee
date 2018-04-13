@@ -7,10 +7,26 @@
 	return [[[self alloc] initWithPath:path] autorelease];
 }
 
++ (instancetype)refWithFileURL:(NSURL *)path
+{
+	return [[[self alloc] initWithFileURL:path] autorelease];
+}
+
 - (id)initWithPath:(NSString *)path
 {
 	FSRef tmpRef;
 	if (FSPathMakeRef((const UInt8 *)[path fileSystemRepresentation], &tmpRef, NULL) != noErr) {
+		[self release];
+		return nil;
+	}
+
+	return [self initWithFSRef:&tmpRef];
+}
+
+- (instancetype)initWithFileURL:(NSURL *)path
+{
+	FSRef tmpRef;
+	if (!CFURLGetFSRef((CFURLRef)path, &tmpRef)) {
 		[self release];
 		return nil;
 	}

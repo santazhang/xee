@@ -67,10 +67,10 @@ glInternalFormat:(int)intformat
 						   yScale:(float)yscale
 						   bounds:(NSRect)transbounds;
 
-- (GLuint)magFilter;
+@property (readonly) GLuint magFilter;
 
 @property (readonly) NSInteger bytesPerRow;
-- (uint8_t *)data;
+@property (readonly) uint8_t *data NS_RETURNS_INNER_POINTER;
 
 - (CGImageRef)createCGImage CF_RETURNS_RETAINED;
 @property (readonly) NSInteger bitsPerComponentForCGImage;
