@@ -392,7 +392,7 @@ struct XeeTileImageProviderInfo {
 
 - (void)drawSampleSet:(XeeSampleSet *)set xScale:(float)x_scale yScale:(float)y_scale bounds:(NSRect)transbounds
 {
-	int num = [set count];
+	NSInteger num = [set count];
 	XeeSamplePoint *samples = [set samples];
 
 	GLint textureunits;
@@ -416,7 +416,7 @@ struct XeeTileImageProviderInfo {
 	} else {
 		float totalweight = 0;
 		for (int i = 0; i < num; i += textureunits) {
-			int curr_num = num - i > textureunits ? textureunits : num - i;
+			NSInteger curr_num = num - i > textureunits ? textureunits : num - i;
 			float currweight = 0;
 			for (int j = 0; j < curr_num; j++)
 				currweight += samples[i + j].weight;
