@@ -49,7 +49,7 @@
 - (id)initWithArchive:(NSString *)archivename
 {
 	if (self = [super init]) {
-		filename = [archivename retain];
+		filename = [archivename copy];
 
 		parser = nil;
 		tmpdir = [[NSTemporaryDirectory() stringByAppendingPathComponent:
