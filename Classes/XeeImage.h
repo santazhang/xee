@@ -144,8 +144,8 @@ typedef NS_OPTIONS(unsigned int, XeeSaveFormatFlags) {
 
 - (void)setDepth:(NSString *)d;
 - (void)setDepthIcon:(NSImage *)icon;
-- (void)setDepthIconName:(NSString *)iconname;
-- (void)setDepth:(NSString *)d iconName:(NSString *)iconname;
+- (void)setDepthIconName:(NSImageName)iconname;
+- (void)setDepth:(NSString *)d iconName:(NSImageName)iconname;
 
 - (void)setDepthBitmap;
 - (void)setDepthIndexed:(int)colors;
@@ -162,14 +162,14 @@ typedef NS_OPTIONS(unsigned int, XeeSaveFormatFlags) {
 + (XeeImage *)imageForHandle:(CSHandle *)fh;
 + (XeeImage *)imageForHandle:(CSHandle *)fh
 						 ref:(XeeFSRef *)ref
-				  attributes:(NSDictionary *)attrs;
+				  attributes:(NSDictionary<NSFileAttributeKey, id> *)attrs;
 @property (class, readonly) NSArray<NSString *> *allFileTypes;
 @property (class, readonly) NSDictionary *fileTypeDictionary;
 + (void)registerImageClass:(Class)aClass;
 
 + (BOOL)canOpenFile:(NSString *)name
 		 firstBlock:(NSData *)block
-		 attributes:(NSDictionary *)attributes;
+		 attributes:(NSDictionary<NSFileAttributeKey, id> *)attributes;
 @property (class, readonly) NSArray<NSString *> *fileTypes;
 
 @end

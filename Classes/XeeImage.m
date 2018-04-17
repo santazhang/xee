@@ -765,10 +765,9 @@ NSMutableArray *imageclasses = nil;
 	static NSMutableDictionary *typehash = nil;
 	if (!typehash) {
 		typehash = [[NSMutableDictionary alloc] init];
-		NSEnumerator *enumerator = [[self allFileTypes] objectEnumerator];
-		NSString *type;
-		while (type = [enumerator nextObject])
+		for (NSString *type in [self allFileTypes]) {
 			[typehash setObject:@"" forKey:type];
+		}
 	}
 	return typehash;
 }
