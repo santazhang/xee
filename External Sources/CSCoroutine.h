@@ -1,5 +1,7 @@
 #import <Foundation/Foundation.h>
 #include <setjmp.h>
+#define _XOPEN_SOURCE
+#include <ucontext.h>
 #include <objc/runtime.h>
 #include <objc/message.h>
 
@@ -10,7 +12,7 @@
 	BOOL fired;
 
 	CSCoroutine *caller;
-	jmp_buf env;
+    ucontext_t ctx;
 
 	NSInvocation *inv;
 }

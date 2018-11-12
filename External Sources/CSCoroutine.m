@@ -17,8 +17,9 @@
 
 static pthread_key_t currkey, mainkey;
 
-static void CSCoroutineFreeMain(CSCoroutine *main)
+static void CSCoroutineFreeMain(void *raw_main)
 {
+    CSCoroutine* main = (CSCoroutine *)raw_main;
 	[main release];
 }
 
@@ -49,27 +50,12 @@ static CSCoroutine *CSSetCurrentCoroutine(CSCoroutine *new)
 	return curr;
 }
 
-static void CSSetEntryPoint(jmp_buf env, void (*entry)(), void *stack, long stacksize)
-{
-#if defined(__i386__)
-	env[9] = (((int)stack + stacksize) & ~15) - 4; // -4 to pretend that a return address has just been pushed onto the stack
-	env[12] = (int)entry;
-#elif defined(__x86_64__)
-#warning TODO: implement!
-#elif defined(__ppc__)
-	env[0] = ((int)stack + stacksize - 64) & ~3;
-	env[21] = (int)entry;
-#else
-#error unknown architecture
-#endif
-}
-
 @implementation CSCoroutine
 
 + (void)initialize
 {
 	pthread_key_create(&currkey, NULL);
-	pthread_key_create(&mainkey, (void (*)())CSCoroutineFreeMain);
+	pthread_key_create(&mainkey, CSCoroutineFreeMain);
 }
 
 + (CSCoroutine *)mainCoroutine
@@ -96,9 +82,11 @@ static void CSSetEntryPoint(jmp_buf env, void (*entry)(), void *stack, long stac
 {
 	target = targetobj;
 	stacksize = stackbytes;
-	if (stacksize) {
+	if (stacksize > 0) {
 		stack = malloc(stacksize);
-	}
+    } else {
+        stack = NULL;
+    }
 	fired = target ? NO : YES;
 
 	caller = nil;
@@ -118,17 +106,13 @@ static void CSSetEntryPoint(jmp_buf env, void (*entry)(), void *stack, long stac
 {
 	CSCoroutine *curr = CSSetCurrentCoroutine(self);
 	caller = curr;
-	if (_setjmp(curr->env) == 0) {
-		_longjmp(env, 1);
-	}
+    swapcontext(&caller->ctx, &ctx);
 }
 
 - (void)returnFrom
 {
-	/*CSCoroutine *curr=*/CSSetCurrentCoroutine(caller);
-	if (_setjmp(env) == 0) {
-		_longjmp(caller->env, 1);
-	}
+	CSSetCurrentCoroutine(caller);
+    swapcontext(&ctx, &caller->ctx);
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)sel
@@ -154,9 +138,12 @@ static void CSLeopardCoroutineStart()
 	inv = [invocation retain];
 	[inv setTarget:target];
 
-	_setjmp(env);
-	CSSetEntryPoint(env, CSLeopardCoroutineStart, stack, stacksize);
-
+    getcontext(&ctx);
+    ctx.uc_stack.ss_sp = (void*)((uint64_t)(stack + stacksize) & ~15);
+    ctx.uc_stack.ss_size = stacksize - 16;
+    ctx.uc_stack.ss_flags = 0;
+    makecontext(&ctx, CSLeopardCoroutineStart, 0);
+    
 	[self switchTo];
 }
 
@@ -166,7 +153,8 @@ static void CSLeopardCoroutineStart()
 
 - (CSCoroutine *)newCoroutine
 {
-	return [[CSCoroutine alloc] initWithTarget:self stackSize:1024 * 1024];
+    size_t kDefaultStackSize = 1024 * 1024;
+    return [self newCoroutineWithStackSize: kDefaultStackSize];
 }
 
 - (CSCoroutine *)newCoroutineWithStackSize:(size_t)stacksize
